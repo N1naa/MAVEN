@@ -8,7 +8,7 @@
     --muted: #9ca3af;
     --line: rgba(124,58,237,0.55);
     --line-w: 3px;
-    --sidebar-w: 240px;
+    --sidebar-w: 250px;
     --accent: #f97316;
     --bg: #000000;
     --card-bg: rgba(255,255,255,0.05);
@@ -18,13 +18,13 @@
   * { box-sizing: border-box; }
   body {
     font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    margin: 0; padding: 0;
-    color: var(--text); background: var(--bg);
-    position: relative; overflow-x: hidden;
+    margin:0; padding:0;
+    color:var(--text); background:var(--bg);
+    position:relative; overflow-x:hidden;
   }
   body::before {
-    content: '';
-    position: fixed; top:0; left:0; width:100%; height:100%;
+    content:'';
+    position:fixed; top:0; left:0; width:100%; height:100%;
     z-index:0; pointer-events:none;
     background:
       radial-gradient(circle at 20% 20%, rgba(124,58,237,0.15) 0%, transparent 50%),
@@ -69,27 +69,39 @@
   .btn-primary:hover { background:#6d28d9; }
   .btn-danger  { background:#ef4444; color:#fff; border-color:#ef4444; }
   .btn-danger:hover { background:#dc2626; }
+  .btn-success { background:#16a34a; color:#fff; border-color:#16a34a; }
+  .btn-success:hover { background:#15803d; }
 
-  /* device list in sidebar */
-  .dev-list { display:flex; flex-direction:column; gap:6px; margin-top:4px; }
+  /* device list */
+  .dev-list { display:flex; flex-direction:column; gap:6px; margin-top:6px; }
   .dev-list-item {
     display:flex; align-items:center; gap:8px;
     padding:6px 8px; border-radius:8px;
     background:rgba(124,58,237,0.12);
     border:1px solid rgba(124,58,237,0.25);
-    font-size:.85rem;
+    font-size:.82rem;
   }
-  .dev-list-item .dot-status {
-    width:8px; height:8px; border-radius:999px; flex-shrink:0;
-    background:#9ca3af;
+  .dot-status { width:8px; height:8px; border-radius:999px; flex-shrink:0; background:#9ca3af; }
+  .dot-status.connected { background:#22c55e; box-shadow:0 0 0 2px rgba(34,197,94,.3); }
+  .dot-status.recording { background:#f97316; box-shadow:0 0 0 2px rgba(249,115,22,.4); animation:recPulse 1s ease-in-out infinite; }
+  @keyframes recPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .dev-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  /* combined recording panel */
+  .rec-panel { border-color: rgba(249,115,22,0.55); }
+  .rec-panel .title { color: #fb923c; }
+  .rec-status {
+    font-size:.82rem; color:var(--muted); margin-top:6px;
+    display:flex; align-items:center; gap:6px;
   }
-  .dev-list-item .dot-status.connected { background:#22c55e; box-shadow:0 0 0 2px rgba(34,197,94,.3); }
-  .dev-list-item .dev-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rec-dot { width:8px; height:8px; border-radius:999px; background:#9ca3af; flex-shrink:0; }
+  .rec-dot.active { background:#f97316; animation:recPulse 1s ease-in-out infinite; }
+  .rec-timer { font-variant-numeric:tabular-nums; font-weight:700; color:var(--text); }
 
   .console {
     border:var(--line-w) solid var(--line); border-radius:10px;
     background:rgba(0,0,0,0.3); color:var(--text-secondary);
-    padding:8px; height:160px; overflow:auto;
+    padding:8px; height:150px; overflow:auto;
     white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word;
     font-size:.82rem; margin-top:8px;
   }
@@ -97,7 +109,6 @@
 
   /* ── Main ── */
   .main { padding:20px; display:flex; flex-direction:column; gap:16px; }
-
   #emptyState {
     display:flex; flex-direction:column; align-items:center;
     justify-content:center; height:60vh; gap:12px;
@@ -107,7 +118,7 @@
   /* ── Device grid ── */
   .device-grid {
     display:grid;
-    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+    grid-template-columns:repeat(auto-fill, minmax(460px, 1fr));
     gap:16px;
   }
 
@@ -116,9 +127,12 @@
     border:var(--line-w) solid var(--line); border-radius:14px;
     padding:14px; background:var(--card-bg); backdrop-filter:blur(10px);
     display:flex; flex-direction:column; gap:10px;
+    transition: border-color .2s;
   }
+  .device-card.recording { border-color: rgba(249,115,22,0.7); }
+
   .dev-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  .dev-title { font-weight:700; font-size:.95rem; }
+  .dev-title { font-weight:700; font-size:.98rem; }
   .rate-info { font-size:.78rem; color:var(--muted); }
   .pitch-display {
     margin-left:auto; font-size:1.4rem; font-weight:800;
@@ -135,6 +149,7 @@
   .pill.Connecting,
   .pill.Requesting { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; }
   .pill.Disconnected { background:rgba(255,255,255,0.08); color:var(--muted); }
+  .pill.Recording { background:linear-gradient(135deg,#f97316,#ea580c); color:#fff; animation:recPulse 1s ease-in-out infinite; }
 
   canvas {
     width:100%; height:240px;
@@ -151,17 +166,29 @@
   .plot-options input[type=number] { width:55px; padding:2px 5px; }
 
   .imu-controls { display:flex; gap:6px; flex-wrap:wrap; }
-  .imu-controls button { flex:1; min-width:100px; font-size:.82rem; padding:5px 8px; }
+  .imu-controls button { flex:1; min-width:90px; font-size:.82rem; padding:5px 8px; }
 
-  .card-footer { display:flex; align-items:center; justify-content:flex-end; }
+  .card-footer { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; }
   .btn-remove { font-size:.78rem; padding:4px 10px; color:#ef4444; border-color:rgba(239,68,68,0.4); background:transparent; }
   .btn-remove:hover { background:rgba(239,68,68,0.15); }
+  .btn-save-ind { font-size:.78rem; padding:4px 10px; }
+
+  /* rec badge on card */
+  .rec-badge {
+    font-size:.72rem; font-weight:700; padding:2px 8px;
+    border-radius:999px; background:rgba(249,115,22,0.2);
+    border:1px solid rgba(249,115,22,0.5); color:#fb923c;
+    display:none; align-items:center; gap:4px;
+  }
+  .rec-badge.active { display:flex; }
+  .rec-badge-dot { width:6px; height:6px; border-radius:999px; background:#f97316; animation:recPulse 1s ease-in-out infinite; }
 
   @media (max-width:700px) {
     .app { grid-template-columns:1fr; }
     .sidebar { position:static; height:auto; }
     .device-grid { grid-template-columns:1fr; }
     canvas { height:clamp(180px,35vh,260px); }
+    button, input { min-height:44px; font-size:1rem; }
   }
 </style>
 
@@ -172,18 +199,35 @@
   <aside class="sidebar">
     <div class="brand"><span class="dot"></span> MAVEN</div>
 
+    <!-- Devices panel -->
     <div class="panel">
       <div class="title">Devices</div>
       <button id="btnAddDevice" class="btn-primary" style="width:100%">＋ Add Device</button>
       <div class="dev-list" id="devList"></div>
     </div>
 
+    <!-- Combined recording panel -->
+    <div class="panel rec-panel">
+      <div class="title">⬤ Combined Recording</div>
+      <div style="display:flex;gap:6px;">
+        <button id="btnRecStart" class="btn-success" style="flex:1">▶ Start</button>
+        <button id="btnRecStop"  class="btn-danger"  style="flex:1" disabled>⏹ Stop</button>
+      </div>
+      <div class="rec-status">
+        <div class="rec-dot" id="recDot"></div>
+        <span id="recStatusText">Idle</span>
+        &nbsp;
+        <span class="rec-timer" id="recTimer"></span>
+      </div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:4px;">
+        Records all connected devices in sync. Columns: <em>t_rel, pitch, vel</em> per device.
+      </div>
+    </div>
+
+    <!-- Log panel -->
     <div class="panel log-panel">
       <div class="title">Log</div>
-      <div style="display:flex;gap:6px;">
-        <button id="btnSaveCsv" style="flex:1">💾 CSV</button>
-        <button id="btnClearLog" style="flex:1">Clear</button>
-      </div>
+      <button id="btnClearLog" style="width:100%">Clear Log</button>
       <div id="logEl" class="console"></div>
     </div>
   </aside>
@@ -218,17 +262,21 @@ function log(s) {
 }
 
 /* ─── Device registry ─── */
-const devices = [];   // array of DeviceCard instances
+const devices = [];
 
-document.getElementById('btnAddDevice').onclick = () => addDevice();
+/* ─── Combined recording state ─── */
+let recActive    = false;
+let recStartTime = null;   // performance.now() when recording started
+let recTimerInterval = null;
+
+// recData: Map<deviceName, [{t_rel, pitch, vel}]>
+// We keep a shared wall-clock start so all devices share the same t=0
+let recData = new Map();
+
+document.getElementById('btnAddDevice').onclick = addDevice;
 document.getElementById('btnClearLog').onclick  = () => logEl.textContent='';
-document.getElementById('btnSaveCsv').onclick   = () => {
-  // save whichever device is focused, or ask user
-  if (devices.length === 0) { log('No devices.'); return; }
-  if (devices.length === 1) { devices[0].saveCsv(); return; }
-  // multiple: save all in sequence
-  devices.forEach(d => d.saveCsv());
-};
+document.getElementById('btnRecStart').onclick  = startRecording;
+document.getElementById('btnRecStop').onclick   = stopRecording;
 
 function addDevice() {
   if (!navigator.bluetooth) { alert('Web Bluetooth not supported.'); return; }
@@ -257,28 +305,127 @@ function updateSidebarList() {
   devices.forEach((d, i) => {
     const item = document.createElement('div');
     item.className = 'dev-list-item';
-    item.innerHTML = `<div class="dot-status ${d.isConnected()?'connected':''}"></div>
-                      <div class="dev-name">${d.name || 'Device '+(i+1)}</div>`;
-    d._sidebarDot  = item.querySelector('.dot-status');
+    const isRec = recActive && recData.has(d.name);
+    item.innerHTML = `
+      <div class="dot-status ${d.isConnected() ? (isRec?'recording':'connected') : ''}"></div>
+      <div class="dev-name">${d.name || 'Device '+(i+1)}</div>`;
     d._sidebarItem = item;
     list.appendChild(item);
   });
 }
 
+/* ─── Combined recording ─── */
+function startRecording() {
+  const connected = devices.filter(d => d.isConnected());
+  if (connected.length === 0) { log('No connected devices to record.'); return; }
+
+  recActive    = true;
+  recStartTime = performance.now();
+  recData      = new Map();
+  connected.forEach(d => {
+    recData.set(d.name, []);
+    d.setRecordingUI(true);
+  });
+
+  document.getElementById('btnRecStart').disabled = true;
+  document.getElementById('btnRecStop').disabled  = false;
+  document.getElementById('recDot').classList.add('active');
+  document.getElementById('recStatusText').textContent =
+    `Recording ${connected.length} device${connected.length>1?'s':''}`;
+
+  // timer display
+  recTimerInterval = setInterval(() => {
+    const elapsed = (performance.now() - recStartTime) / 1000;
+    const m = Math.floor(elapsed/60).toString().padStart(2,'0');
+    const s = (elapsed%60).toFixed(1).padStart(4,'0');
+    document.getElementById('recTimer').textContent = `${m}:${s}`;
+  }, 100);
+
+  log(`Recording started — ${connected.map(d=>d.name).join(', ')}`);
+  updateSidebarList();
+}
+
+async function stopRecording() {
+  if (!recActive) return;
+  recActive = false;
+  clearInterval(recTimerInterval);
+
+  devices.forEach(d => d.setRecordingUI(false));
+
+  document.getElementById('btnRecStart').disabled = false;
+  document.getElementById('btnRecStop').disabled  = true;
+  document.getElementById('recDot').classList.remove('active');
+  document.getElementById('recStatusText').textContent = 'Idle';
+  document.getElementById('recTimer').textContent = '';
+
+  updateSidebarList();
+
+  // Build combined CSV
+  const devNames = [...recData.keys()];
+  if (devNames.length === 0) { log('No data recorded.'); return; }
+
+  // Find total sample count (use longest device)
+  const maxRows = Math.max(...devNames.map(n => recData.get(n).length));
+  if (maxRows === 0) { log('No samples captured.'); return; }
+
+  // Header: t_abs + per device columns
+  const header = ['t_abs_s',
+    ...devNames.flatMap(n => [`${n}_t_rel_s`, `${n}_pitch_deg`, `${n}_vel_ema`])
+  ].join(',');
+
+  const rows = [];
+  for (let i = 0; i < maxRows; i++) {
+    // t_abs based on first device's sample time, falling back to index
+    const firstDev = recData.get(devNames[0]);
+    const t_abs = firstDev[i] ? firstDev[i].t_abs : '';
+    const cols = [t_abs !== '' ? t_abs.toFixed(6) : ''];
+    for (const n of devNames) {
+      const sample = recData.get(n)[i];
+      if (sample) {
+        cols.push(sample.t_rel.toFixed(6), sample.pitch.toFixed(6), sample.vel.toFixed(6));
+      } else {
+        cols.push('','','');   // device had fewer samples
+      }
+    }
+    rows.push(cols.join(','));
+  }
+
+  const csv  = header + '\n' + rows.join('\n');
+  const blob = new Blob([csv], { type:'text/csv' });
+  const fn   = `MAVEN_combined_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
+
+  log(`Recording stopped — ${maxRows} rows, ${devNames.length} device(s). Saving…`);
+
+  if ('showSaveFilePicker' in window) {
+    try {
+      const h = await window.showSaveFilePicker({
+        suggestedName: fn,
+        types: [{ description:'CSV', accept:{'text/csv':['.csv']} }]
+      });
+      const w = await h.createWritable(); await w.write(blob); await w.close();
+      log('Combined CSV saved: ' + (h.name||fn)); return;
+    } catch(e) { if (e?.name==='AbortError') { log('Save canceled.'); return; } }
+  }
+  // fallback
+  const url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download=fn; document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  log('Combined CSV saved: ' + fn);
+}
+
 /* ════════════════════════════════════
-   DeviceCard class
+   DeviceCard
 ════════════════════════════════════ */
 class DeviceCard {
   constructor() {
-    this.name      = '';
-    this.bleDevice = null;
-    this.bleServer = null;
-    this.bleTx     = null;
-    this.bleRx     = null;
-    this._onNotify = null;
-    this.connecting= false;
+    this.name       = '';
+    this.bleDevice  = null;
+    this.bleServer  = null;
+    this.bleTx      = null;
+    this.bleRx      = null;
+    this._onNotify  = null;
+    this.connecting = false;
 
-    // buffers
     this.BUF_MAX   = 1800;
     this.WIN       = 400;
     this.pitchBuf  = [];
@@ -289,7 +436,6 @@ class DeviceCard {
     this.lastPitch = null;
     this.DERIV_A   = 0.3;
 
-    // RAF
     this.rafId      = null;
     this.lastDrawTs = 0;
 
@@ -299,22 +445,30 @@ class DeviceCard {
 
   isConnected() { return !!this.bleServer?.connected; }
 
+  setRecordingUI(active) {
+    this.cardEl.classList.toggle('recording', active);
+    const badge = this.cardEl.querySelector('.rec-badge');
+    badge.classList.toggle('active', active);
+    if (this._sidebarItem) {
+      const dot = this._sidebarItem.querySelector('.dot-status');
+      if (dot) dot.className = 'dot-status' + (active ? ' recording' : (this.isConnected()?' connected':''));
+    }
+  }
+
   _buildDOM() {
     const grid = document.getElementById('deviceGrid');
-
     this.cardEl = document.createElement('div');
     this.cardEl.className = 'device-card';
     this.cardEl.innerHTML = `
       <div class="dev-head">
-        <div class="dev-title-el" style="font-weight:700;font-size:.95rem;">Connecting…</div>
+        <div class="dev-title-el dev-title">Connecting…</div>
         <span class="pill Disconnected status-pill">Disconnected</span>
+        <div class="rec-badge"><div class="rec-badge-dot"></div> REC</div>
         <div class="rate-info" style="margin-left:auto">
           IMU <strong class="imu-hz">—</strong> Hz &nbsp;|&nbsp;
           BLE <strong class="ble-hz">—</strong> Hz
         </div>
-        <div class="pitch-display">
-          <span class="pitch-val">—</span> <span>°</span>
-        </div>
+        <div class="pitch-display"><span class="pitch-val">—</span> <span>°</span></div>
       </div>
 
       <canvas></canvas>
@@ -322,23 +476,23 @@ class DeviceCard {
       <div class="plot-options">
         <label><input type="checkbox" class="chk-pause"> Pause</label>
         <label><input type="checkbox" class="chk-auto" checked> Autoscale Y</label>
-        <label>Fixed range ±<input type="number" class="in-range" value="90">°</label>
+        <label>Fixed ±<input type="number" class="in-range" value="90">°</label>
       </div>
 
       <div class="imu-controls">
-        <button class="btn-stream-on">▶ Start Stream</button>
-        <button class="btn-stream-off">⏹ Stop Stream</button>
-        <button class="btn-cal">⚖ Calibrate (3 s)</button>
+        <button class="btn-stream-on">▶ Stream</button>
+        <button class="btn-stream-off">⏹ Stop</button>
+        <button class="btn-cal">⚖ Cal (3s)</button>
         <button class="btn-reconnect btn-primary">⟳ Reconnect</button>
       </div>
 
       <div class="card-footer">
+        <button class="btn-save-ind">💾 Save CSV</button>
         <button class="btn-remove">✕ Remove</button>
       </div>
     `;
     grid.appendChild(this.cardEl);
 
-    // refs
     this.titleEl    = this.cardEl.querySelector('.dev-title-el');
     this.statusPill = this.cardEl.querySelector('.status-pill');
     this.pitchValEl = this.cardEl.querySelector('.pitch-val');
@@ -350,19 +504,21 @@ class DeviceCard {
     this.canvas     = this.cardEl.querySelector('canvas');
     this.ctx        = this.canvas.getContext('2d');
 
-    // buttons
     this.cardEl.querySelector('.btn-stream-on') .onclick = () => this.send('STREAM,ON');
     this.cardEl.querySelector('.btn-stream-off').onclick = () => this.send('STREAM,OFF');
     this.cardEl.querySelector('.btn-cal')       .onclick = () => this.send('CAL,3000');
     this.cardEl.querySelector('.btn-reconnect') .onclick = () => this.connect();
+    this.cardEl.querySelector('.btn-save-ind')  .onclick = () => this.saveCsv();
     this.cardEl.querySelector('.btn-remove')    .onclick = () => removeDevice(this);
   }
 
   setStatus(s) {
     this.statusPill.textContent = s;
     this.statusPill.className   = 'pill ' + s.replace('…','').replace(/\s+/g,'');
-    if (this._sidebarDot)
-      this._sidebarDot.className = 'dot-status' + (this.isConnected()?' connected':'');
+    if (this._sidebarItem) {
+      const dot = this._sidebarItem.querySelector('.dot-status');
+      if (dot) dot.className = 'dot-status' + (this.isConnected()?' connected':'');
+    }
   }
 
   /* ── BLE ── */
@@ -376,7 +532,9 @@ class DeviceCard {
         optionalServices: [NUS_SERVICE]
       });
       this.bleDevice.addEventListener('gattserverdisconnected', () => this._onDrop());
-      this.name = this.bleDevice.name || ('Device '+(devices.indexOf(this)+1));
+
+      // Use the BLE advertised name directly
+      this.name = this.bleDevice.name || ('IMU-'+(devices.indexOf(this)+1));
       this.titleEl.textContent = this.name;
       updateSidebarList();
 
@@ -391,6 +549,7 @@ class DeviceCard {
 
       this.setStatus('Connected');
       log(`[${this.name}] Connected`);
+      updateSidebarList();
       if (!this.rafId) this.rafId = requestAnimationFrame(ts => this._loop(ts));
     } catch(e) {
       this.setStatus('Disconnected');
@@ -412,6 +571,7 @@ class DeviceCard {
     finally {
       this.bleTx=this.bleRx=this.bleServer=null;
       this.setStatus('Disconnected');
+      updateSidebarList();
     }
   }
 
@@ -447,27 +607,41 @@ class DeviceCard {
         }
       } else if (line.startsWith('RATE ')) {
         const m = line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
-        if (m) { this.imuHzEl.textContent=(+m[1]).toFixed(1); this.bleHzEl.textContent=(+m[2]).toFixed(1); }
+        if (m) {
+          this.imuHzEl.textContent = (+m[1]).toFixed(1);
+          this.bleHzEl.textContent = (+m[2]).toFixed(1);
+        }
       } else { log(`[${this.name}] ${line}`); }
     }
   }
 
   /* ── Buffer ── */
   _push(v, devMs) {
-    let t;
+    let t_abs;
     if (devMs!=null && isFinite(devMs)) {
       if (this._t0ms==null) this._t0ms=devMs;
-      t=(devMs-this._t0ms)/1000;
-    } else t=performance.now()/1000;
+      t_abs = (devMs - this._t0ms) / 1000;
+    } else {
+      t_abs = performance.now() / 1000;
+    }
 
-    this.pitchBuf.push(v); this.timeBuf.push(t); this.sampleIdx++;
+    this.pitchBuf.push(v); this.timeBuf.push(t_abs); this.sampleIdx++;
+
     if (this.lastPitch==null) this.lastPitch=v;
-    const rv=v-this.lastPitch;
-    const lv=this.velBuf.length?this.velBuf[this.velBuf.length-1]:rv;
-    this.velBuf.push(lv+this.DERIV_A*(rv-lv));
-    this.lastPitch=v;
-    if (this.pitchBuf.length>this.BUF_MAX) {
-      const drop=Math.max(this.pitchBuf.length-this.BUF_MAX,100);
+    const rv = v - this.lastPitch;
+    const lv = this.velBuf.length ? this.velBuf[this.velBuf.length-1] : rv;
+    const vel = lv + this.DERIV_A*(rv-lv);
+    this.velBuf.push(vel);
+    this.lastPitch = v;
+
+    // Append to combined recording if active
+    if (recActive && recData.has(this.name)) {
+      const t_rel = (performance.now() - recStartTime) / 1000;
+      recData.get(this.name).push({ t_abs, t_rel, pitch:v, vel });
+    }
+
+    if (this.pitchBuf.length > this.BUF_MAX) {
+      const drop = Math.max(this.pitchBuf.length-this.BUF_MAX, 100);
       this.pitchBuf.splice(0,drop); this.timeBuf.splice(0,drop); this.velBuf.splice(0,drop);
     }
   }
@@ -491,25 +665,22 @@ class DeviceCard {
   }
 
   _draw() {
-    const dpr=devicePixelRatio||1;
-    const ctx=this.ctx;
+    const dpr=devicePixelRatio||1, ctx=this.ctx;
     const W=this.canvas.width/dpr, H=this.canvas.height/dpr;
     const PL=46,PR=10,PT=12,PB=28;
 
     ctx.clearRect(0,0,W,H);
 
-    // axes
     ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(PL,PT); ctx.lineTo(PL,H-PB); ctx.lineTo(W-PR,H-PB); ctx.stroke();
 
     if (!this.pitchBuf.length) {
       ctx.fillStyle='rgba(255,255,255,0.25)'; ctx.font='13px system-ui';
       ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText('Waiting for data…',W/2,H/2);
-      return;
+      ctx.fillText('Waiting for data…',W/2,H/2); return;
     }
 
-    const ys=this.pitchBuf.slice(Math.max(0,this.pitchBuf.length-this.WIN));
+    const ys = this.pitchBuf.slice(Math.max(0,this.pitchBuf.length-this.WIN));
     let y0=-90, y1=90;
     if (this.chkAuto.checked) {
       let mn=Infinity, mx=-Infinity;
@@ -517,20 +688,17 @@ class DeviceCard {
       const pad=Math.max(2,0.1*(mx-mn+1e-6)); y0=mn-pad; y1=mx+pad;
     } else { const r=Math.abs(+this.inRange.value||90); y0=-r; y1=r; }
 
-    const mapX=i=>PL+(i/Math.max(1,this.WIN))*(W-PL-PR);
-    const mapY=v=>(H-PB)-((v-y0)/(y1-y0+1e-9))*(H-PB-PT);
+    const mapX = i => PL+(i/Math.max(1,this.WIN))*(W-PL-PR);
+    const mapY = v => (H-PB)-((v-y0)/(y1-y0+1e-9))*(H-PB-PT);
 
-    // zero line
     ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(255,255,255,0.12)';
     ctx.beginPath(); ctx.moveTo(PL,mapY(0)); ctx.lineTo(W-PR,mapY(0)); ctx.stroke();
     ctx.setLineDash([]);
 
-    // decimated points
     const total=ys.length, step=Math.max(1,Math.floor(total/Math.max(1,W-PL-PR)));
     const xp=[],yp=[];
     for (let k=0;k<total;k+=step) { xp.push(mapX(k)); yp.push(mapY(ys[k])); }
 
-    // fill
     if (xp.length>1) {
       const g=ctx.createLinearGradient(0,PT,0,H-PB);
       g.addColorStop(0,'rgba(124,58,237,0.25)'); g.addColorStop(1,'rgba(124,58,237,0.00)');
@@ -541,19 +709,16 @@ class DeviceCard {
       ctx.closePath(); ctx.fill(); ctx.restore();
     }
 
-    // line
     ctx.strokeStyle='#a78bfa'; ctx.lineWidth=2.2;
     ctx.shadowColor='rgba(167,139,250,0.4)'; ctx.shadowBlur=6;
     ctx.beginPath();
     for (let i=0;i<xp.length;i++) { if(!i) ctx.moveTo(xp[i],yp[i]); else ctx.lineTo(xp[i],yp[i]); }
     ctx.stroke(); ctx.shadowBlur=0;
 
-    // Y ticks
     ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.font='11px system-ui';
     ctx.textAlign='right'; ctx.textBaseline='middle';
     for (let i=0;i<=5;i++) { const v=y0+(y1-y0)*(i/5); ctx.fillText(v.toFixed(0),PL-4,mapY(v)); }
 
-    // axis labels
     ctx.save();
     ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='11px system-ui';
     ctx.textAlign='center'; ctx.textBaseline='alphabetic';
@@ -563,7 +728,7 @@ class DeviceCard {
     ctx.restore();
   }
 
-  /* ── CSV ── */
+  /* ── Individual CSV ── */
   async saveCsv() {
     if (!this.pitchBuf.length) { log(`[${this.name}] Nothing to save.`); return; }
     const t0=this.timeBuf[0], si=this.sampleIdx-this.pitchBuf.length+1;
@@ -572,7 +737,7 @@ class DeviceCard {
       csv+=`${this.timeBuf[i].toFixed(6)},${(this.timeBuf[i]-t0).toFixed(6)},${si+i},${this.pitchBuf[i].toFixed(6)},${(this.velBuf[i]??0).toFixed(6)}\n`;
 
     const blob=new Blob([csv],{type:'text/csv'});
-    const safeName=(this.name||'device').replace(/[^a-z0-9]/gi,'-');
+    const safeName=(this.name).replace(/[^a-z0-9]/gi,'-');
     const fn=`MAVEN_${safeName}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
 
     if ('showSaveFilePicker' in window) {
