@@ -177,6 +177,8 @@
 
     <div class="panel rec-panel">
       <div class="title">⬤ Combined Recording</div>
+      <button id="btnChooseFolder" style="width:100%;margin-bottom:6px;">📁 Choose Save Folder</button>
+      <div id="folderStatus" style="font-size:.78rem;color:var(--muted);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">No folder selected</div>
       <div style="display:flex;gap:6px;">
         <button id="btnRecStart" class="btn-success" style="flex:1">▶ Start</button>
         <button id="btnRecStop"  class="btn-danger"  style="flex:1" disabled>⏹ Stop</button>
@@ -187,7 +189,7 @@
         &nbsp;<span class="rec-timer" id="recTimer"></span>
       </div>
       <div style="font-size:.78rem;color:var(--muted);margin-top:4px;">
-        Records all connected devices in sync.<br>Columns: <em>t_rel, pitch, vel</em> per device.
+        Saves one CSV per device into chosen folder on stop.
       </div>
     </div>
 
@@ -260,11 +262,28 @@ let recActive    = false;
 let recStartTime = null;
 let recTimerInt  = null;
 let recData      = new Map();   // name -> [{t_abs, t_rel, pitch, vel}]
+let recDirHandle = null;        // chosen save folder
 
-document.getElementById('btnAddDevice').onclick = addDevice;
-document.getElementById('btnClearLog').onclick  = () => logEl.textContent='';
-document.getElementById('btnRecStart').onclick  = startRecording;
-document.getElementById('btnRecStop').onclick   = stopRecording;
+document.getElementById('btnAddDevice').onclick    = addDevice;
+document.getElementById('btnClearLog').onclick     = () => logEl.textContent='';
+document.getElementById('btnRecStart').onclick     = startRecording;
+document.getElementById('btnRecStop').onclick      = stopRecording;
+document.getElementById('btnChooseFolder').onclick = chooseFolder;
+
+async function chooseFolder() {
+  if (!('showDirectoryPicker' in window)) {
+    alert('Folder saving requires Chrome or Edge desktop.');
+    return;
+  }
+  try {
+    recDirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    document.getElementById('folderStatus').textContent = '\u{1F4C2} ' + recDirHandle.name;
+    document.getElementById('folderStatus').style.color = '#a78bfa';
+    log('Save folder set: ' + recDirHandle.name);
+  } catch(e) {
+    if (e?.name !== 'AbortError') log('Folder error: ' + e);
+  }
+}
 
 function addDevice() {
   if (!navigator.bluetooth) { alert('Web Bluetooth not supported.'); return; }
@@ -338,48 +357,47 @@ async function stopRecording() {
 
   const devNames = [...recData.keys()];
   if (!devNames.length) { log('No data recorded.'); return; }
-  const maxRows = Math.max(...devNames.map(n => recData.get(n).length));
-  if (!maxRows) { log('No samples captured.'); return; }
 
-  // Row 1: device names aligned to their columns
-  const nameRow = ['',
-    ...devNames.flatMap((n,i) => [n, '', ''])
-  ].join(',');
+  const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  log(`Recording stopped — ${devNames.length} device(s). Saving to folder…`);
 
-  // Row 2: numbered column headers — t1, pitch1, vel1, t2, pitch2, vel2 ...
-  const header = ['t_abs_s',
-    ...devNames.flatMap((_,i) => [`t${i+1}`,`pitch${i+1}`,`vel${i+1}`])
-  ].join(',');
+  // Build and save one CSV per device
+  for (const name of devNames) {
+    const samples = recData.get(name);
+    if (!samples.length) { log(`[${name}] No samples — skipped.`); continue; }
 
-  const rows = [];
-  for (let i=0; i<maxRows; i++) {
-    const first = recData.get(devNames[0])[i];
-    const t_abs = first ? first.t_abs.toFixed(6) : '';
-    const cols  = [t_abs];
-    for (const n of devNames) {
-      const s = recData.get(n)[i];
-      if (s) cols.push(s.t_rel.toFixed(6), s.pitch.toFixed(6), s.vel.toFixed(6));
-      else   cols.push('','','');
+    const header = 'timestamp_s,t_rel_s,pitch_deg,vel_ema';
+    const rows   = samples.map(s =>
+      `${s.t_abs.toFixed(6)},${s.t_rel.toFixed(6)},${s.pitch.toFixed(6)},${s.vel.toFixed(6)}`
+    );
+    const csv  = header + '\n' + rows.join('\n');
+    const blob = new Blob([csv], {type:'text/csv'});
+    const safe = name.replace(/[^a-z0-9]/gi,'-');
+    const fn   = `MAVEN_${safe}_${stamp}.csv`;
+
+    // Save to chosen folder if available
+    if (recDirHandle) {
+      try {
+        const ok = (recDirHandle.queryPermission  && await recDirHandle.queryPermission({mode:'readwrite'}) === 'granted')
+                || (recDirHandle.requestPermission && await recDirHandle.requestPermission({mode:'readwrite'}) === 'granted');
+        if (ok) {
+          const fh = await recDirHandle.getFileHandle(fn, {create:true});
+          const w  = await fh.createWritable();
+          await w.write(blob); await w.close();
+          log(`[${name}] Saved to folder: ${fn}`);
+          continue;
+        }
+      } catch(e) { log(`[${name}] Folder save error: ${e} — falling back to download`); }
     }
-    rows.push(cols.join(','));
-  }
 
-  const csv  = nameRow+'\n'+header+'\n'+rows.join('\n');
-  const blob = new Blob([csv],{type:'text/csv'});
-  const fn   = `MAVEN_combined_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
-  log(`Recording stopped — ${maxRows} rows, ${devNames.length} device(s). Saving…`);
-
-  if ('showSaveFilePicker' in window) {
-    try {
-      const h=await window.showSaveFilePicker({suggestedName:fn,types:[{description:'CSV',accept:{'text/csv':['.csv']}}]});
-      const w=await h.createWritable(); await w.write(blob); await w.close();
-      log('Combined CSV saved: '+(h.name||fn)); return;
-    } catch(e) { if(e?.name==='AbortError'){log('Save canceled.');return;} }
+    // Fallback: auto-download
+    const url = URL.createObjectURL(blob);
+    const a   = document.createElement('a');
+    a.href=url; a.download=fn;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+    log(`[${name}] Downloaded: ${fn}`);
   }
-  const url=URL.createObjectURL(blob), a=document.createElement('a');
-  a.href=url; a.download=fn; document.body.appendChild(a); a.click();
-  document.body.removeChild(a); URL.revokeObjectURL(url);
-  log('Combined CSV saved: '+fn);
 }
 
 /* ════════════════════════════════════
