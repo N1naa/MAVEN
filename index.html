@@ -8,7 +8,7 @@
     --muted: #9ca3af;
     --line: rgba(124,58,237,0.55);
     --line-w: 3px;
-    --sidebar-w: 260px;
+    --sidebar-w: 240px;
     --accent: #f97316;
     --bg: #000000;
     --card-bg: rgba(255,255,255,0.05);
@@ -24,8 +24,8 @@
   }
   body::before {
     content: '';
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 0; pointer-events: none;
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    z-index:0; pointer-events:none;
     background:
       radial-gradient(circle at 20% 20%, rgba(124,58,237,0.15) 0%, transparent 50%),
       radial-gradient(circle at 80% 80%, rgba(249,115,22,0.15) 0%, transparent 50%),
@@ -33,21 +33,22 @@
     animation: bgFloat 20s ease-in-out infinite;
   }
   @keyframes bgFloat {
-    0%,100% { transform: translate(0,0) scale(1); opacity:1; }
-    33%      { transform: translate(50px,-50px) scale(1.1); opacity:.8; }
-    66%      { transform: translate(-30px,30px) scale(.9); opacity:.9; }
+    0%,100% { transform:translate(0,0) scale(1); opacity:1; }
+    33%      { transform:translate(50px,-50px) scale(1.1); opacity:.8; }
+    66%      { transform:translate(-30px,30px) scale(.9); opacity:.9; }
   }
-  body > * { position: relative; z-index: 1; }
+  body > * { position:relative; z-index:1; }
 
-  .app { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: 100vh; }
+  .app { display:grid; grid-template-columns:var(--sidebar-w) 1fr; min-height:100vh; }
 
   /* ── Sidebar ── */
   .sidebar {
-    background: rgba(124,58,237,0.12);
-    border-right: 1px solid rgba(124,58,237,0.35);
-    padding: 16px 14px;
-    display: flex; flex-direction: column; gap: 12px;
-    backdrop-filter: blur(10px); overflow: auto;
+    background:rgba(124,58,237,0.12);
+    border-right:1px solid rgba(124,58,237,0.35);
+    padding:16px 14px;
+    display:flex; flex-direction:column; gap:12px;
+    backdrop-filter:blur(10px); overflow:auto;
+    position:sticky; top:0; height:100vh;
   }
   .brand { display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem; }
   .brand .dot { width:8px; height:8px; border-radius:999px; background:var(--accent); box-shadow:0 0 0 3px rgba(249,115,22,.35); }
@@ -67,29 +68,31 @@
   .btn-primary { background:#7c3aed; color:#fff; border-color:#7c3aed; }
   .btn-primary:hover { background:#6d28d9; }
   .btn-danger  { background:#ef4444; color:#fff; border-color:#ef4444; }
-  .btn-danger:hover  { background:#dc2626; }
+  .btn-danger:hover { background:#dc2626; }
 
-  .controls { display:flex; gap:6px; flex-wrap:wrap; }
-  .controls button { flex:1; }
-
-  .pill {
-    display:inline-block; padding:2px 10px; border-radius:999px;
-    font-size:.8rem; font-weight:600;
-    background:rgba(255,255,255,0.08); color:var(--muted);
+  /* device list in sidebar */
+  .dev-list { display:flex; flex-direction:column; gap:6px; margin-top:4px; }
+  .dev-list-item {
+    display:flex; align-items:center; gap:8px;
+    padding:6px 8px; border-radius:8px;
+    background:rgba(124,58,237,0.12);
+    border:1px solid rgba(124,58,237,0.25);
+    font-size:.85rem;
   }
-  .pill.Connected   { background:linear-gradient(135deg,#22c55e,#16a34a); color:#fff; }
-  .pill.Connecting,
-  .pill.Requesting  { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; }
-  .pill.Disconnected { background:rgba(255,255,255,0.08); color:var(--muted); }
+  .dev-list-item .dot-status {
+    width:8px; height:8px; border-radius:999px; flex-shrink:0;
+    background:#9ca3af;
+  }
+  .dev-list-item .dot-status.connected { background:#22c55e; box-shadow:0 0 0 2px rgba(34,197,94,.3); }
+  .dev-list-item .dev-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
   .console {
     border:var(--line-w) solid var(--line); border-radius:10px;
     background:rgba(0,0,0,0.3); color:var(--text-secondary);
-    padding:8px; height:180px; overflow:auto;
+    padding:8px; height:160px; overflow:auto;
     white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word;
     font-size:.82rem; margin-top:8px;
   }
-
   .log-panel { margin-top:auto; }
 
   /* ── Main ── */
@@ -101,43 +104,64 @@
     color:var(--muted); text-align:center;
   }
 
+  /* ── Device grid ── */
+  .device-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+    gap:16px;
+  }
+
+  /* ── Device card ── */
   .device-card {
     border:var(--line-w) solid var(--line); border-radius:14px;
-    padding:16px; background:var(--card-bg); backdrop-filter:blur(10px);
+    padding:14px; background:var(--card-bg); backdrop-filter:blur(10px);
+    display:flex; flex-direction:column; gap:10px;
   }
-  .dev-head {
-    display:flex; align-items:center; gap:12px;
-    margin-bottom:14px; flex-wrap:wrap;
-  }
-  .dev-title { font-weight:700; font-size:1rem; }
+  .dev-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .dev-title { font-weight:700; font-size:.95rem; }
+  .rate-info { font-size:.78rem; color:var(--muted); }
   .pitch-display {
-    font-size:1.5rem; font-weight:800;
-    color:#a78bfa; font-variant-numeric:tabular-nums; margin-left:auto;
+    margin-left:auto; font-size:1.4rem; font-weight:800;
+    color:#a78bfa; font-variant-numeric:tabular-nums;
   }
-  .pitch-display span { font-size:.85rem; font-weight:400; color:var(--muted); }
-  .rate-info { font-size:.82rem; color:var(--muted); }
+  .pitch-display span { font-size:.8rem; font-weight:400; color:var(--muted); }
+
+  .pill {
+    display:inline-block; padding:2px 8px; border-radius:999px;
+    font-size:.75rem; font-weight:600;
+    background:rgba(255,255,255,0.08); color:var(--muted);
+  }
+  .pill.Connected  { background:linear-gradient(135deg,#22c55e,#16a34a); color:#fff; }
+  .pill.Connecting,
+  .pill.Requesting { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; }
+  .pill.Disconnected { background:rgba(255,255,255,0.08); color:var(--muted); }
 
   canvas {
-    width:100%; height:300px;
+    width:100%; height:240px;
     background:rgba(0,0,0,0.3);
     border:var(--line-w) solid var(--line);
     border-radius:10px; display:block;
   }
 
   .plot-options {
-    display:flex; align-items:center; gap:14px;
-    margin-top:10px; font-size:.85rem; color:var(--muted); flex-wrap:wrap;
+    display:flex; align-items:center; gap:12px;
+    font-size:.82rem; color:var(--muted); flex-wrap:wrap;
   }
-  .plot-options label { display:flex; align-items:center; gap:5px; cursor:pointer; }
-  .plot-options input[type=number] { width:60px; padding:3px 6px; }
+  .plot-options label { display:flex; align-items:center; gap:4px; cursor:pointer; }
+  .plot-options input[type=number] { width:55px; padding:2px 5px; }
 
-  .imu-controls { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-  .imu-controls button { flex:1; min-width:120px; }
+  .imu-controls { display:flex; gap:6px; flex-wrap:wrap; }
+  .imu-controls button { flex:1; min-width:100px; font-size:.82rem; padding:5px 8px; }
+
+  .card-footer { display:flex; align-items:center; justify-content:flex-end; }
+  .btn-remove { font-size:.78rem; padding:4px 10px; color:#ef4444; border-color:rgba(239,68,68,0.4); background:transparent; }
+  .btn-remove:hover { background:rgba(239,68,68,0.15); }
 
   @media (max-width:700px) {
     .app { grid-template-columns:1fr; }
+    .sidebar { position:static; height:auto; }
+    .device-grid { grid-template-columns:1fr; }
     canvas { height:clamp(180px,35vh,260px); }
-    button, input { min-height:44px; width:100%; font-size:1rem; }
   }
 </style>
 
@@ -149,22 +173,16 @@
     <div class="brand"><span class="dot"></span> MAVEN</div>
 
     <div class="panel">
-      <div class="title">Device</div>
-      <div class="controls">
-        <button id="btnConnect" class="btn-primary">Add / Connect</button>
-        <button id="btnDisconnect" class="btn-danger">Disconnect</button>
-      </div>
-      <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
-        <span style="font-size:.85rem; color:var(--muted)">Status:</span>
-        <span id="statusPill" class="pill Disconnected">Disconnected</span>
-      </div>
+      <div class="title">Devices</div>
+      <button id="btnAddDevice" class="btn-primary" style="width:100%">＋ Add Device</button>
+      <div class="dev-list" id="devList"></div>
     </div>
 
     <div class="panel log-panel">
       <div class="title">Log</div>
-      <div class="controls">
-        <button id="btnSaveCsv">💾 Save CSV</button>
-        <button id="btnClearLog">Clear</button>
+      <div style="display:flex;gap:6px;">
+        <button id="btnSaveCsv" style="flex:1">💾 CSV</button>
+        <button id="btnClearLog" style="flex:1">Clear</button>
       </div>
       <div id="logEl" class="console"></div>
     </div>
@@ -172,328 +190,408 @@
 
   <!-- ═══ MAIN ═══ -->
   <main class="main">
-
     <div id="emptyState">
       <div style="font-size:3rem">📶</div>
-      <div style="font-size:1.1rem; font-weight:700; color:var(--text)">No device connected</div>
-      <div style="font-size:.9rem">Click <strong>Add / Connect</strong> in the sidebar to pair your IMU via BLE.</div>
+      <div style="font-size:1.1rem;font-weight:700;color:var(--text)">No devices connected</div>
+      <div style="font-size:.9rem">Click <strong>＋ Add Device</strong> to pair an IMU via BLE.</div>
     </div>
-
-    <div id="deviceCard" class="device-card" style="display:none">
-      <div class="dev-head">
-        <div class="dev-title" id="devTitle">MAVEN Device</div>
-        <div class="rate-info">IMU <strong id="imuHz">—</strong> Hz &nbsp;|&nbsp; BLE <strong id="bleHz">—</strong> Hz</div>
-        <div class="pitch-display" id="pitchDisplay"><span id="pitchVal">—</span> <span>°</span></div>
-      </div>
-
-      <canvas id="plotCanvas"></canvas>
-
-      <div class="plot-options">
-        <label><input type="checkbox" id="chkPause"> Pause</label>
-        <label><input type="checkbox" id="chkAutoscale" checked> Autoscale Y</label>
-        <label>Fixed range ±<input type="number" id="inFixedRange" value="90">°</label>
-      </div>
-
-      <div class="imu-controls">
-        <button id="btnStartStream">▶ Start Stream</button>
-        <button id="btnStopStream">⏹ Stop Stream</button>
-        <button id="btnCal">⚖ Calibrate (3 s zero)</button>
-      </div>
-    </div>
-
+    <div class="device-grid" id="deviceGrid"></div>
   </main>
 </div>
 
 <script>
-/* ─── BLE UUIDs (Nordic UART) ─── */
+/* ─── BLE UUIDs ─── */
 const NUS_SERVICE = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
 const NUS_TX      = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 const NUS_RX      = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
 
-/* ─── State ─── */
-let bleDevice, bleServer, bleTx, bleRx, _onNotify;
-let connecting = false;
-
-const BUF_MAX = 1800, WIN = 400;
-let pitchBuf = [], timeBuf = [], velBuf = [];
-let sampleIdx = 0, _t0ms = null, lastPitch = null;
-const DERIV_A = 0.3;
-
-let rafId = null, lastDrawTs = 0;
-const FRAME_MS = 33;
-
-/* ─── DOM ─── */
-const $ = id => document.getElementById(id);
-const statusPill   = $('statusPill');
-const pitchValEl   = $('pitchVal');
-const imuHzEl      = $('imuHz');
-const bleHzEl      = $('bleHz');
-const devTitleEl   = $('devTitle');
-const logEl        = $('logEl');
-const deviceCard   = $('deviceCard');
-const emptyState   = $('emptyState');
-const canvas       = $('plotCanvas');
-const ctx          = canvas.getContext('2d');
-const chkPause     = $('chkPause');
-const chkAutoscale = $('chkAutoscale');
-const inFixedRange = $('inFixedRange');
-
-/* ─── Log ─── */
-let _lb = [], _lt = null;
+/* ─── Global log ─── */
+const logEl = document.getElementById('logEl');
+let _lb=[], _lt=null;
 function log(s) {
   _lb.push(s);
-  if (!_lt) _lt = setTimeout(() => {
-    logEl.textContent += _lb.join('\n') + '\n';
-    _lb = []; _lt = null;
+  if (!_lt) _lt = setTimeout(()=>{
+    logEl.textContent += _lb.join('\n')+'\n';
+    _lb=[]; _lt=null;
     logEl.scrollTop = logEl.scrollHeight;
   }, 80);
 }
 
-/* ─── Status ─── */
-function setStatus(s) {
-  statusPill.textContent = s;
-  statusPill.className = 'pill ' + s.replace('…','').replace(/\s+/g,'');
-}
+/* ─── Device registry ─── */
+const devices = [];   // array of DeviceCard instances
 
-/* ─── BLE ─── */
-$('btnConnect').onclick    = connect;
-$('btnDisconnect').onclick = disconnect;
+document.getElementById('btnAddDevice').onclick = () => addDevice();
+document.getElementById('btnClearLog').onclick  = () => logEl.textContent='';
+document.getElementById('btnSaveCsv').onclick   = () => {
+  // save whichever device is focused, or ask user
+  if (devices.length === 0) { log('No devices.'); return; }
+  if (devices.length === 1) { devices[0].saveCsv(); return; }
+  // multiple: save all in sequence
+  devices.forEach(d => d.saveCsv());
+};
 
-async function connect() {
+function addDevice() {
   if (!navigator.bluetooth) { alert('Web Bluetooth not supported.'); return; }
-  if (bleServer?.connected || connecting) return;
-  connecting = true;
-  try {
-    setStatus('Requesting…');
-    bleDevice = await navigator.bluetooth.requestDevice({
-      filters: [{ services:[NUS_SERVICE] }, { namePrefix:'C3-' }],
-      optionalServices: [NUS_SERVICE]
-    });
-    bleDevice.addEventListener('gattserverdisconnected', onDrop);
-    devTitleEl.textContent = bleDevice.name || 'MAVEN Device';
-    setStatus('Connecting…');
-    bleServer = await bleDevice.gatt.connect();
-    const svc = await bleServer.getPrimaryService(NUS_SERVICE);
-    bleTx  = await svc.getCharacteristic(NUS_TX);
-    bleRx  = await svc.getCharacteristic(NUS_RX);
-    await bleTx.startNotifications();
-    _onNotify = ev => onNotify(ev);
-    bleTx.addEventListener('characteristicvaluechanged', _onNotify);
-    setStatus('Connected');
-    log('Connected to ' + (bleDevice.name || 'device'));
-    showCard();
-  } catch(e) {
-    setStatus('Disconnected');
-    log('Connect error: ' + e);
-  } finally { connecting = false; }
+  const card = new DeviceCard();
+  devices.push(card);
+  updateEmptyState();
+  card.connect();
 }
 
-async function disconnect() {
-  try {
-    if (bleTx) {
-      try { await bleTx.stopNotifications(); } catch(_){}
-      if (_onNotify) { bleTx.removeEventListener('characteristicvaluechanged', _onNotify); _onNotify = null; }
-    }
-    if (bleDevice?.gatt?.connected) bleDevice.gatt.disconnect();
-  } catch(e) { log('Disconnect error: ' + e); }
-  finally { bleTx=bleRx=bleServer=null; setStatus('Disconnected'); log('Disconnected.'); }
+function removeDevice(card) {
+  card.disconnect();
+  card.cardEl.remove();
+  const i = devices.indexOf(card);
+  if (i !== -1) devices.splice(i, 1);
+  updateSidebarList();
+  updateEmptyState();
 }
 
-function onDrop() { bleTx=bleRx=bleServer=null; setStatus('Disconnected'); log('Disconnected.'); }
-
-function showCard() {
-  emptyState.style.display = 'none';
-  deviceCard.style.display = '';
-  if (!rafId) rafId = requestAnimationFrame(loop);
+function updateEmptyState() {
+  document.getElementById('emptyState').style.display = devices.length ? 'none' : 'flex';
 }
 
-/* ─── Send ─── */
-async function sendLine(s) {
-  if (!bleRx) { log('Not connected'); return; }
-  const d = new TextEncoder().encode(s.endsWith('\n') ? s : s+'\n');
-  try {
-    if ('writeValueWithoutResponse' in bleRx) await bleRx.writeValueWithoutResponse(d);
-    else await bleRx.writeValue(d);
-    log('> ' + s);
-  } catch(e) { log('Write error: ' + e); }
+function updateSidebarList() {
+  const list = document.getElementById('devList');
+  list.innerHTML = '';
+  devices.forEach((d, i) => {
+    const item = document.createElement('div');
+    item.className = 'dev-list-item';
+    item.innerHTML = `<div class="dot-status ${d.isConnected()?'connected':''}"></div>
+                      <div class="dev-name">${d.name || 'Device '+(i+1)}</div>`;
+    d._sidebarDot  = item.querySelector('.dot-status');
+    d._sidebarItem = item;
+    list.appendChild(item);
+  });
 }
 
-$('btnStartStream').onclick = () => sendLine('STREAM,ON');
-$('btnStopStream').onclick  = () => sendLine('STREAM,OFF');
-$('btnCal').onclick         = () => sendLine('CAL,3000');
+/* ════════════════════════════════════
+   DeviceCard class
+════════════════════════════════════ */
+class DeviceCard {
+  constructor() {
+    this.name      = '';
+    this.bleDevice = null;
+    this.bleServer = null;
+    this.bleTx     = null;
+    this.bleRx     = null;
+    this._onNotify = null;
+    this.connecting= false;
 
-/* ─── Notify ─── */
-function onNotify(ev) {
-  const s = new TextDecoder().decode(ev.target.value).trim();
-  if (!s) return;
-  for (const line of s.split(/\n+/)) {
-    if (line.startsWith('PITCH,')) {
-      const p = line.split(',');
-      const v = parseFloat(p[1]);
-      const t = p[2] ? parseInt(p[2],10) : null;
-      if (!isNaN(v) && !chkPause.checked) {
-        pitchValEl.textContent = v.toFixed(2);
-        pushSample(v, t);
-      }
-    } else if (line.startsWith('RATE ')) {
-      const m = line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
-      if (m) { imuHzEl.textContent = (+m[1]).toFixed(1); bleHzEl.textContent = (+m[2]).toFixed(1); }
-    } else {
-      log(line);
-    }
-  }
-}
+    // buffers
+    this.BUF_MAX   = 1800;
+    this.WIN       = 400;
+    this.pitchBuf  = [];
+    this.timeBuf   = [];
+    this.velBuf    = [];
+    this.sampleIdx = 0;
+    this._t0ms     = null;
+    this.lastPitch = null;
+    this.DERIV_A   = 0.3;
 
-/* ─── Buffer ─── */
-function pushSample(v, devMs) {
-  let t;
-  if (devMs != null && isFinite(devMs)) {
-    if (_t0ms == null) _t0ms = devMs;
-    t = (devMs - _t0ms) / 1000;
-  } else t = performance.now() / 1000;
+    // RAF
+    this.rafId      = null;
+    this.lastDrawTs = 0;
 
-  pitchBuf.push(v); timeBuf.push(t); sampleIdx++;
-  if (lastPitch == null) lastPitch = v;
-  const rv = v - lastPitch;
-  const lv = velBuf.length ? velBuf[velBuf.length-1] : rv;
-  velBuf.push(lv + DERIV_A*(rv - lv));
-  lastPitch = v;
-
-  if (pitchBuf.length > BUF_MAX) {
-    const drop = Math.max(pitchBuf.length - BUF_MAX, 100);
-    pitchBuf.splice(0,drop); timeBuf.splice(0,drop); velBuf.splice(0,drop);
-  }
-}
-
-/* ─── Canvas / DPR ─── */
-function resizeDPR() {
-  const dpr = devicePixelRatio || 1;
-  const r   = canvas.getBoundingClientRect();
-  const w   = Math.max(1, Math.round(r.width*dpr));
-  const h   = Math.max(1, Math.round(r.height*dpr));
-  if (canvas.width !== w || canvas.height !== h) {
-    canvas.width = w; canvas.height = h;
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-  }
-}
-
-function loop(ts) {
-  rafId = requestAnimationFrame(loop);
-  if (ts - lastDrawTs < FRAME_MS) return;
-  lastDrawTs = ts;
-  resizeDPR();
-  draw();
-}
-
-function draw() {
-  const dpr = devicePixelRatio || 1;
-  const W = canvas.width/dpr, H = canvas.height/dpr;
-  const PL=48, PR=12, PT=14, PB=30;
-
-  ctx.clearRect(0,0,W,H);
-
-  // axes
-  ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=1;
-  ctx.beginPath(); ctx.moveTo(PL,PT); ctx.lineTo(PL,H-PB); ctx.lineTo(W-PR,H-PB); ctx.stroke();
-
-  if (!pitchBuf.length) {
-    ctx.fillStyle='rgba(255,255,255,0.25)'; ctx.font='14px system-ui';
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('Waiting for data…', W/2, H/2);
-    return;
+    this._buildDOM();
+    updateSidebarList();
   }
 
-  const ys = pitchBuf.slice(Math.max(0, pitchBuf.length-WIN));
-  let y0=-90, y1=90;
-  if (chkAutoscale.checked) {
-    let mn=Infinity, mx=-Infinity;
-    for (const v of ys) { if(v<mn) mn=v; if(v>mx) mx=v; }
-    const pad = Math.max(2, 0.1*(mx-mn+1e-6));
-    y0=mn-pad; y1=mx+pad;
-  } else {
-    const r = Math.abs(+inFixedRange.value||90);
-    y0=-r; y1=r;
+  isConnected() { return !!this.bleServer?.connected; }
+
+  _buildDOM() {
+    const grid = document.getElementById('deviceGrid');
+
+    this.cardEl = document.createElement('div');
+    this.cardEl.className = 'device-card';
+    this.cardEl.innerHTML = `
+      <div class="dev-head">
+        <div class="dev-title-el" style="font-weight:700;font-size:.95rem;">Connecting…</div>
+        <span class="pill Disconnected status-pill">Disconnected</span>
+        <div class="rate-info" style="margin-left:auto">
+          IMU <strong class="imu-hz">—</strong> Hz &nbsp;|&nbsp;
+          BLE <strong class="ble-hz">—</strong> Hz
+        </div>
+        <div class="pitch-display">
+          <span class="pitch-val">—</span> <span>°</span>
+        </div>
+      </div>
+
+      <canvas></canvas>
+
+      <div class="plot-options">
+        <label><input type="checkbox" class="chk-pause"> Pause</label>
+        <label><input type="checkbox" class="chk-auto" checked> Autoscale Y</label>
+        <label>Fixed range ±<input type="number" class="in-range" value="90">°</label>
+      </div>
+
+      <div class="imu-controls">
+        <button class="btn-stream-on">▶ Start Stream</button>
+        <button class="btn-stream-off">⏹ Stop Stream</button>
+        <button class="btn-cal">⚖ Calibrate (3 s)</button>
+        <button class="btn-reconnect btn-primary">⟳ Reconnect</button>
+      </div>
+
+      <div class="card-footer">
+        <button class="btn-remove">✕ Remove</button>
+      </div>
+    `;
+    grid.appendChild(this.cardEl);
+
+    // refs
+    this.titleEl    = this.cardEl.querySelector('.dev-title-el');
+    this.statusPill = this.cardEl.querySelector('.status-pill');
+    this.pitchValEl = this.cardEl.querySelector('.pitch-val');
+    this.imuHzEl    = this.cardEl.querySelector('.imu-hz');
+    this.bleHzEl    = this.cardEl.querySelector('.ble-hz');
+    this.chkPause   = this.cardEl.querySelector('.chk-pause');
+    this.chkAuto    = this.cardEl.querySelector('.chk-auto');
+    this.inRange    = this.cardEl.querySelector('.in-range');
+    this.canvas     = this.cardEl.querySelector('canvas');
+    this.ctx        = this.canvas.getContext('2d');
+
+    // buttons
+    this.cardEl.querySelector('.btn-stream-on') .onclick = () => this.send('STREAM,ON');
+    this.cardEl.querySelector('.btn-stream-off').onclick = () => this.send('STREAM,OFF');
+    this.cardEl.querySelector('.btn-cal')       .onclick = () => this.send('CAL,3000');
+    this.cardEl.querySelector('.btn-reconnect') .onclick = () => this.connect();
+    this.cardEl.querySelector('.btn-remove')    .onclick = () => removeDevice(this);
   }
 
-  const mapX = i => PL + (i/Math.max(1,WIN))*(W-PL-PR);
-  const mapY = v => (H-PB) - ((v-y0)/(y1-y0+1e-9))*(H-PB-PT);
-
-  // zero line
-  ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(255,255,255,0.12)';
-  ctx.beginPath(); ctx.moveTo(PL,mapY(0)); ctx.lineTo(W-PR,mapY(0)); ctx.stroke();
-  ctx.setLineDash([]);
-
-  // build decimated point arrays
-  const total = ys.length;
-  const step  = Math.max(1, Math.floor(total/Math.max(1,W-PL-PR)));
-  const xp=[], yp=[];
-  for (let k=0; k<total; k+=step) { xp.push(mapX(k)); yp.push(mapY(ys[k])); }
-
-  // gradient fill
-  if (xp.length > 1) {
-    const g = ctx.createLinearGradient(0,PT,0,H-PB);
-    g.addColorStop(0,'rgba(124,58,237,0.25)');
-    g.addColorStop(1,'rgba(124,58,237,0.00)');
-    ctx.save(); ctx.fillStyle=g;
-    ctx.beginPath(); ctx.moveTo(xp[0],yp[0]);
-    for (let i=1;i<xp.length;i++) ctx.lineTo(xp[i],yp[i]);
-    ctx.lineTo(xp[xp.length-1],H-PB); ctx.lineTo(xp[0],H-PB);
-    ctx.closePath(); ctx.fill(); ctx.restore();
+  setStatus(s) {
+    this.statusPill.textContent = s;
+    this.statusPill.className   = 'pill ' + s.replace('…','').replace(/\s+/g,'');
+    if (this._sidebarDot)
+      this._sidebarDot.className = 'dot-status' + (this.isConnected()?' connected':'');
   }
 
-  // signal line
-  ctx.strokeStyle='#a78bfa'; ctx.lineWidth=2.4;
-  ctx.shadowColor='rgba(167,139,250,0.4)'; ctx.shadowBlur=7;
-  ctx.beginPath();
-  for (let i=0;i<xp.length;i++) { if(!i) ctx.moveTo(xp[i],yp[i]); else ctx.lineTo(xp[i],yp[i]); }
-  ctx.stroke(); ctx.shadowBlur=0;
-
-  // Y tick labels
-  ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.font='11px system-ui';
-  ctx.textAlign='right'; ctx.textBaseline='middle';
-  for (let i=0;i<=5;i++) {
-    const val = y0+(y1-y0)*(i/5);
-    ctx.fillText(val.toFixed(0), PL-4, mapY(val));
-  }
-
-  // axis labels
-  ctx.save();
-  ctx.fillStyle='rgba(255,255,255,0.55)'; ctx.font='12px system-ui';
-  ctx.textAlign='center'; ctx.textBaseline='alphabetic';
-  ctx.fillText('Sample index', (PL+W-PR)/2, H-4);
-  ctx.translate(14,(PT+H-PB)/2); ctx.rotate(-Math.PI/2);
-  ctx.textBaseline='top'; ctx.fillText('Pitch angle (°)',0,0);
-  ctx.restore();
-}
-
-/* ─── CSV ─── */
-$('btnSaveCsv').onclick = saveCsv;
-async function saveCsv() {
-  if (!pitchBuf.length) { log('Nothing to save.'); return; }
-  const t0 = timeBuf[0];
-  const si = sampleIdx - pitchBuf.length + 1;
-  let csv = 'timestamp_s,t_rel_s,sample_index,pitch_deg,vel_ema\n';
-  for (let i=0;i<pitchBuf.length;i++)
-    csv += `${timeBuf[i].toFixed(6)},${(timeBuf[i]-t0).toFixed(6)},${si+i},${pitchBuf[i].toFixed(6)},${(velBuf[i]??0).toFixed(6)}\n`;
-
-  const blob = new Blob([csv],{type:'text/csv'});
-  const fn   = `MAVEN_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
-
-  if ('showSaveFilePicker' in window) {
+  /* ── BLE ── */
+  async connect() {
+    if (this.bleServer?.connected || this.connecting) return;
+    this.connecting = true;
     try {
-      const h = await window.showSaveFilePicker({ suggestedName:fn, types:[{description:'CSV',accept:{'text/csv':['.csv']}}] });
-      const w = await h.createWritable(); await w.write(blob); await w.close();
-      log('Saved ' + (h.name||fn)); return;
-    } catch(e) { if (e?.name==='AbortError') { log('Save canceled.'); return; } }
+      this.setStatus('Requesting…');
+      this.bleDevice = await navigator.bluetooth.requestDevice({
+        filters: [{ services:[NUS_SERVICE] }, { namePrefix:'C3-' }],
+        optionalServices: [NUS_SERVICE]
+      });
+      this.bleDevice.addEventListener('gattserverdisconnected', () => this._onDrop());
+      this.name = this.bleDevice.name || ('Device '+(devices.indexOf(this)+1));
+      this.titleEl.textContent = this.name;
+      updateSidebarList();
+
+      this.setStatus('Connecting…');
+      this.bleServer = await this.bleDevice.gatt.connect();
+      const svc  = await this.bleServer.getPrimaryService(NUS_SERVICE);
+      this.bleTx = await svc.getCharacteristic(NUS_TX);
+      this.bleRx = await svc.getCharacteristic(NUS_RX);
+      await this.bleTx.startNotifications();
+      this._onNotify = ev => this._notify(ev);
+      this.bleTx.addEventListener('characteristicvaluechanged', this._onNotify);
+
+      this.setStatus('Connected');
+      log(`[${this.name}] Connected`);
+      if (!this.rafId) this.rafId = requestAnimationFrame(ts => this._loop(ts));
+    } catch(e) {
+      this.setStatus('Disconnected');
+      log(`[${this.name||'?'}] Connect error: ${e}`);
+    } finally { this.connecting = false; }
   }
-  const url=URL.createObjectURL(blob), a=document.createElement('a');
-  a.href=url; a.download=fn; document.body.appendChild(a); a.click();
-  document.body.removeChild(a); URL.revokeObjectURL(url);
-  log('Saved ' + fn);
+
+  async disconnect() {
+    try {
+      if (this.bleTx) {
+        try { await this.bleTx.stopNotifications(); } catch(_){}
+        if (this._onNotify) {
+          this.bleTx.removeEventListener('characteristicvaluechanged', this._onNotify);
+          this._onNotify = null;
+        }
+      }
+      if (this.bleDevice?.gatt?.connected) this.bleDevice.gatt.disconnect();
+    } catch(e) { log(`[${this.name}] Disconnect error: ${e}`); }
+    finally {
+      this.bleTx=this.bleRx=this.bleServer=null;
+      this.setStatus('Disconnected');
+    }
+  }
+
+  _onDrop() {
+    this.bleTx=this.bleRx=this.bleServer=null;
+    this.setStatus('Disconnected');
+    log(`[${this.name}] Disconnected.`);
+    updateSidebarList();
+  }
+
+  async send(s) {
+    if (!this.bleRx) { log(`[${this.name}] Not connected`); return; }
+    const d = new TextEncoder().encode(s.endsWith('\n')?s:s+'\n');
+    try {
+      if ('writeValueWithoutResponse' in this.bleRx) await this.bleRx.writeValueWithoutResponse(d);
+      else await this.bleRx.writeValue(d);
+      log(`[${this.name}] > ${s}`);
+    } catch(e) { log(`[${this.name}] Write error: ${e}`); }
+  }
+
+  /* ── Notify ── */
+  _notify(ev) {
+    const s = new TextDecoder().decode(ev.target.value).trim();
+    if (!s) return;
+    for (const line of s.split(/\n+/)) {
+      if (line.startsWith('PITCH,')) {
+        const p = line.split(',');
+        const v = parseFloat(p[1]);
+        const t = p[2] ? parseInt(p[2],10) : null;
+        if (!isNaN(v) && !this.chkPause.checked) {
+          this.pitchValEl.textContent = v.toFixed(2);
+          this._push(v, t);
+        }
+      } else if (line.startsWith('RATE ')) {
+        const m = line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
+        if (m) { this.imuHzEl.textContent=(+m[1]).toFixed(1); this.bleHzEl.textContent=(+m[2]).toFixed(1); }
+      } else { log(`[${this.name}] ${line}`); }
+    }
+  }
+
+  /* ── Buffer ── */
+  _push(v, devMs) {
+    let t;
+    if (devMs!=null && isFinite(devMs)) {
+      if (this._t0ms==null) this._t0ms=devMs;
+      t=(devMs-this._t0ms)/1000;
+    } else t=performance.now()/1000;
+
+    this.pitchBuf.push(v); this.timeBuf.push(t); this.sampleIdx++;
+    if (this.lastPitch==null) this.lastPitch=v;
+    const rv=v-this.lastPitch;
+    const lv=this.velBuf.length?this.velBuf[this.velBuf.length-1]:rv;
+    this.velBuf.push(lv+this.DERIV_A*(rv-lv));
+    this.lastPitch=v;
+    if (this.pitchBuf.length>this.BUF_MAX) {
+      const drop=Math.max(this.pitchBuf.length-this.BUF_MAX,100);
+      this.pitchBuf.splice(0,drop); this.timeBuf.splice(0,drop); this.velBuf.splice(0,drop);
+    }
+  }
+
+  /* ── Draw loop ── */
+  _loop(ts) {
+    this.rafId = requestAnimationFrame(t => this._loop(t));
+    if (ts - this.lastDrawTs < 33) return;
+    this.lastDrawTs = ts;
+    this._resizeDPR();
+    this._draw();
+  }
+
+  _resizeDPR() {
+    const dpr=devicePixelRatio||1, r=this.canvas.getBoundingClientRect();
+    const w=Math.max(1,Math.round(r.width*dpr)), h=Math.max(1,Math.round(r.height*dpr));
+    if (this.canvas.width!==w||this.canvas.height!==h) {
+      this.canvas.width=w; this.canvas.height=h;
+      this.ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+  }
+
+  _draw() {
+    const dpr=devicePixelRatio||1;
+    const ctx=this.ctx;
+    const W=this.canvas.width/dpr, H=this.canvas.height/dpr;
+    const PL=46,PR=10,PT=12,PB=28;
+
+    ctx.clearRect(0,0,W,H);
+
+    // axes
+    ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(PL,PT); ctx.lineTo(PL,H-PB); ctx.lineTo(W-PR,H-PB); ctx.stroke();
+
+    if (!this.pitchBuf.length) {
+      ctx.fillStyle='rgba(255,255,255,0.25)'; ctx.font='13px system-ui';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('Waiting for data…',W/2,H/2);
+      return;
+    }
+
+    const ys=this.pitchBuf.slice(Math.max(0,this.pitchBuf.length-this.WIN));
+    let y0=-90, y1=90;
+    if (this.chkAuto.checked) {
+      let mn=Infinity, mx=-Infinity;
+      for (const v of ys) { if(v<mn)mn=v; if(v>mx)mx=v; }
+      const pad=Math.max(2,0.1*(mx-mn+1e-6)); y0=mn-pad; y1=mx+pad;
+    } else { const r=Math.abs(+this.inRange.value||90); y0=-r; y1=r; }
+
+    const mapX=i=>PL+(i/Math.max(1,this.WIN))*(W-PL-PR);
+    const mapY=v=>(H-PB)-((v-y0)/(y1-y0+1e-9))*(H-PB-PT);
+
+    // zero line
+    ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(255,255,255,0.12)';
+    ctx.beginPath(); ctx.moveTo(PL,mapY(0)); ctx.lineTo(W-PR,mapY(0)); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // decimated points
+    const total=ys.length, step=Math.max(1,Math.floor(total/Math.max(1,W-PL-PR)));
+    const xp=[],yp=[];
+    for (let k=0;k<total;k+=step) { xp.push(mapX(k)); yp.push(mapY(ys[k])); }
+
+    // fill
+    if (xp.length>1) {
+      const g=ctx.createLinearGradient(0,PT,0,H-PB);
+      g.addColorStop(0,'rgba(124,58,237,0.25)'); g.addColorStop(1,'rgba(124,58,237,0.00)');
+      ctx.save(); ctx.fillStyle=g;
+      ctx.beginPath(); ctx.moveTo(xp[0],yp[0]);
+      for (let i=1;i<xp.length;i++) ctx.lineTo(xp[i],yp[i]);
+      ctx.lineTo(xp[xp.length-1],H-PB); ctx.lineTo(xp[0],H-PB);
+      ctx.closePath(); ctx.fill(); ctx.restore();
+    }
+
+    // line
+    ctx.strokeStyle='#a78bfa'; ctx.lineWidth=2.2;
+    ctx.shadowColor='rgba(167,139,250,0.4)'; ctx.shadowBlur=6;
+    ctx.beginPath();
+    for (let i=0;i<xp.length;i++) { if(!i) ctx.moveTo(xp[i],yp[i]); else ctx.lineTo(xp[i],yp[i]); }
+    ctx.stroke(); ctx.shadowBlur=0;
+
+    // Y ticks
+    ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.font='11px system-ui';
+    ctx.textAlign='right'; ctx.textBaseline='middle';
+    for (let i=0;i<=5;i++) { const v=y0+(y1-y0)*(i/5); ctx.fillText(v.toFixed(0),PL-4,mapY(v)); }
+
+    // axis labels
+    ctx.save();
+    ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='11px system-ui';
+    ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Sample index',(PL+W-PR)/2,H-4);
+    ctx.translate(13,(PT+H-PB)/2); ctx.rotate(-Math.PI/2);
+    ctx.textBaseline='top'; ctx.fillText('Pitch (°)',0,0);
+    ctx.restore();
+  }
+
+  /* ── CSV ── */
+  async saveCsv() {
+    if (!this.pitchBuf.length) { log(`[${this.name}] Nothing to save.`); return; }
+    const t0=this.timeBuf[0], si=this.sampleIdx-this.pitchBuf.length+1;
+    let csv='timestamp_s,t_rel_s,sample_index,pitch_deg,vel_ema\n';
+    for (let i=0;i<this.pitchBuf.length;i++)
+      csv+=`${this.timeBuf[i].toFixed(6)},${(this.timeBuf[i]-t0).toFixed(6)},${si+i},${this.pitchBuf[i].toFixed(6)},${(this.velBuf[i]??0).toFixed(6)}\n`;
+
+    const blob=new Blob([csv],{type:'text/csv'});
+    const safeName=(this.name||'device').replace(/[^a-z0-9]/gi,'-');
+    const fn=`MAVEN_${safeName}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
+
+    if ('showSaveFilePicker' in window) {
+      try {
+        const h=await window.showSaveFilePicker({suggestedName:fn,types:[{description:'CSV',accept:{'text/csv':['.csv']}}]});
+        const w=await h.createWritable(); await w.write(blob); await w.close();
+        log(`[${this.name}] Saved ${h.name||fn}`); return;
+      } catch(e) { if(e?.name==='AbortError'){log(`[${this.name}] Save canceled.`);return;} }
+    }
+    const url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url; a.download=fn; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+    log(`[${this.name}] Saved ${fn}`);
+  }
 }
 
-$('btnClearLog').onclick = () => logEl.textContent='';
-window.addEventListener('resize', () => { if(!rafId) rafId=requestAnimationFrame(loop); });
+window.addEventListener('resize', () => {
+  devices.forEach(d => { if(!d.rafId) d.rafId=requestAnimationFrame(ts=>d._loop(ts)); });
+});
 </script>
 </body>
 </html>
