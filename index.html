@@ -72,7 +72,6 @@
   .btn-success { background:#16a34a; color:#fff; border-color:#16a34a; }
   .btn-success:hover { background:#15803d; }
 
-  /* device list */
   .dev-list { display:flex; flex-direction:column; gap:6px; margin-top:6px; }
   .dev-list-item {
     display:flex; align-items:center; gap:8px;
@@ -87,13 +86,9 @@
   @keyframes recPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
   .dev-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
-  /* combined recording panel */
-  .rec-panel { border-color: rgba(249,115,22,0.55); }
-  .rec-panel .title { color: #fb923c; }
-  .rec-status {
-    font-size:.82rem; color:var(--muted); margin-top:6px;
-    display:flex; align-items:center; gap:6px;
-  }
+  .rec-panel { border-color:rgba(249,115,22,0.55); }
+  .rec-panel .title { color:#fb923c; }
+  .rec-status { font-size:.82rem; color:var(--muted); margin-top:6px; display:flex; align-items:center; gap:6px; }
   .rec-dot { width:8px; height:8px; border-radius:999px; background:#9ca3af; flex-shrink:0; }
   .rec-dot.active { background:#f97316; animation:recPulse 1s ease-in-out infinite; }
   .rec-timer { font-variant-numeric:tabular-nums; font-weight:700; color:var(--text); }
@@ -115,53 +110,35 @@
     color:var(--muted); text-align:center;
   }
 
-  /* ── Device grid ── */
   .device-grid {
     display:grid;
     grid-template-columns:repeat(auto-fill, minmax(460px, 1fr));
     gap:16px;
   }
 
-  /* ── Device card ── */
   .device-card {
     border:var(--line-w) solid var(--line); border-radius:14px;
     padding:14px; background:var(--card-bg); backdrop-filter:blur(10px);
     display:flex; flex-direction:column; gap:10px;
-    transition: border-color .2s;
+    transition:border-color .2s;
   }
-  .device-card.recording { border-color: rgba(249,115,22,0.7); }
+  .device-card.recording { border-color:rgba(249,115,22,0.7); }
 
   .dev-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .dev-title { font-weight:700; font-size:.98rem; }
   .rate-info { font-size:.78rem; color:var(--muted); }
-  .pitch-display {
-    margin-left:auto; font-size:1.4rem; font-weight:800;
-    color:#a78bfa; font-variant-numeric:tabular-nums;
-  }
+  .pitch-display { margin-left:auto; font-size:1.4rem; font-weight:800; color:#a78bfa; font-variant-numeric:tabular-nums; }
   .pitch-display span { font-size:.8rem; font-weight:400; color:var(--muted); }
 
-  .pill {
-    display:inline-block; padding:2px 8px; border-radius:999px;
-    font-size:.75rem; font-weight:600;
-    background:rgba(255,255,255,0.08); color:var(--muted);
-  }
+  .pill { display:inline-block; padding:2px 8px; border-radius:999px; font-size:.75rem; font-weight:600; background:rgba(255,255,255,0.08); color:var(--muted); }
   .pill.Connected  { background:linear-gradient(135deg,#22c55e,#16a34a); color:#fff; }
-  .pill.Connecting,
-  .pill.Requesting { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; }
+  .pill.Connecting,.pill.Requesting { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; }
   .pill.Disconnected { background:rgba(255,255,255,0.08); color:var(--muted); }
-  .pill.Recording { background:linear-gradient(135deg,#f97316,#ea580c); color:#fff; animation:recPulse 1s ease-in-out infinite; }
 
-  canvas {
-    width:100%; height:240px;
-    background:rgba(0,0,0,0.3);
-    border:var(--line-w) solid var(--line);
-    border-radius:10px; display:block;
-  }
+  /* canvas is just a display surface — no height in CSS, set by JS */
+  canvas { width:100%; height:240px; background:rgba(0,0,0,0.3); border:var(--line-w) solid var(--line); border-radius:10px; display:block; }
 
-  .plot-options {
-    display:flex; align-items:center; gap:12px;
-    font-size:.82rem; color:var(--muted); flex-wrap:wrap;
-  }
+  .plot-options { display:flex; align-items:center; gap:12px; font-size:.82rem; color:var(--muted); flex-wrap:wrap; }
   .plot-options label { display:flex; align-items:center; gap:4px; cursor:pointer; }
   .plot-options input[type=number] { width:55px; padding:2px 5px; }
 
@@ -171,15 +148,8 @@
   .card-footer { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; }
   .btn-remove { font-size:.78rem; padding:4px 10px; color:#ef4444; border-color:rgba(239,68,68,0.4); background:transparent; }
   .btn-remove:hover { background:rgba(239,68,68,0.15); }
-  .btn-save-ind { font-size:.78rem; padding:4px 10px; }
 
-  /* rec badge on card */
-  .rec-badge {
-    font-size:.72rem; font-weight:700; padding:2px 8px;
-    border-radius:999px; background:rgba(249,115,22,0.2);
-    border:1px solid rgba(249,115,22,0.5); color:#fb923c;
-    display:none; align-items:center; gap:4px;
-  }
+  .rec-badge { font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:999px; background:rgba(249,115,22,0.2); border:1px solid rgba(249,115,22,0.5); color:#fb923c; display:none; align-items:center; gap:4px; }
   .rec-badge.active { display:flex; }
   .rec-badge-dot { width:6px; height:6px; border-radius:999px; background:#f97316; animation:recPulse 1s ease-in-out infinite; }
 
@@ -199,14 +169,12 @@
   <aside class="sidebar">
     <div class="brand"><span class="dot"></span> MAVEN</div>
 
-    <!-- Devices panel -->
     <div class="panel">
       <div class="title">Devices</div>
       <button id="btnAddDevice" class="btn-primary" style="width:100%">＋ Add Device</button>
       <div class="dev-list" id="devList"></div>
     </div>
 
-    <!-- Combined recording panel -->
     <div class="panel rec-panel">
       <div class="title">⬤ Combined Recording</div>
       <div style="display:flex;gap:6px;">
@@ -216,15 +184,13 @@
       <div class="rec-status">
         <div class="rec-dot" id="recDot"></div>
         <span id="recStatusText">Idle</span>
-        &nbsp;
-        <span class="rec-timer" id="recTimer"></span>
+        &nbsp;<span class="rec-timer" id="recTimer"></span>
       </div>
       <div style="font-size:.78rem;color:var(--muted);margin-top:4px;">
-        Records all connected devices in sync. Columns: <em>t_rel, pitch, vel</em> per device.
+        Records all connected devices in sync.<br>Columns: <em>t_rel, pitch, vel</em> per device.
       </div>
     </div>
 
-    <!-- Log panel -->
     <div class="panel log-panel">
       <div class="title">Log</div>
       <button id="btnClearLog" style="width:100%">Clear Log</button>
@@ -249,7 +215,7 @@ const NUS_SERVICE = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
 const NUS_TX      = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 const NUS_RX      = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
 
-/* ─── Global log ─── */
+/* ─── Global log (batched) ─── */
 const logEl = document.getElementById('logEl');
 let _lb=[], _lt=null;
 function log(s) {
@@ -264,14 +230,36 @@ function log(s) {
 /* ─── Device registry ─── */
 const devices = [];
 
-/* ─── Combined recording state ─── */
-let recActive    = false;
-let recStartTime = null;   // performance.now() when recording started
-let recTimerInterval = null;
+/* ════════════════════════════════════
+   SINGLE SHARED RAF LOOP
+   One requestAnimationFrame drives ALL
+   canvas redraws — eliminates redundant
+   layout reads and GPU flushes.
+════════════════════════════════════ */
+const FRAME_MS  = 50;   // ~20 fps is plenty for visual smoothness; data unaffected
+let   _rafId    = null;
+let   _lastTs   = 0;
 
-// recData: Map<deviceName, [{t_rel, pitch, vel}]>
-// We keep a shared wall-clock start so all devices share the same t=0
-let recData = new Map();
+function globalLoop(ts) {
+  _rafId = requestAnimationFrame(globalLoop);
+  if (ts - _lastTs < FRAME_MS) return;
+  _lastTs = ts;
+
+  for (const d of devices) {
+    // Only resize DPR if canvas rect changed (throttled inside _resizeDPR)
+    d._resizeDPR();
+    d._draw();
+  }
+}
+
+// Start the single loop once
+_rafId = requestAnimationFrame(globalLoop);
+
+/* ─── Combined recording ─── */
+let recActive    = false;
+let recStartTime = null;
+let recTimerInt  = null;
+let recData      = new Map();   // name -> [{t_abs, t_rel, pitch, vel}]
 
 document.getElementById('btnAddDevice').onclick = addDevice;
 document.getElementById('btnClearLog').onclick  = () => logEl.textContent='';
@@ -307,40 +295,31 @@ function updateSidebarList() {
     item.className = 'dev-list-item';
     const isRec = recActive && recData.has(d.name);
     item.innerHTML = `
-      <div class="dot-status ${d.isConnected() ? (isRec?'recording':'connected') : ''}"></div>
-      <div class="dev-name">${d.name || 'Device '+(i+1)}</div>`;
+      <div class="dot-status ${d.isConnected()?(isRec?'recording':'connected'):''}"></div>
+      <div class="dev-name">${d.name||'Device '+(i+1)}</div>`;
     d._sidebarItem = item;
     list.appendChild(item);
   });
 }
 
-/* ─── Combined recording ─── */
 function startRecording() {
   const connected = devices.filter(d => d.isConnected());
-  if (connected.length === 0) { log('No connected devices to record.'); return; }
-
+  if (!connected.length) { log('No connected devices to record.'); return; }
   recActive    = true;
   recStartTime = performance.now();
   recData      = new Map();
-  connected.forEach(d => {
-    recData.set(d.name, []);
-    d.setRecordingUI(true);
-  });
-
+  connected.forEach(d => { recData.set(d.name, []); d.setRecordingUI(true); });
   document.getElementById('btnRecStart').disabled = true;
   document.getElementById('btnRecStop').disabled  = false;
   document.getElementById('recDot').classList.add('active');
   document.getElementById('recStatusText').textContent =
     `Recording ${connected.length} device${connected.length>1?'s':''}`;
-
-  // timer display
-  recTimerInterval = setInterval(() => {
-    const elapsed = (performance.now() - recStartTime) / 1000;
-    const m = Math.floor(elapsed/60).toString().padStart(2,'0');
-    const s = (elapsed%60).toFixed(1).padStart(4,'0');
-    document.getElementById('recTimer').textContent = `${m}:${s}`;
+  recTimerInt = setInterval(() => {
+    const e=(performance.now()-recStartTime)/1000;
+    const m=Math.floor(e/60).toString().padStart(2,'0');
+    const s=(e%60).toFixed(1).padStart(4,'0');
+    document.getElementById('recTimer').textContent=`${m}:${s}`;
   }, 100);
-
   log(`Recording started — ${connected.map(d=>d.name).join(', ')}`);
   updateSidebarList();
 }
@@ -348,69 +327,59 @@ function startRecording() {
 async function stopRecording() {
   if (!recActive) return;
   recActive = false;
-  clearInterval(recTimerInterval);
-
+  clearInterval(recTimerInt);
   devices.forEach(d => d.setRecordingUI(false));
-
   document.getElementById('btnRecStart').disabled = false;
   document.getElementById('btnRecStop').disabled  = true;
   document.getElementById('recDot').classList.remove('active');
   document.getElementById('recStatusText').textContent = 'Idle';
   document.getElementById('recTimer').textContent = '';
-
   updateSidebarList();
 
-  // Build combined CSV
   const devNames = [...recData.keys()];
-  if (devNames.length === 0) { log('No data recorded.'); return; }
-
-  // Find total sample count (use longest device)
+  if (!devNames.length) { log('No data recorded.'); return; }
   const maxRows = Math.max(...devNames.map(n => recData.get(n).length));
-  if (maxRows === 0) { log('No samples captured.'); return; }
+  if (!maxRows) { log('No samples captured.'); return; }
 
-  // Header: t_abs + per device columns
+  // Row 1: device names aligned to their columns
+  const nameRow = ['',
+    ...devNames.flatMap((n,i) => [n, '', ''])
+  ].join(',');
+
+  // Row 2: numbered column headers — t1, pitch1, vel1, t2, pitch2, vel2 ...
   const header = ['t_abs_s',
-    ...devNames.flatMap(n => [`${n}_t_rel_s`, `${n}_pitch_deg`, `${n}_vel_ema`])
+    ...devNames.flatMap((_,i) => [`t${i+1}`,`pitch${i+1}`,`vel${i+1}`])
   ].join(',');
 
   const rows = [];
-  for (let i = 0; i < maxRows; i++) {
-    // t_abs based on first device's sample time, falling back to index
-    const firstDev = recData.get(devNames[0]);
-    const t_abs = firstDev[i] ? firstDev[i].t_abs : '';
-    const cols = [t_abs !== '' ? t_abs.toFixed(6) : ''];
+  for (let i=0; i<maxRows; i++) {
+    const first = recData.get(devNames[0])[i];
+    const t_abs = first ? first.t_abs.toFixed(6) : '';
+    const cols  = [t_abs];
     for (const n of devNames) {
-      const sample = recData.get(n)[i];
-      if (sample) {
-        cols.push(sample.t_rel.toFixed(6), sample.pitch.toFixed(6), sample.vel.toFixed(6));
-      } else {
-        cols.push('','','');   // device had fewer samples
-      }
+      const s = recData.get(n)[i];
+      if (s) cols.push(s.t_rel.toFixed(6), s.pitch.toFixed(6), s.vel.toFixed(6));
+      else   cols.push('','','');
     }
     rows.push(cols.join(','));
   }
 
-  const csv  = header + '\n' + rows.join('\n');
-  const blob = new Blob([csv], { type:'text/csv' });
+  const csv  = nameRow+'\n'+header+'\n'+rows.join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
   const fn   = `MAVEN_combined_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
-
   log(`Recording stopped — ${maxRows} rows, ${devNames.length} device(s). Saving…`);
 
   if ('showSaveFilePicker' in window) {
     try {
-      const h = await window.showSaveFilePicker({
-        suggestedName: fn,
-        types: [{ description:'CSV', accept:{'text/csv':['.csv']} }]
-      });
-      const w = await h.createWritable(); await w.write(blob); await w.close();
-      log('Combined CSV saved: ' + (h.name||fn)); return;
-    } catch(e) { if (e?.name==='AbortError') { log('Save canceled.'); return; } }
+      const h=await window.showSaveFilePicker({suggestedName:fn,types:[{description:'CSV',accept:{'text/csv':['.csv']}}]});
+      const w=await h.createWritable(); await w.write(blob); await w.close();
+      log('Combined CSV saved: '+(h.name||fn)); return;
+    } catch(e) { if(e?.name==='AbortError'){log('Save canceled.');return;} }
   }
-  // fallback
   const url=URL.createObjectURL(blob), a=document.createElement('a');
   a.href=url; a.download=fn; document.body.appendChild(a); a.click();
   document.body.removeChild(a); URL.revokeObjectURL(url);
-  log('Combined CSV saved: ' + fn);
+  log('Combined CSV saved: '+fn);
 }
 
 /* ════════════════════════════════════
@@ -436,8 +405,10 @@ class DeviceCard {
     this.lastPitch = null;
     this.DERIV_A   = 0.3;
 
-    this.rafId      = null;
-    this.lastDrawTs = 0;
+    // DPR resize throttle — only re-measure canvas every 500 ms
+    this._lastDprCheck = 0;
+    this._canvasW = 0;
+    this._canvasH = 0;
 
     this._buildDOM();
     updateSidebarList();
@@ -447,11 +418,10 @@ class DeviceCard {
 
   setRecordingUI(active) {
     this.cardEl.classList.toggle('recording', active);
-    const badge = this.cardEl.querySelector('.rec-badge');
-    badge.classList.toggle('active', active);
+    this.cardEl.querySelector('.rec-badge').classList.toggle('active', active);
     if (this._sidebarItem) {
       const dot = this._sidebarItem.querySelector('.dot-status');
-      if (dot) dot.className = 'dot-status' + (active ? ' recording' : (this.isConnected()?' connected':''));
+      if (dot) dot.className='dot-status'+(active?' recording':(this.isConnected()?' connected':''));
     }
   }
 
@@ -470,27 +440,22 @@ class DeviceCard {
         </div>
         <div class="pitch-display"><span class="pitch-val">—</span> <span>°</span></div>
       </div>
-
       <canvas></canvas>
-
       <div class="plot-options">
         <label><input type="checkbox" class="chk-pause"> Pause</label>
         <label><input type="checkbox" class="chk-auto" checked> Autoscale Y</label>
         <label>Fixed ±<input type="number" class="in-range" value="90">°</label>
       </div>
-
       <div class="imu-controls">
         <button class="btn-stream-on">▶ Stream</button>
         <button class="btn-stream-off">⏹ Stop</button>
         <button class="btn-cal">⚖ Cal (3s)</button>
         <button class="btn-reconnect btn-primary">⟳ Reconnect</button>
       </div>
-
       <div class="card-footer">
         <button class="btn-save-ind">💾 Save CSV</button>
         <button class="btn-remove">✕ Remove</button>
-      </div>
-    `;
+      </div>`;
     grid.appendChild(this.cardEl);
 
     this.titleEl    = this.cardEl.querySelector('.dev-title-el');
@@ -514,10 +479,10 @@ class DeviceCard {
 
   setStatus(s) {
     this.statusPill.textContent = s;
-    this.statusPill.className   = 'pill ' + s.replace('…','').replace(/\s+/g,'');
+    this.statusPill.className   = 'pill '+s.replace('…','').replace(/\s+/g,'');
     if (this._sidebarItem) {
       const dot = this._sidebarItem.querySelector('.dot-status');
-      if (dot) dot.className = 'dot-status' + (this.isConnected()?' connected':'');
+      if (dot) dot.className='dot-status'+(this.isConnected()?' connected':'');
     }
   }
 
@@ -528,16 +493,13 @@ class DeviceCard {
     try {
       this.setStatus('Requesting…');
       this.bleDevice = await navigator.bluetooth.requestDevice({
-        filters: [{ services:[NUS_SERVICE] }, { namePrefix:'C3-' }],
-        optionalServices: [NUS_SERVICE]
+        filters:[{services:[NUS_SERVICE]},{namePrefix:'C3-'}],
+        optionalServices:[NUS_SERVICE]
       });
-      this.bleDevice.addEventListener('gattserverdisconnected', () => this._onDrop());
-
-      // Use the BLE advertised name directly
+      this.bleDevice.addEventListener('gattserverdisconnected', ()=>this._onDrop());
       this.name = this.bleDevice.name || ('IMU-'+(devices.indexOf(this)+1));
       this.titleEl.textContent = this.name;
       updateSidebarList();
-
       this.setStatus('Connecting…');
       this.bleServer = await this.bleDevice.gatt.connect();
       const svc  = await this.bleServer.getPrimaryService(NUS_SERVICE);
@@ -546,15 +508,13 @@ class DeviceCard {
       await this.bleTx.startNotifications();
       this._onNotify = ev => this._notify(ev);
       this.bleTx.addEventListener('characteristicvaluechanged', this._onNotify);
-
       this.setStatus('Connected');
       log(`[${this.name}] Connected`);
       updateSidebarList();
-      if (!this.rafId) this.rafId = requestAnimationFrame(ts => this._loop(ts));
     } catch(e) {
       this.setStatus('Disconnected');
       log(`[${this.name||'?'}] Connect error: ${e}`);
-    } finally { this.connecting = false; }
+    } finally { this.connecting=false; }
   }
 
   async disconnect() {
@@ -563,16 +523,12 @@ class DeviceCard {
         try { await this.bleTx.stopNotifications(); } catch(_){}
         if (this._onNotify) {
           this.bleTx.removeEventListener('characteristicvaluechanged', this._onNotify);
-          this._onNotify = null;
+          this._onNotify=null;
         }
       }
       if (this.bleDevice?.gatt?.connected) this.bleDevice.gatt.disconnect();
     } catch(e) { log(`[${this.name}] Disconnect error: ${e}`); }
-    finally {
-      this.bleTx=this.bleRx=this.bleServer=null;
-      this.setStatus('Disconnected');
-      updateSidebarList();
-    }
+    finally { this.bleTx=this.bleRx=this.bleServer=null; this.setStatus('Disconnected'); updateSidebarList(); }
   }
 
   _onDrop() {
@@ -584,7 +540,7 @@ class DeviceCard {
 
   async send(s) {
     if (!this.bleRx) { log(`[${this.name}] Not connected`); return; }
-    const d = new TextEncoder().encode(s.endsWith('\n')?s:s+'\n');
+    const d=new TextEncoder().encode(s.endsWith('\n')?s:s+'\n');
     try {
       if ('writeValueWithoutResponse' in this.bleRx) await this.bleRx.writeValueWithoutResponse(d);
       else await this.bleRx.writeValue(d);
@@ -592,78 +548,71 @@ class DeviceCard {
     } catch(e) { log(`[${this.name}] Write error: ${e}`); }
   }
 
-  /* ── Notify ── */
+  /* ── Notify — called by BLE, NOT by RAF ── */
   _notify(ev) {
-    const s = new TextDecoder().decode(ev.target.value).trim();
+    const s=new TextDecoder().decode(ev.target.value).trim();
     if (!s) return;
     for (const line of s.split(/\n+/)) {
       if (line.startsWith('PITCH,')) {
-        const p = line.split(',');
-        const v = parseFloat(p[1]);
-        const t = p[2] ? parseInt(p[2],10) : null;
+        const p=line.split(',');
+        const v=parseFloat(p[1]);
+        const t=p[2]?parseInt(p[2],10):null;
         if (!isNaN(v) && !this.chkPause.checked) {
-          this.pitchValEl.textContent = v.toFixed(2);
-          this._push(v, t);
+          // DOM write batched — just set textContent, no layout triggered
+          this.pitchValEl.textContent=v.toFixed(2);
+          this._push(v,t);
         }
       } else if (line.startsWith('RATE ')) {
-        const m = line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
-        if (m) {
-          this.imuHzEl.textContent = (+m[1]).toFixed(1);
-          this.bleHzEl.textContent = (+m[2]).toFixed(1);
-        }
+        const m=line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
+        if (m) { this.imuHzEl.textContent=(+m[1]).toFixed(1); this.bleHzEl.textContent=(+m[2]).toFixed(1); }
       } else { log(`[${this.name}] ${line}`); }
     }
   }
 
-  /* ── Buffer ── */
+  /* ── Buffer push — O(1), no layout reads ── */
   _push(v, devMs) {
     let t_abs;
     if (devMs!=null && isFinite(devMs)) {
       if (this._t0ms==null) this._t0ms=devMs;
-      t_abs = (devMs - this._t0ms) / 1000;
-    } else {
-      t_abs = performance.now() / 1000;
-    }
+      t_abs=(devMs-this._t0ms)/1000;
+    } else t_abs=performance.now()/1000;
 
     this.pitchBuf.push(v); this.timeBuf.push(t_abs); this.sampleIdx++;
-
     if (this.lastPitch==null) this.lastPitch=v;
-    const rv = v - this.lastPitch;
-    const lv = this.velBuf.length ? this.velBuf[this.velBuf.length-1] : rv;
-    const vel = lv + this.DERIV_A*(rv-lv);
+    const rv=v-this.lastPitch;
+    const lv=this.velBuf.length?this.velBuf[this.velBuf.length-1]:rv;
+    const vel=lv+this.DERIV_A*(rv-lv);
     this.velBuf.push(vel);
-    this.lastPitch = v;
+    this.lastPitch=v;
 
-    // Append to combined recording if active
     if (recActive && recData.has(this.name)) {
-      const t_rel = (performance.now() - recStartTime) / 1000;
-      recData.get(this.name).push({ t_abs, t_rel, pitch:v, vel });
+      const t_rel=(performance.now()-recStartTime)/1000;
+      recData.get(this.name).push({t_abs,t_rel,pitch:v,vel});
     }
 
-    if (this.pitchBuf.length > this.BUF_MAX) {
-      const drop = Math.max(this.pitchBuf.length-this.BUF_MAX, 100);
+    if (this.pitchBuf.length>this.BUF_MAX) {
+      const drop=Math.max(this.pitchBuf.length-this.BUF_MAX,100);
       this.pitchBuf.splice(0,drop); this.timeBuf.splice(0,drop); this.velBuf.splice(0,drop);
     }
   }
 
-  /* ── Draw loop ── */
-  _loop(ts) {
-    this.rafId = requestAnimationFrame(t => this._loop(t));
-    if (ts - this.lastDrawTs < 33) return;
-    this.lastDrawTs = ts;
-    this._resizeDPR();
-    this._draw();
-  }
-
+  /* ── DPR resize — throttled to once per 500ms ── */
   _resizeDPR() {
-    const dpr=devicePixelRatio||1, r=this.canvas.getBoundingClientRect();
-    const w=Math.max(1,Math.round(r.width*dpr)), h=Math.max(1,Math.round(r.height*dpr));
+    const now=performance.now();
+    if (now-this._lastDprCheck < 500) return;
+    this._lastDprCheck=now;
+    const dpr=devicePixelRatio||1;
+    const r=this.canvas.getBoundingClientRect();
+    const w=Math.max(1,Math.round(r.width*dpr));
+    const h=Math.max(1,Math.round(r.height*dpr));
     if (this.canvas.width!==w||this.canvas.height!==h) {
       this.canvas.width=w; this.canvas.height=h;
       this.ctx.setTransform(dpr,0,0,dpr,0,0);
+      this._canvasW=w; this._canvasH=h;
     }
   }
 
+  /* ── Draw — called by global loop, not per-device RAF ── */
   _draw() {
     const dpr=devicePixelRatio||1, ctx=this.ctx;
     const W=this.canvas.width/dpr, H=this.canvas.height/dpr;
@@ -671,6 +620,7 @@ class DeviceCard {
 
     ctx.clearRect(0,0,W,H);
 
+    // axes
     ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(PL,PT); ctx.lineTo(PL,H-PB); ctx.lineTo(W-PR,H-PB); ctx.stroke();
 
@@ -680,25 +630,30 @@ class DeviceCard {
       ctx.fillText('Waiting for data…',W/2,H/2); return;
     }
 
-    const ys = this.pitchBuf.slice(Math.max(0,this.pitchBuf.length-this.WIN));
+    const ys=this.pitchBuf.slice(Math.max(0,this.pitchBuf.length-this.WIN));
     let y0=-90, y1=90;
     if (this.chkAuto.checked) {
       let mn=Infinity, mx=-Infinity;
-      for (const v of ys) { if(v<mn)mn=v; if(v>mx)mx=v; }
+      for (const v of ys){if(v<mn)mn=v;if(v>mx)mx=v;}
       const pad=Math.max(2,0.1*(mx-mn+1e-6)); y0=mn-pad; y1=mx+pad;
     } else { const r=Math.abs(+this.inRange.value||90); y0=-r; y1=r; }
 
-    const mapX = i => PL+(i/Math.max(1,this.WIN))*(W-PL-PR);
-    const mapY = v => (H-PB)-((v-y0)/(y1-y0+1e-9))*(H-PB-PT);
+    const mapX=i=>PL+(i/Math.max(1,this.WIN))*(W-PL-PR);
+    const mapY=v=>(H-PB)-((v-y0)/(y1-y0+1e-9))*(H-PB-PT);
 
+    // zero line
     ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(255,255,255,0.12)';
     ctx.beginPath(); ctx.moveTo(PL,mapY(0)); ctx.lineTo(W-PR,mapY(0)); ctx.stroke();
     ctx.setLineDash([]);
 
-    const total=ys.length, step=Math.max(1,Math.floor(total/Math.max(1,W-PL-PR)));
+    // decimate to pixel-width — no point drawing more points than pixels
+    const total=ys.length;
+    const pxWide=Math.max(1,Math.floor(W-PL-PR));
+    const step=Math.max(1,Math.floor(total/pxWide));
     const xp=[],yp=[];
-    for (let k=0;k<total;k+=step) { xp.push(mapX(k)); yp.push(mapY(ys[k])); }
+    for (let k=0;k<total;k+=step){xp.push(mapX(k));yp.push(mapY(ys[k]));}
 
+    // gradient fill
     if (xp.length>1) {
       const g=ctx.createLinearGradient(0,PT,0,H-PB);
       g.addColorStop(0,'rgba(124,58,237,0.25)'); g.addColorStop(1,'rgba(124,58,237,0.00)');
@@ -709,16 +664,19 @@ class DeviceCard {
       ctx.closePath(); ctx.fill(); ctx.restore();
     }
 
+    // signal line
     ctx.strokeStyle='#a78bfa'; ctx.lineWidth=2.2;
-    ctx.shadowColor='rgba(167,139,250,0.4)'; ctx.shadowBlur=6;
+    ctx.shadowColor='rgba(167,139,250,0.35)'; ctx.shadowBlur=5;
     ctx.beginPath();
-    for (let i=0;i<xp.length;i++) { if(!i) ctx.moveTo(xp[i],yp[i]); else ctx.lineTo(xp[i],yp[i]); }
+    for (let i=0;i<xp.length;i++){if(!i)ctx.moveTo(xp[i],yp[i]);else ctx.lineTo(xp[i],yp[i]);}
     ctx.stroke(); ctx.shadowBlur=0;
 
+    // Y ticks
     ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.font='11px system-ui';
     ctx.textAlign='right'; ctx.textBaseline='middle';
-    for (let i=0;i<=5;i++) { const v=y0+(y1-y0)*(i/5); ctx.fillText(v.toFixed(0),PL-4,mapY(v)); }
+    for (let i=0;i<=5;i++){const v=y0+(y1-y0)*(i/5);ctx.fillText(v.toFixed(0),PL-4,mapY(v));}
 
+    // axis labels
     ctx.save();
     ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='11px system-ui';
     ctx.textAlign='center'; ctx.textBaseline='alphabetic';
@@ -730,33 +688,27 @@ class DeviceCard {
 
   /* ── Individual CSV ── */
   async saveCsv() {
-    if (!this.pitchBuf.length) { log(`[${this.name}] Nothing to save.`); return; }
+    if (!this.pitchBuf.length){log(`[${this.name}] Nothing to save.`);return;}
     const t0=this.timeBuf[0], si=this.sampleIdx-this.pitchBuf.length+1;
     let csv='timestamp_s,t_rel_s,sample_index,pitch_deg,vel_ema\n';
     for (let i=0;i<this.pitchBuf.length;i++)
       csv+=`${this.timeBuf[i].toFixed(6)},${(this.timeBuf[i]-t0).toFixed(6)},${si+i},${this.pitchBuf[i].toFixed(6)},${(this.velBuf[i]??0).toFixed(6)}\n`;
-
     const blob=new Blob([csv],{type:'text/csv'});
-    const safeName=(this.name).replace(/[^a-z0-9]/gi,'-');
-    const fn=`MAVEN_${safeName}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
-
+    const safe=(this.name).replace(/[^a-z0-9]/gi,'-');
+    const fn=`MAVEN_${safe}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
     if ('showSaveFilePicker' in window) {
       try {
         const h=await window.showSaveFilePicker({suggestedName:fn,types:[{description:'CSV',accept:{'text/csv':['.csv']}}]});
-        const w=await h.createWritable(); await w.write(blob); await w.close();
-        log(`[${this.name}] Saved ${h.name||fn}`); return;
-      } catch(e) { if(e?.name==='AbortError'){log(`[${this.name}] Save canceled.`);return;} }
+        const w=await h.createWritable();await w.write(blob);await w.close();
+        log(`[${this.name}] Saved ${h.name||fn}`);return;
+      } catch(e){if(e?.name==='AbortError'){log(`[${this.name}] Save canceled.`);return;}}
     }
-    const url=URL.createObjectURL(blob), a=document.createElement('a');
-    a.href=url; a.download=fn; document.body.appendChild(a); a.click();
-    document.body.removeChild(a); URL.revokeObjectURL(url);
+    const url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download=fn;document.body.appendChild(a);a.click();
+    document.body.removeChild(a);URL.revokeObjectURL(url);
     log(`[${this.name}] Saved ${fn}`);
   }
 }
-
-window.addEventListener('resize', () => {
-  devices.forEach(d => { if(!d.rafId) d.rafId=requestAnimationFrame(ts=>d._loop(ts)); });
-});
 </script>
 </body>
 </html>
