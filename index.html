@@ -343,6 +343,7 @@ class DeviceCard {
     this.bleDevice=null; this.bleServer=null; this.bleTx=null; this.bleRx=null;
     this._onNotify=null; this.connecting=false; this.plotOpen=false;
 
+    this.plotSignal='pitch';
     this.BUF_MAX=1800; this.WIN=400;
     this.pitchBuf=[]; this.tmsBuf=[]; this.velBuf=[];
     // ++ extra signal buffers
@@ -388,6 +389,16 @@ class DeviceCard {
       <div class="plot-wrap">
         <canvas></canvas>
         <div class="plot-opts">
+          <label>Signal:
+            <select class="sel-signal" style="padding:2px 4px;margin-left:2px">
+              <option value="pitch">Pitch</option>
+              <option value="yaw">Yaw</option>
+              <option value="roll">Roll</option>
+              <option value="ax">Ax</option>
+              <option value="ay">Ay</option>
+              <option value="az">Az</option>
+            </select>
+          </label>
           <label><input type="checkbox" class="chk-pause"> Pause</label>
           <label><input type="checkbox" class="chk-auto" checked> Autoscale</label>
           <label>Fixed ±<input type="number" class="in-range" value="90">°</label>
@@ -413,6 +424,8 @@ class DeviceCard {
     this.chkPause  =this.cardEl.querySelector('.chk-pause');
     this.chkAuto   =this.cardEl.querySelector('.chk-auto');
     this.inRange   =this.cardEl.querySelector('.in-range');
+    this.selSignal =this.cardEl.querySelector('.sel-signal');
+    this.selSignal.addEventListener('change',()=>{ this.plotSignal=this.selSignal.value; });
     this.canvas    =this.cardEl.querySelector('canvas');
     this.ctx       =this.canvas.getContext('2d');
     // ++ extra display refs
@@ -586,7 +599,9 @@ class DeviceCard {
       ctx.fillStyle='#444';ctx.font='12px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
       ctx.fillText('Waiting…',W/2,H/2);return;
     }
-    const ys=this.pitchBuf.slice(Math.max(0,this.pitchBuf.length-this.WIN));
+    const _sigMap={'pitch':this.pitchBuf,'yaw':this.yawBuf,'roll':this.rollBuf,'ax':this.axBuf,'ay':this.ayBuf,'az':this.azBuf};
+    const _sigBuf=_sigMap[this.plotSignal]||this.pitchBuf;
+    const ys=_sigBuf.slice(Math.max(0,_sigBuf.length-this.WIN));
     let y0=-90,y1=90;
     if(this.chkAuto.checked){
       let mn=Infinity,mx=-Infinity;
@@ -607,7 +622,7 @@ class DeviceCard {
     for(let i=0;i<=4;i++){const v=y0+(y1-y0)*(i/4);ctx.fillText(v.toFixed(0),PL-3,mapY(v));}
     ctx.save();ctx.fillStyle='#444';ctx.font='10px system-ui';ctx.textAlign='center';
     ctx.textBaseline='alphabetic';ctx.fillText('samples',(PL+W-PR)/2,H-4);
-    ctx.translate(12,(PT+H-PB)/2);ctx.rotate(-Math.PI/2);ctx.textBaseline='top';ctx.fillText('pitch°',0,0);
+    ctx.translate(12,(PT+H-PB)/2);ctx.rotate(-Math.PI/2);ctx.textBaseline='top';ctx.fillText(this.plotSignal+'°',0,0);
     ctx.restore();
   }
 
