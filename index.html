@@ -5,13 +5,40 @@
 <title>MAVEN</title>
 <style>
   :root {
-    --bg:#0a0a0a; --bg2:#111111; --bg3:#1a1a1a; --border:#2a2a2a;
-    --accent:#7c3aed; --accent2:#a78bfa; --text:#ffffff; --muted:#6b7280;
-    --green:#22c55e; --orange:#f97316; --red:#ef4444;
+    --bg:      #0a0a0a;
+    --bg2:     #111111;
+    --bg3:     #1a1a1a;
+    --border:  #2a2a2a;
+    --accent:  #7c3aed;
+    --accent2: #a78bfa;
+    --text:    #ffffff;
+    --muted:   #6b7280;
+    --green:   #22c55e;
+    --orange:  #f97316;
+    --red:     #ef4444;
   }
-  * { box-sizing:border-box; margin:0; padding:0; }
-  body { font-family:system-ui,-apple-system,sans-serif; font-size:13px; background:var(--bg); color:var(--text); display:grid; grid-template-columns:220px 1fr; min-height:100vh; }
-  aside { background:var(--bg2); border-right:1px solid var(--border); padding:12px; display:flex; flex-direction:column; gap:10px; position:sticky; top:0; height:100vh; overflow-y:auto; }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    background: var(--bg);
+    color: var(--text);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 100vh;
+  }
+  aside {
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
   .brand { font-weight:800; font-size:1.1rem; color:var(--accent2); padding:2px 0 8px; border-bottom:1px solid var(--border); }
   .s-panel { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:8px 10px; }
   .s-panel .t { font-weight:700; font-size:.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:7px; }
@@ -37,16 +64,16 @@
   .btn-success { background:#15803d; border-color:#15803d; color:#fff; }
   .btn-success:hover { background:#166534; }
   .btn-danger  { background:#b91c1c; border-color:#b91c1c; color:#fff; }
-  .btn-danger:hover { background:#991b1b; }
+  .btn-danger:hover  { background:#991b1b; }
   .btn-ghost   { background:transparent; border-color:transparent; color:var(--muted); }
-  .btn-ghost:hover { color:var(--red); }
+  .btn-ghost:hover   { color:var(--red); }
   .btn-row { display:flex; gap:5px; }
   .btn-row button { flex:1; }
-  input[type=number], input[type=text], select { background:var(--bg); border:1px solid var(--border); border-radius:5px; color:var(--text); font:inherit; font-size:.82rem; padding:3px 6px; }
+  input[type=number], input[type=text] { background:var(--bg); border:1px solid var(--border); border-radius:5px; color:var(--text); font:inherit; font-size:.82rem; padding:3px 6px; }
   .pill { display:inline-block; padding:1px 7px; border-radius:999px; font-size:.72rem; font-weight:600; background:var(--bg3); color:var(--muted); border:1px solid var(--border); }
   .pill.Connected   { background:#14532d; color:var(--green); border-color:#166534; }
   .pill.Connecting,.pill.Requesting { background:#431407; color:var(--orange); border-color:#9a3412; }
-  .pill.Disconnected { background:var(--bg3); color:var(--muted); }
+  .pill.Disconnected{ background:var(--bg3); color:var(--muted); }
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:none; align-items:center; justify-content:center; z-index:50; }
   .modal-overlay.open { display:flex; }
   .modal { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; width:340px; display:flex; flex-direction:column; gap:12px; }
@@ -65,11 +92,9 @@
   .card-pitch { margin-left:auto; font-size:1.3rem; font-weight:800; font-variant-numeric:tabular-nums; color:var(--accent2); }
   .card-pitch span { font-size:.75rem; font-weight:400; color:var(--muted); }
   .card-rate { font-size:.75rem; color:var(--muted); }
-  /* live values row */
-  .card-vals { display:flex; gap:10px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); font-variant-numeric:tabular-nums; }
-  .card-vals .val-item { display:flex; gap:3px; align-items:baseline; }
-  .card-vals .val-label { font-size:.7rem; color:var(--muted); }
-  .card-vals .val-num { color:var(--text); font-weight:600; }
+  /* ++ live extra values row */
+  .card-vals { display:flex; gap:12px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .card-vals b { color:var(--text); font-weight:600; }
   .btn-rename { font-size:.7rem; padding:1px 6px; color:var(--muted); border-color:var(--border); background:transparent; }
   .btn-rename:hover { color:var(--accent2); border-color:var(--accent2); }
   .plot-toggle { display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none; font-size:.8rem; color:var(--muted); padding:2px 0; }
@@ -82,7 +107,6 @@
   .plot-opts { display:flex; align-items:center; gap:10px; font-size:.78rem; color:var(--muted); flex-wrap:wrap; margin-top:4px; }
   .plot-opts label { display:flex; align-items:center; gap:3px; cursor:pointer; }
   .plot-opts input[type=number] { width:48px; }
-  .plot-opts select { padding:2px 5px; }
   .card-controls { display:flex; gap:5px; flex-wrap:wrap; }
   .card-controls button { font-size:.78rem; padding:4px 8px; }
   .card-foot { display:flex; align-items:center; justify-content:space-between; gap:6px; }
@@ -140,7 +164,9 @@
     <h3>Rename Device</h3>
     <div class="hint" id="renameHint"></div>
     <input type="text" id="renameInput" placeholder="e.g. Left Knee, IMU-3…" maxlength="32"/>
-    <div class="hint" style="color:var(--accent2)">Saved permanently in this browser. Auto-applied on reconnect.</div>
+    <div class="hint" style="color:var(--accent2)">
+      This name is saved permanently in your browser and will be remembered next time this device connects.
+    </div>
     <div class="modal-btns">
       <button id="renameClear" class="btn-ghost">Clear saved name</button>
       <button id="renameCancel">Cancel</button>
@@ -155,16 +181,6 @@ const NUS_TX        = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 const NUS_RX        = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
 const GENERIC_NAMES = ['MPY-ESP32','ESP32','BLE','UART'];
 const LS_KEY        = 'maven_device_names';
-
-// Signal definitions for plotting
-const SIGNALS = [
-  { key:'pitch', label:'Pitch (°)',  color:'#a78bfa' },
-  { key:'yaw',   label:'Yaw (°)',   color:'#38bdf8' },
-  { key:'roll',  label:'Roll (°)',  color:'#4ade80' },
-  { key:'ax',    label:'Ax (m/s²)', color:'#fb923c' },
-  { key:'ay',    label:'Ay (m/s²)', color:'#f472b6' },
-  { key:'az',    label:'Az (m/s²)', color:'#facc15' },
-];
 
 function loadNameTable() { try { return JSON.parse(localStorage.getItem(LS_KEY)||'{}'); } catch { return {}; } }
 function saveNameTable(t) { try { localStorage.setItem(LS_KEY,JSON.stringify(t)); } catch {} }
@@ -264,10 +280,10 @@ async function stopRecording() {
   let idx=1;
   for (const [,{name,samples}] of entries) {
     if (!samples.length){log(`[${name}] No samples.`);idx++;continue;}
-    // CSV: both device tms AND browser t_rel, plus all 6 signals
-    const csv='device_tms_ms,t_rel_s,yaw_deg,pitch_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema\n'
+    // ++ added yaw,roll,ax,ay,az columns
+    const csv='device_tms_ms,t_rel_s,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema\n'
       +samples.map(s=>
-        `${s.tms},${s.t_rel.toFixed(6)},${s.yaw.toFixed(2)},${s.pitch.toFixed(2)},${s.roll.toFixed(2)},${s.ax.toFixed(2)},${s.ay.toFixed(2)},${s.az.toFixed(2)},${s.vel.toFixed(6)}`
+        `${s.tms},${s.t_rel.toFixed(6)},${s.pitch.toFixed(2)},${s.yaw.toFixed(2)},${s.roll.toFixed(2)},${s.ax.toFixed(2)},${s.ay.toFixed(2)},${s.az.toFixed(2)},${s.vel.toFixed(6)}`
       ).join('\n');
     const blob=new Blob([csv],{type:'text/csv'});
     const safe=name.replace(/[^a-z0-9]/gi,'-');
@@ -289,12 +305,11 @@ async function stopRecording() {
   }
 }
 
-/* ── Rename modal ── */
 let _renameCard=null;
 function openRenameModal(card) {
   _renameCard=card;
   const saved=card.bleDevice?getSavedName(card.bleDevice.id):null;
-  document.getElementById('renameHint').textContent=`BLE: "${card.bleName||'?'}"  |  ID: …${card.bleDevice?.id?.slice(-8)||'?'}`;
+  document.getElementById('renameHint').textContent=`BLE name: "${card.bleName||'?'}"  |  ID: ${card.bleDevice?.id?.slice(-8)||'?'}`;
   document.getElementById('renameInput').value=saved||card.displayName||'';
   document.getElementById('renameModal').classList.add('open');
   setTimeout(()=>document.getElementById('renameInput').focus(),50);
@@ -306,33 +321,32 @@ document.getElementById('renameSave').onclick=()=>{
   if(!val)return;
   if(_renameCard.bleDevice)setSavedName(_renameCard.bleDevice.id,val);
   _renameCard.displayName=val; _renameCard.nameEl.textContent=val;
-  updateSidebar();log(`Renamed → "${val}"`);closeRenameModal();
+  updateSidebar(); log(`Renamed → "${val}"`); closeRenameModal();
 };
 document.getElementById('renameClear').onclick=()=>{
   if(!_renameCard?.bleDevice)return;
   clearSavedName(_renameCard.bleDevice.id);
   _renameCard.displayName=_renameCard.bleName||_renameCard.displayName;
   _renameCard.nameEl.textContent=_renameCard.displayName;
-  updateSidebar();log('Cleared saved name');closeRenameModal();
+  updateSidebar(); log('Cleared saved name'); closeRenameModal();
 };
 document.getElementById('renameCancel').onclick=closeRenameModal;
 document.getElementById('renameModal').addEventListener('click',e=>{if(e.target===document.getElementById('renameModal'))closeRenameModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRenameModal();});
 
 /* ════════════════════════════════
-   DeviceCard
+   DeviceCard — same as working version, minimal additions marked ++
 ════════════════════════════════ */
 class DeviceCard {
   constructor() {
     this.bleName=''; this.displayName='';
     this.bleDevice=null; this.bleServer=null; this.bleTx=null; this.bleRx=null;
     this._onNotify=null; this.connecting=false; this.plotOpen=false;
-    this.plotSignal='pitch'; // which signal to plot
 
     this.BUF_MAX=1800; this.WIN=400;
-    // per-signal buffers
-    this.bufs={ yaw:[], pitch:[], roll:[], ax:[], ay:[], az:[] };
-    this.tmsBuf=[]; this.velBuf=[];
+    this.pitchBuf=[]; this.tmsBuf=[]; this.velBuf=[];
+    // ++ extra signal buffers
+    this.yawBuf=[]; this.rollBuf=[]; this.axBuf=[]; this.ayBuf=[]; this.azBuf=[];
     this.sampleIdx=0; this._t0tms=null; this.lastPitch=null; this.DERIV_A=0.3;
     this._dprTs=0;
     this._buildDOM(); updateSidebar();
@@ -358,35 +372,25 @@ class DeviceCard {
         <div class="card-rate rate-el" style="margin-left:auto">— Hz</div>
         <div class="card-pitch"><span class="pitch-el">—</span> <span>°</span></div>
       </div>
-      <!-- live values -->
+      <!-- ++ live extra values -->
       <div class="card-vals">
-        <div class="val-item"><span class="val-label">Yaw</span>&nbsp;<span class="val-num yaw-el">—</span><span class="val-label">°</span></div>
-        <div class="val-item"><span class="val-label">Pitch</span>&nbsp;<span class="val-num pitch-el2">—</span><span class="val-label">°</span></div>
-        <div class="val-item"><span class="val-label">Roll</span>&nbsp;<span class="val-num roll-el">—</span><span class="val-label">°</span></div>
-        <div class="val-item"><span class="val-label">Ax</span>&nbsp;<span class="val-num ax-el">—</span><span class="val-label">m/s²</span></div>
-        <div class="val-item"><span class="val-label">Ay</span>&nbsp;<span class="val-num ay-el">—</span><span class="val-label">m/s²</span></div>
-        <div class="val-item"><span class="val-label">Az</span>&nbsp;<span class="val-num az-el">—</span><span class="val-label">m/s²</span></div>
+        <span>Yaw <b class="yaw-el">—</b>°</span>
+        <span>Roll <b class="roll-el">—</b>°</span>
+        <span>Ax <b class="ax-el">—</b></span>
+        <span>Ay <b class="ay-el">—</b></span>
+        <span>Az <b class="az-el">—</b> m/s²</span>
       </div>
       <div class="plot-toggle">
         <span class="plot-caret">▶</span>
         <span>Plot</span>
+        <span class="pitch-mini" style="margin-left:4px;font-variant-numeric:tabular-nums;color:var(--accent2)"></span>
       </div>
       <div class="plot-wrap">
         <canvas></canvas>
         <div class="plot-opts">
-          <label>Signal:
-            <select class="sel-signal">
-              <option value="pitch">Pitch</option>
-              <option value="yaw">Yaw</option>
-              <option value="roll">Roll</option>
-              <option value="ax">Ax</option>
-              <option value="ay">Ay</option>
-              <option value="az">Az</option>
-            </select>
-          </label>
           <label><input type="checkbox" class="chk-pause"> Pause</label>
           <label><input type="checkbox" class="chk-auto" checked> Autoscale</label>
-          <label>Fixed ±<input type="number" class="in-range" value="90"></label>
+          <label>Fixed ±<input type="number" class="in-range" value="90">°</label>
         </div>
       </div>
       <div class="card-controls">
@@ -401,23 +405,22 @@ class DeviceCard {
       </div>`;
     grid.appendChild(this.cardEl);
 
-    this.nameEl    = this.cardEl.querySelector('.name-el');
-    this.statusPill= this.cardEl.querySelector('.status-pill');
-    this.pitchEl   = this.cardEl.querySelector('.pitch-el');
-    this.rateEl    = this.cardEl.querySelector('.rate-el');
-    this.chkPause  = this.cardEl.querySelector('.chk-pause');
-    this.chkAuto   = this.cardEl.querySelector('.chk-auto');
-    this.inRange   = this.cardEl.querySelector('.in-range');
-    this.selSignal = this.cardEl.querySelector('.sel-signal');
-    this.canvas    = this.cardEl.querySelector('canvas');
-    this.ctx       = this.canvas.getContext('2d');
-    // live value displays
-    this.yawEl   = this.cardEl.querySelector('.yaw-el');
-    this.pitch2El= this.cardEl.querySelector('.pitch-el2');
-    this.rollEl  = this.cardEl.querySelector('.roll-el');
-    this.axEl    = this.cardEl.querySelector('.ax-el');
-    this.ayEl    = this.cardEl.querySelector('.ay-el');
-    this.azEl    = this.cardEl.querySelector('.az-el');
+    this.nameEl    =this.cardEl.querySelector('.name-el');
+    this.statusPill=this.cardEl.querySelector('.status-pill');
+    this.pitchEl   =this.cardEl.querySelector('.pitch-el');
+    this.pitchMini =this.cardEl.querySelector('.pitch-mini');
+    this.rateEl    =this.cardEl.querySelector('.rate-el');
+    this.chkPause  =this.cardEl.querySelector('.chk-pause');
+    this.chkAuto   =this.cardEl.querySelector('.chk-auto');
+    this.inRange   =this.cardEl.querySelector('.in-range');
+    this.canvas    =this.cardEl.querySelector('canvas');
+    this.ctx       =this.canvas.getContext('2d');
+    // ++ extra display refs
+    this.yawEl =this.cardEl.querySelector('.yaw-el');
+    this.rollEl=this.cardEl.querySelector('.roll-el');
+    this.axEl  =this.cardEl.querySelector('.ax-el');
+    this.ayEl  =this.cardEl.querySelector('.ay-el');
+    this.azEl  =this.cardEl.querySelector('.az-el');
 
     const toggle=this.cardEl.querySelector('.plot-toggle');
     const wrap  =this.cardEl.querySelector('.plot-wrap');
@@ -426,7 +429,6 @@ class DeviceCard {
       toggle.classList.toggle('open',this.plotOpen);
       wrap.classList.toggle('open',this.plotOpen);
     });
-    this.selSignal.addEventListener('change',()=>{ this.plotSignal=this.selSignal.value; });
 
     this.cardEl.querySelector('.btn-rename')    .onclick=()=>openRenameModal(this);
     this.cardEl.querySelector('.btn-stream-on') .onclick=()=>this.send('STREAM,ON');
@@ -505,36 +507,26 @@ class DeviceCard {
           log(`[${this.displayName}] Assigned from firmware ID`);
         }
       } else if (line.startsWith('PITCH,')) {
-        // Format: PITCH,yaw,pitch,roll,ax,ay,az,tms
         const p=line.split(',');
-        if (p.length >= 8) {
-          // new format with all fields
-          const yaw  =parseFloat(p[1]);
-          const pitch=parseFloat(p[2]);
-          const roll =parseFloat(p[3]);
-          const ax   =parseFloat(p[4]);
-          const ay   =parseFloat(p[5]);
-          const az   =parseFloat(p[6]);
-          const tms  =parseInt(p[7],10);
-          if(!isNaN(pitch)&&!this.chkPause.checked){
-            this.pitchEl.textContent =pitch.toFixed(2);
-            this.yawEl.textContent   =isNaN(yaw)  ?'—':yaw.toFixed(1);
-            this.pitch2El.textContent=pitch.toFixed(1);
-            this.rollEl.textContent  =isNaN(roll)  ?'—':roll.toFixed(1);
-            this.axEl.textContent    =isNaN(ax)    ?'—':ax.toFixed(2);
-            this.ayEl.textContent    =isNaN(ay)    ?'—':ay.toFixed(2);
-            this.azEl.textContent    =isNaN(az)    ?'—':az.toFixed(2);
-            this._push({yaw,pitch,roll,ax,ay,az}, isNaN(tms)?null:tms);
-          }
-        } else if (p.length >= 2) {
-          // fallback: old format PITCH,pitch[,tms]
-          const pitch=parseFloat(p[1]);
-          const tms=p[2]?parseInt(p[2],10):null;
-          if(!isNaN(pitch)&&!this.chkPause.checked){
-            this.pitchEl.textContent=pitch.toFixed(2);
-            this.pitch2El.textContent=pitch.toFixed(1);
-            this._push({yaw:0,pitch,roll:0,ax:0,ay:0,az:0}, tms);
-          }
+        const v  =parseFloat(p[1]);   // pitch (same position as before)
+        const tms=p[2]?parseInt(p[2],10):null;
+        // ++ read extra fields if present (new firmware format)
+        // new format: PITCH,pitch,tms,yaw,roll,ax,ay,az
+        const yaw =p[3]?parseFloat(p[3]):0;
+        const roll=p[4]?parseFloat(p[4]):0;
+        const ax  =p[5]?parseFloat(p[5]):0;
+        const ay  =p[6]?parseFloat(p[6]):0;
+        const az  =p[7]?parseFloat(p[7]):0;
+        if(!isNaN(v)&&!this.chkPause.checked){
+          this.pitchEl.textContent  =v.toFixed(2);
+          this.pitchMini.textContent=v.toFixed(1)+'°';
+          // ++ update live display
+          this.yawEl.textContent =yaw.toFixed(1);
+          this.rollEl.textContent=roll.toFixed(1);
+          this.axEl.textContent  =ax.toFixed(2);
+          this.ayEl.textContent  =ay.toFixed(2);
+          this.azEl.textContent  =az.toFixed(2);
+          this._push(v,tms,yaw,roll,ax,ay,az);
         }
       } else if (line.startsWith('RATE ')) {
         const m=line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
@@ -543,36 +535,35 @@ class DeviceCard {
     }
   }
 
-  _push(vals, tms) {
+  // ++ added yaw,roll,ax,ay,az parameters (default 0 for backward compat)
+  _push(v, tms, yaw=0, roll=0, ax=0, ay=0, az=0) {
     if(tms!=null&&isFinite(tms)){if(this._t0tms==null)this._t0tms=tms;}
     else{tms=Math.round(performance.now());if(this._t0tms==null)this._t0tms=tms;}
 
-    for (const k of ['yaw','pitch','roll','ax','ay','az']) this.bufs[k].push(vals[k]||0);
-    this.tmsBuf.push(tms); this.sampleIdx++;
+    this.pitchBuf.push(v); this.tmsBuf.push(tms); this.sampleIdx++;
+    // ++ push extra signals
+    this.yawBuf.push(yaw); this.rollBuf.push(roll);
+    this.axBuf.push(ax);   this.ayBuf.push(ay); this.azBuf.push(az);
 
-    // vel_ema on pitch only
-    if(this.lastPitch==null)this.lastPitch=vals.pitch;
-    const rv=vals.pitch-this.lastPitch;
+    if(this.lastPitch==null)this.lastPitch=v;
+    const rv=v-this.lastPitch;
     const lv=this.velBuf.length?this.velBuf[this.velBuf.length-1]:rv;
     const prevTms=this.tmsBuf[this.tmsBuf.length-2]??tms;
     const dt_s=Math.max(0.001,(tms-prevTms)/1000);
     this.velBuf.push(lv+this.DERIV_A*((rv/dt_s)-lv));
-    this.lastPitch=vals.pitch;
+    this.lastPitch=v;
 
     if(recActive&&this.bleDevice&&recData.has(this.bleDevice.id)){
       const t_rel=(performance.now()-recStartTime)/1000;
-      recData.get(this.bleDevice.id).samples.push({
-        tms, t_rel,
-        yaw:vals.yaw, pitch:vals.pitch, roll:vals.roll,
-        ax:vals.ax, ay:vals.ay, az:vals.az,
-        vel:this.velBuf[this.velBuf.length-1]
-      });
+      // ++ include extra fields in recording
+      recData.get(this.bleDevice.id).samples.push({tms,t_rel,pitch:v,yaw,roll,ax,ay,az,vel:this.velBuf[this.velBuf.length-1]});
     }
 
-    if(this.tmsBuf.length>this.BUF_MAX){
-      const drop=Math.max(this.tmsBuf.length-this.BUF_MAX,100);
-      for(const k of Object.keys(this.bufs))this.bufs[k].splice(0,drop);
-      this.tmsBuf.splice(0,drop); this.velBuf.splice(0,drop);
+    if(this.pitchBuf.length>this.BUF_MAX){
+      const drop=Math.max(this.pitchBuf.length-this.BUF_MAX,100);
+      this.pitchBuf.splice(0,drop); this.tmsBuf.splice(0,drop); this.velBuf.splice(0,drop);
+      this.yawBuf.splice(0,drop);   this.rollBuf.splice(0,drop);
+      this.axBuf.splice(0,drop);    this.ayBuf.splice(0,drop);  this.azBuf.splice(0,drop);
     }
   }
 
@@ -583,68 +574,53 @@ class DeviceCard {
     if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;this.ctx.setTransform(dpr,0,0,dpr,0,0);}
   }
 
+  // unchanged from working version — plots pitch only
   _draw(){
-    const sig=SIGNALS.find(s=>s.key===this.plotSignal)||SIGNALS[0];
-    const ys=this.bufs[sig.key];
     const dpr=devicePixelRatio||1,ctx=this.ctx;
     const W=this.canvas.width/dpr,H=this.canvas.height/dpr;
     const PL=40,PR=8,PT=10,PB=24;
-
     ctx.clearRect(0,0,W,H);
     ctx.strokeStyle='#2a2a2a';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(PL,PT);ctx.lineTo(PL,H-PB);ctx.lineTo(W-PR,H-PB);ctx.stroke();
-
-    // signal label
-    ctx.fillStyle='#555';ctx.font='10px system-ui';ctx.textAlign='left';ctx.textBaseline='top';
-    ctx.fillText(sig.label,PL+4,PT+2);
-
-    if(!ys.length){
+    if(!this.pitchBuf.length){
       ctx.fillStyle='#444';ctx.font='12px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
       ctx.fillText('Waiting…',W/2,H/2);return;
     }
-
-    const slice=ys.slice(Math.max(0,ys.length-this.WIN));
+    const ys=this.pitchBuf.slice(Math.max(0,this.pitchBuf.length-this.WIN));
     let y0=-90,y1=90;
     if(this.chkAuto.checked){
       let mn=Infinity,mx=-Infinity;
-      for(const v of slice){if(v<mn)mn=v;if(v>mx)mx=v;}
-      const pad=Math.max(0.5,0.1*(mx-mn+1e-6));y0=mn-pad;y1=mx+pad;
+      for(const v of ys){if(v<mn)mn=v;if(v>mx)mx=v;}
+      const pad=Math.max(2,0.1*(mx-mn+1e-6));y0=mn-pad;y1=mx+pad;
     }else{const r=Math.abs(+this.inRange.value||90);y0=-r;y1=r;}
-
     const mapX=i=>PL+(i/Math.max(1,this.WIN))*(W-PL-PR);
     const mapY=v=>(H-PB)-((v-y0)/(y1-y0+1e-9))*(H-PB-PT);
-
     ctx.strokeStyle='#222';ctx.setLineDash([3,3]);
     ctx.beginPath();ctx.moveTo(PL,mapY(0));ctx.lineTo(W-PR,mapY(0));ctx.stroke();
     ctx.setLineDash([]);
-
-    const total=slice.length,step=Math.max(1,Math.floor(total/Math.max(1,W-PL-PR)));
-    ctx.strokeStyle=sig.color;ctx.lineWidth=1.5;
+    const total=ys.length,step=Math.max(1,Math.floor(total/Math.max(1,W-PL-PR)));
+    ctx.strokeStyle='#a78bfa';ctx.lineWidth=1.5;
     ctx.beginPath();let first=true;
-    for(let k=0;k<total;k+=step){
-      const x=mapX(k),y=mapY(slice[k]);
-      if(first){ctx.moveTo(x,y);first=false;}else ctx.lineTo(x,y);
-    }
+    for(let k=0;k<total;k+=step){const x=mapX(k),y=mapY(ys[k]);if(first){ctx.moveTo(x,y);first=false;}else ctx.lineTo(x,y);}
     ctx.stroke();
-
     ctx.fillStyle='#444';ctx.font='10px system-ui';ctx.textAlign='right';ctx.textBaseline='middle';
-    for(let i=0;i<=4;i++){const v=y0+(y1-y0)*(i/4);ctx.fillText(v.toFixed(1),PL-3,mapY(v));}
+    for(let i=0;i<=4;i++){const v=y0+(y1-y0)*(i/4);ctx.fillText(v.toFixed(0),PL-3,mapY(v));}
     ctx.save();ctx.fillStyle='#444';ctx.font='10px system-ui';ctx.textAlign='center';
     ctx.textBaseline='alphabetic';ctx.fillText('samples',(PL+W-PR)/2,H-4);
+    ctx.translate(12,(PT+H-PB)/2);ctx.rotate(-Math.PI/2);ctx.textBaseline='top';ctx.fillText('pitch°',0,0);
     ctx.restore();
   }
 
   async saveCsv(){
-    if(!this.tmsBuf.length){log(`[${this.displayName}] Nothing to save.`);return;}
+    if(!this.pitchBuf.length){log(`[${this.displayName}] Nothing to save.`);return;}
     const t0=this._t0tms??this.tmsBuf[0];
-    const si=this.sampleIdx-this.tmsBuf.length+1;
-    const csv='device_tms_ms,t_rel_s,sample_index,yaw_deg,pitch_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema\n'
-      +this.tmsBuf.map((tms,i)=>{
+    const si=this.sampleIdx-this.pitchBuf.length+1;
+    // ++ added yaw,roll,ax,ay,az columns
+    const csv='device_tms_ms,t_rel_s,sample_index,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema\n'
+      +this.pitchBuf.map((p,i)=>{
+        const tms=this.tmsBuf[i];
         const t_rel=((tms-t0)/1000).toFixed(6);
-        return `${tms},${t_rel},${si+i},`+
-          `${(this.bufs.yaw[i]||0).toFixed(2)},${(this.bufs.pitch[i]||0).toFixed(2)},${(this.bufs.roll[i]||0).toFixed(2)},`+
-          `${(this.bufs.ax[i]||0).toFixed(2)},${(this.bufs.ay[i]||0).toFixed(2)},${(this.bufs.az[i]||0).toFixed(2)},`+
-          `${(this.velBuf[i]??0).toFixed(6)}`;
+        return `${tms},${t_rel},${si+i},${p.toFixed(2)},${(this.yawBuf[i]||0).toFixed(2)},${(this.rollBuf[i]||0).toFixed(2)},${(this.axBuf[i]||0).toFixed(2)},${(this.ayBuf[i]||0).toFixed(2)},${(this.azBuf[i]||0).toFixed(2)},${(this.velBuf[i]??0).toFixed(6)}`;
       }).join('\n');
     const blob=new Blob([csv],{type:'text/csv'});
     const safe=this.displayName.replace(/[^a-z0-9]/gi,'-');
