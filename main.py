@@ -17,6 +17,8 @@ from micropython import const
 import ubluetooth as bt
 import time, struct
 
+time.sleep(3) # otherwise sometimes stuck when opening thonny
+
 # ---------- USER CONFIG ----------
 NAME     = "NameBLEIMU1"
 PIN_NUM  = 3
