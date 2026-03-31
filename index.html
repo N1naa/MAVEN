@@ -641,21 +641,44 @@ class DeviceCard {
   _notify(ev) {
     const s = new TextDecoder().decode(ev.target.value).trim();
     if (!s) return;
+  
     for (const line of s.split(/\n+/)) {
-      if (line.startsWith('PITCH,')) {
+  
+      if (line.startsWith('ID,')) {
+        const imuId = parseInt(line.split(',')[1], 10);
+        if (!isNaN(imuId)) {
+          this.displayName = `IMU-${imuId}`;
+          this.nameEl.textContent = this.displayName;
+          updateSidebar();
+  
+          // save it in localStorage too, using bleDevice.id
+          if (this.bleDevice?.id) {
+            setSavedName(this.bleDevice.id, this.displayName);
+          }
+  
+          log(`[${this.displayName}] Assigned from firmware ID`);
+        }
+  
+      } else if (line.startsWith('PITCH,')) {
         const p   = line.split(',');
         const v   = parseFloat(p[1]);
-        // p[2] is device ticks_ms from firmware — use it if present
         const tms = p[2] ? parseInt(p[2], 10) : null;
+  
         if (!isNaN(v) && !this.chkPause.checked) {
           this.pitchEl.textContent   = v.toFixed(2);
           this.pitchMini.textContent = v.toFixed(1)+'°';
           this._push(v, tms);
         }
+  
       } else if (line.startsWith('RATE ')) {
         const m = line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
-        if (m) this.rateEl.textContent = `IMU ${(+m[1]).toFixed(0)}Hz | BLE ${(+m[2]).toFixed(0)}Hz`;
-      } else { log(`[${this.displayName}] ${line}`); }
+        if (m) {
+          this.rateEl.textContent = `IMU ${(+m[1]).toFixed(0)}Hz | BLE ${(+m[2]).toFixed(0)}Hz`;
+        }
+  
+      } else {
+        log(`[${this.displayName}] ${line}`);
+      }
     }
   }
 
