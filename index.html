@@ -5,19 +5,19 @@
 <title>MAVEN</title>
 <style>
   :root {
-    --bg:       #0a0a0a;
-    --bg2:      #111111;
-    --bg3:      #1a1a1a;
-    --border:   #2a2a2a;
-    --accent:   #7c3aed;
-    --accent2:  #a78bfa;
-    --text:     #ffffff;
-    --muted:    #6b7280;
-    --green:    #22c55e;
-    --orange:   #f97316;
-    --red:      #ef4444;
+    --bg:      #0a0a0a;
+    --bg2:     #111111;
+    --bg3:     #1a1a1a;
+    --border:  #2a2a2a;
+    --accent:  #7c3aed;
+    --accent2: #a78bfa;
+    --text:    #ffffff;
+    --muted:   #6b7280;
+    --green:   #22c55e;
+    --orange:  #f97316;
+    --red:     #ef4444;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin:0; padding:0; }
   body {
     font-family: system-ui, -apple-system, sans-serif;
     font-size: 13px;
@@ -41,249 +41,109 @@
     height: 100vh;
     overflow-y: auto;
   }
-  .brand {
-    font-weight: 800;
-    font-size: 1.1rem;
-    color: var(--accent2);
-    padding: 2px 0 8px;
-    border-bottom: 1px solid var(--border);
-  }
-  .s-panel {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 10px;
-  }
-  .s-panel .t {
-    font-weight: 700;
-    font-size: .8rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    margin-bottom: 7px;
-  }
-  .s-panel.rec-panel .t { color: var(--orange); }
+  .brand { font-weight:800; font-size:1.1rem; color:var(--accent2); padding:2px 0 8px; border-bottom:1px solid var(--border); }
+  .s-panel { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:8px 10px; }
+  .s-panel .t { font-weight:700; font-size:.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:7px; }
+  .s-panel.rec-panel .t { color:var(--orange); }
 
-  /* dev list */
-  .dev-list { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
-  .dev-list-item {
-    display: flex; align-items: center; gap: 7px;
-    padding: 4px 6px; border-radius: 5px;
-    background: var(--bg);
-    font-size: .82rem; color: var(--muted);
-  }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
-  .dot.on  { background: var(--green); }
-  .dot.rec { background: var(--orange); animation: blink 1s ease-in-out infinite; }
+  .dev-list { display:flex; flex-direction:column; gap:4px; margin-top:4px; }
+  .dev-list-item { display:flex; align-items:center; gap:7px; padding:4px 6px; border-radius:5px; background:var(--bg); font-size:.82rem; color:var(--muted); }
+  .dot { width:7px; height:7px; border-radius:50%; background:var(--border); flex-shrink:0; }
+  .dot.on  { background:var(--green); }
+  .dot.rec { background:var(--orange); animation:blink 1s ease-in-out infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-  /* rec timer */
-  .rec-row { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: .82rem; color: var(--muted); }
-  .rec-timer { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--text); }
-  .rec-note { font-size: .75rem; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+  .rec-row { display:flex; align-items:center; gap:6px; margin-top:6px; font-size:.82rem; color:var(--muted); }
+  .rec-timer { font-variant-numeric:tabular-nums; font-weight:700; color:var(--text); }
+  .rec-note { font-size:.75rem; color:var(--muted); margin-top:5px; line-height:1.4; }
+  .folder-name { font-size:.78rem; color:var(--accent2); margin-bottom:5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
-  /* folder status */
-  .folder-name {
-    font-size: .78rem; color: var(--accent2);
-    margin-bottom: 5px;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-
-  /* log */
-  .log-panel { margin-top: auto; }
-  .console {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 6px;
-    height: 140px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    word-break: break-word;
-    font-size: .75rem;
-    color: var(--muted);
-    margin-top: 6px;
-    font-family: monospace;
-  }
+  .log-panel { margin-top:auto; }
+  .console { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:6px; height:140px; overflow-y:auto; white-space:pre-wrap; word-break:break-word; font-size:.75rem; color:var(--muted); margin-top:6px; font-family:monospace; }
 
   /* ── Buttons ── */
-  button {
-    padding: 5px 10px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--bg3);
-    color: var(--text);
-    font: inherit;
-    font-size: .82rem;
-    cursor: pointer;
-    transition: background .1s;
-  }
-  button:hover    { background: #222; }
-  button:active   { background: #2a2a2a; }
-  button:disabled { opacity: .4; cursor: not-allowed; }
-  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .btn-primary:hover { background: #6d28d9; }
-  .btn-success { background: #15803d; border-color: #15803d; color: #fff; }
-  .btn-success:hover { background: #166534; }
-  .btn-danger  { background: #b91c1c; border-color: #b91c1c; color: #fff; }
-  .btn-danger:hover  { background: #991b1b; }
-  .btn-ghost   { background: transparent; border-color: transparent; color: var(--muted); }
-  .btn-ghost:hover   { color: var(--red); background: transparent; }
-  .btn-row { display: flex; gap: 5px; }
-  .btn-row button { flex: 1; }
+  button { padding:5px 10px; border-radius:6px; border:1px solid var(--border); background:var(--bg3); color:var(--text); font:inherit; font-size:.82rem; cursor:pointer; transition:background .1s; }
+  button:hover   { background:#222; }
+  button:active  { background:#2a2a2a; }
+  button:disabled { opacity:.4; cursor:not-allowed; }
+  .btn-primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .btn-primary:hover { background:#6d28d9; }
+  .btn-success { background:#15803d; border-color:#15803d; color:#fff; }
+  .btn-success:hover { background:#166534; }
+  .btn-danger  { background:#b91c1c; border-color:#b91c1c; color:#fff; }
+  .btn-danger:hover  { background:#991b1b; }
+  .btn-ghost   { background:transparent; border-color:transparent; color:var(--muted); }
+  .btn-ghost:hover   { color:var(--red); }
+  .btn-row { display:flex; gap:5px; }
+  .btn-row button { flex:1; }
 
   /* ── Inputs ── */
-  input[type=number], input[type=text] {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    color: var(--text);
-    font: inherit;
-    font-size: .82rem;
-    padding: 3px 6px;
-  }
+  input[type=number], input[type=text] { background:var(--bg); border:1px solid var(--border); border-radius:5px; color:var(--text); font:inherit; font-size:.82rem; padding:3px 6px; }
 
-  /* ── Status pills ── */
-  .pill {
-    display: inline-block;
-    padding: 1px 7px;
-    border-radius: 999px;
-    font-size: .72rem;
-    font-weight: 600;
-    background: var(--bg3);
-    color: var(--muted);
-    border: 1px solid var(--border);
-  }
-  .pill.Connected   { background: #14532d; color: var(--green); border-color: #166534; }
-  .pill.Connecting,
-  .pill.Requesting  { background: #431407; color: var(--orange); border-color: #9a3412; }
-  .pill.Disconnected{ background: var(--bg3); color: var(--muted); }
-  .pill.Recording   { background: #431407; color: var(--orange); border-color: #9a3412; animation: blink 1s ease-in-out infinite; }
+  /* ── Pills ── */
+  .pill { display:inline-block; padding:1px 7px; border-radius:999px; font-size:.72rem; font-weight:600; background:var(--bg3); color:var(--muted); border:1px solid var(--border); }
+  .pill.Connected   { background:#14532d; color:var(--green); border-color:#166534; }
+  .pill.Connecting,.pill.Requesting { background:#431407; color:var(--orange); border-color:#9a3412; }
+  .pill.Disconnected{ background:var(--bg3); color:var(--muted); }
+
+  /* ── Rename modal ── */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:none; align-items:center; justify-content:center; z-index:50; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; width:340px; display:flex; flex-direction:column; gap:12px; }
+  .modal h3 { font-size:.95rem; font-weight:700; }
+  .modal .hint { font-size:.78rem; color:var(--muted); line-height:1.5; }
+  .modal input { width:100%; padding:6px 8px; font-size:.9rem; }
+  .modal-btns { display:flex; gap:8px; justify-content:flex-end; }
 
   /* ── Main ── */
-  main {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    overflow-y: auto;
-  }
-  #emptyState {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 60vh;
-    gap: 8px;
-    color: var(--muted);
-    text-align: center;
-  }
-  #emptyState strong { color: var(--text); font-size: 1rem; }
+  main { padding:16px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; }
+  #emptyState { display:flex; flex-direction:column; align-items:center; justify-content:center; height:60vh; gap:8px; color:var(--muted); text-align:center; }
+  #emptyState strong { color:var(--text); font-size:1rem; }
 
-  /* ── Device grid ── */
-  .device-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-    gap: 10px;
-  }
+  .device-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(420px,1fr)); gap:10px; }
 
   /* ── Device card ── */
-  .device-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .device-card.recording { border-color: var(--orange); }
+  .device-card { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:10px 12px; display:flex; flex-direction:column; gap:8px; }
+  .device-card.recording { border-color:var(--orange); }
 
-  .card-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .card-name  { font-weight: 700; font-size: .9rem; }
-  .card-pitch {
-    margin-left: auto;
-    font-size: 1.3rem;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    color: var(--accent2);
-  }
-  .card-pitch span { font-size: .75rem; font-weight: 400; color: var(--muted); }
-  .card-rate  { font-size: .75rem; color: var(--muted); }
+  .card-head { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .card-name { font-weight:700; font-size:.9rem; }
+  .card-id   { font-size:.7rem; color:var(--muted); font-family:monospace; }
+  .card-pitch { margin-left:auto; font-size:1.3rem; font-weight:800; font-variant-numeric:tabular-nums; color:var(--accent2); }
+  .card-pitch span { font-size:.75rem; font-weight:400; color:var(--muted); }
+  .card-rate { font-size:.75rem; color:var(--muted); }
+
+  /* rename button inline */
+  .btn-rename { font-size:.7rem; padding:1px 6px; color:var(--muted); border-color:var(--border); background:transparent; }
+  .btn-rename:hover { color:var(--accent2); border-color:var(--accent2); }
 
   /* collapsible plot */
-  .plot-toggle {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    user-select: none;
-    font-size: .8rem;
-    color: var(--muted);
-    padding: 2px 0;
-  }
-  .plot-toggle:hover { color: var(--text); }
-  .plot-caret { font-size: .7rem; transition: transform .15s; display: inline-block; }
-  .plot-toggle.open .plot-caret { transform: rotate(90deg); }
-  .plot-wrap { display: none; }
-  .plot-wrap.open { display: block; }
+  .plot-toggle { display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none; font-size:.8rem; color:var(--muted); padding:2px 0; }
+  .plot-toggle:hover { color:var(--text); }
+  .plot-caret { font-size:.7rem; transition:transform .15s; display:inline-block; }
+  .plot-toggle.open .plot-caret { transform:rotate(90deg); }
+  .plot-wrap { display:none; }
+  .plot-wrap.open { display:block; }
 
-  canvas {
-    width: 100%;
-    height: 200px;
-    display: block;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-  }
+  canvas { width:100%; height:200px; display:block; background:var(--bg); border:1px solid var(--border); border-radius:6px; }
 
-  .plot-opts {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: .78rem;
-    color: var(--muted);
-    flex-wrap: wrap;
-    margin-top: 4px;
-  }
-  .plot-opts label { display: flex; align-items: center; gap: 3px; cursor: pointer; }
-  .plot-opts input[type=number] { width: 48px; }
+  .plot-opts { display:flex; align-items:center; gap:10px; font-size:.78rem; color:var(--muted); flex-wrap:wrap; margin-top:4px; }
+  .plot-opts label { display:flex; align-items:center; gap:3px; cursor:pointer; }
+  .plot-opts input[type=number] { width:48px; }
 
-  .card-controls {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-  }
-  .card-controls button { font-size: .78rem; padding: 4px 8px; }
+  .card-controls { display:flex; gap:5px; flex-wrap:wrap; }
+  .card-controls button { font-size:.78rem; padding:4px 8px; }
 
-  .card-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-  }
-  .card-foot button { font-size: .75rem; padding: 3px 8px; }
+  .card-foot { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+  .card-foot button { font-size:.75rem; padding:3px 8px; }
 
-  /* rec badge */
-  .rec-badge {
-    display: none;
-    align-items: center;
-    gap: 4px;
-    font-size: .72rem;
-    color: var(--orange);
-    font-weight: 700;
-  }
-  .rec-badge.on { display: flex; }
+  .rec-badge { display:none; align-items:center; gap:4px; font-size:.72rem; color:var(--orange); font-weight:700; }
+  .rec-badge.on { display:flex; }
 
-  @media (max-width: 640px) {
-    body { grid-template-columns: 1fr; }
-    aside { position: static; height: auto; }
-    .device-grid { grid-template-columns: 1fr; }
+  @media (max-width:640px) {
+    body { grid-template-columns:1fr; }
+    aside { position:static; height:auto; }
+    .device-grid { grid-template-columns:1fr; }
   }
 </style>
 
@@ -332,12 +192,44 @@
   <div class="device-grid" id="deviceGrid"></div>
 </main>
 
+<!-- ═══ RENAME MODAL ═══ -->
+<div class="modal-overlay" id="renameModal">
+  <div class="modal">
+    <h3>Rename Device</h3>
+    <div class="hint" id="renameHint"></div>
+    <input type="text" id="renameInput" placeholder="e.g. Left Knee, IMU-3…" maxlength="32"/>
+    <div class="hint" style="color:var(--accent2)">
+      This name is saved permanently in your browser and will be remembered next time this device connects.
+    </div>
+    <div class="modal-btns">
+      <button id="renameClear" class="btn-ghost">Clear saved name</button>
+      <button id="renameCancel">Cancel</button>
+      <button id="renameSave" class="btn-primary">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ─── BLE UUIDs ─── */
-const NUS_SERVICE = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
-const NUS_TX      = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
-const NUS_RX      = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
+const NUS_SERVICE   = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
+const NUS_TX        = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
+const NUS_RX        = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
 const GENERIC_NAMES = ['MPY-ESP32','ESP32','BLE','UART'];
+const LS_KEY        = 'maven_device_names'; // localStorage key for name lookup table
+
+/* ─── Name lookup table (persisted in localStorage) ───
+   Structure: { [bleDeviceId]: "custom name" }
+   bleDevice.id is a browser-generated UUID stable per origin per device.
+─── */
+function loadNameTable() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch { return {}; }
+}
+function saveNameTable(t) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(t)); } catch {}
+}
+function getSavedName(id)          { return loadNameTable()[id] || null; }
+function setSavedName(id, name)    { const t=loadNameTable(); t[id]=name.trim(); saveNameTable(t); }
+function clearSavedName(id)        { const t=loadNameTable(); delete t[id]; saveNameTable(t); }
 
 /* ─── Log ─── */
 const logEl = document.getElementById('logEl');
@@ -361,8 +253,8 @@ let recTimerInt  = null;
 let recData      = new Map();  // bleDevice.id -> {name, samples}
 let recDirHandle = null;
 
-/* ─── Single shared RAF loop ─── */
-const FRAME_MS = 50;  // 20fps — enough for visual, data unaffected
+/* ─── Single shared RAF loop — skips collapsed plots ─── */
+const FRAME_MS = 50;
 let _lastTs = 0;
 function globalLoop(ts) {
   requestAnimationFrame(globalLoop);
@@ -408,8 +300,8 @@ function updateSidebar() {
     const item = document.createElement('div');
     item.className = 'dev-list-item';
     const isRec = recActive && d.bleDevice && recData.has(d.bleDevice.id);
-    const dotCls = isRec ? 'rec' : (d.isConnected() ? 'on' : '');
-    item.innerHTML = `<div class="dot ${dotCls}"></div><span>${d.name || 'Device '+(i+1)}</span>`;
+    item.innerHTML = `<div class="dot ${isRec?'rec':(d.isConnected()?'on':'')}"></div>
+                      <span>${d.displayName || 'Device '+(i+1)}</span>`;
     d._sidebarItem = item;
     list.appendChild(item);
   });
@@ -433,7 +325,7 @@ function startRecording() {
   recStartTime = performance.now();
   recData = new Map();
   connected.forEach(d => {
-    recData.set(d.bleDevice.id, { name: d.name, samples: [] });
+    recData.set(d.bleDevice.id, { name: d.displayName, samples: [] });
     d.setRecUI(true);
   });
   document.getElementById('btnRecStart').disabled = true;
@@ -441,12 +333,12 @@ function startRecording() {
   document.getElementById('recDot').className     = 'dot rec';
   document.getElementById('recStatus').textContent = `${connected.length} device${connected.length>1?'s':''}`;
   recTimerInt = setInterval(() => {
-    const e = (performance.now()-recStartTime)/1000;
-    const m = Math.floor(e/60).toString().padStart(2,'0');
-    const s = (e%60).toFixed(1).padStart(4,'0');
-    document.getElementById('recTimer').textContent = `${m}:${s}`;
+    const e=(performance.now()-recStartTime)/1000;
+    const m=Math.floor(e/60).toString().padStart(2,'0');
+    const s=(e%60).toFixed(1).padStart(4,'0');
+    document.getElementById('recTimer').textContent=`${m}:${s}`;
   }, 100);
-  log(`Recording started — ${connected.map(d=>d.name).join(', ')}`);
+  log(`Recording started — ${connected.map(d=>d.displayName).join(', ')}`);
   updateSidebar();
 }
 
@@ -464,35 +356,32 @@ async function stopRecording() {
 
   const entries = [...recData.entries()];
   if (!entries.length) { log('No data.'); return; }
-
   const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
   log(`Stopped — ${entries.length} device(s). Saving…`);
 
   let idx = 1;
   for (const [, {name, samples}] of entries) {
     if (!samples.length) { log(`[${name}] No samples — skipped.`); idx++; continue; }
-
-    const csv  = 'timestamp_s,t_rel_s,pitch_deg,vel_ema\n'
-               + samples.map(s=>`${s.t_abs.toFixed(6)},${s.t_rel.toFixed(6)},${s.pitch.toFixed(6)},${s.vel.toFixed(6)}`).join('\n');
-    const blob = new Blob([csv], {type:'text/csv'});
+    const csv = 'device_tms_ms,t_rel_s,pitch_deg,vel_ema\n'
+      + samples.map(s =>
+          `${s.tms},${s.t_rel.toFixed(6)},${s.pitch.toFixed(6)},${s.vel.toFixed(6)}`
+        ).join('\n');
+    const blob = new Blob([csv],{type:'text/csv'});
     const safe = name.replace(/[^a-z0-9]/gi,'-');
     const fn   = `MAVEN_${idx}-${safe}_${stamp}.csv`;
 
     if (recDirHandle) {
       try {
-        const perm = recDirHandle.queryPermission
-          ? await recDirHandle.queryPermission({mode:'readwrite'})
-          : await recDirHandle.requestPermission({mode:'readwrite'});
-        if (perm === 'granted' || recDirHandle.requestPermission && await recDirHandle.requestPermission({mode:'readwrite'}) === 'granted') {
-          const fh = await recDirHandle.getFileHandle(fn, {create:true});
+        const perm = await recDirHandle.queryPermission({mode:'readwrite'})
+          .catch(()=>recDirHandle.requestPermission({mode:'readwrite'}));
+        if (perm === 'granted') {
+          const fh = await recDirHandle.getFileHandle(fn,{create:true});
           const w  = await fh.createWritable();
           await w.write(blob); await w.close();
           log(`[${name}] → ${fn}`); idx++; continue;
         }
-      } catch(e) { log(`[${name}] Folder error: ${e} — downloading instead`); }
+      } catch(e) { log(`[${name}] Folder error: ${e} — downloading`); }
     }
-
-    // fallback download
     const url=URL.createObjectURL(blob), a=document.createElement('a');
     a.href=url; a.download=fn; document.body.appendChild(a); a.click();
     document.body.removeChild(a); URL.revokeObjectURL(url);
@@ -501,34 +390,80 @@ async function stopRecording() {
   }
 }
 
-/* ════════════════════════════
+/* ─── Rename modal ─── */
+let _renameCard = null;
+
+function openRenameModal(card) {
+  _renameCard = card;
+  const saved = card.bleDevice ? getSavedName(card.bleDevice.id) : null;
+  document.getElementById('renameHint').textContent =
+    `BLE name: "${card.bleName || '?'}"  |  ID: ${card.bleDevice?.id?.slice(-8) || '?'}`;
+  document.getElementById('renameInput').value = saved || card.displayName || '';
+  document.getElementById('renameModal').classList.add('open');
+  setTimeout(() => document.getElementById('renameInput').focus(), 50);
+}
+
+function closeRenameModal() {
+  document.getElementById('renameModal').classList.remove('open');
+  _renameCard = null;
+}
+
+document.getElementById('renameSave').onclick = () => {
+  if (!_renameCard) return;
+  const val = document.getElementById('renameInput').value.trim();
+  if (!val) return;
+  if (_renameCard.bleDevice) setSavedName(_renameCard.bleDevice.id, val);
+  _renameCard.displayName = val;
+  _renameCard.nameEl.textContent = val;
+  updateSidebar();
+  log(`Renamed → "${val}"`);
+  closeRenameModal();
+};
+
+document.getElementById('renameClear').onclick = () => {
+  if (!_renameCard?.bleDevice) return;
+  clearSavedName(_renameCard.bleDevice.id);
+  // revert to BLE name
+  _renameCard.displayName = _renameCard.bleName || _renameCard.displayName;
+  _renameCard.nameEl.textContent = _renameCard.displayName;
+  updateSidebar();
+  log(`Cleared saved name for ${_renameCard.displayName}`);
+  closeRenameModal();
+};
+
+document.getElementById('renameCancel').onclick = closeRenameModal;
+document.getElementById('renameModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('renameModal')) closeRenameModal();
+});
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeRenameModal(); });
+
+/* ════════════════════════════════════
    DeviceCard
-════════════════════════════ */
+════════════════════════════════════ */
 class DeviceCard {
   constructor() {
-    this.name       = '';
+    this.bleName    = '';    // raw BLE advertised name
+    this.displayName= '';   // what's shown (saved name > BLE name > fallback)
     this.bleDevice  = null;
     this.bleServer  = null;
     this.bleTx      = null;
     this.bleRx      = null;
     this._onNotify  = null;
     this.connecting = false;
-    this.plotOpen   = false;   // collapsed by default
+    this.plotOpen   = false;
 
     // buffers
     this.BUF_MAX   = 1800;
     this.WIN       = 400;
     this.pitchBuf  = [];
-    this.timeBuf   = [];
+    this.tmsBuf    = [];    // device ticks_ms timestamps
     this.velBuf    = [];
     this.sampleIdx = 0;
-    this._t0ms     = null;
+    this._t0tms    = null;  // first device tms, for relative time
     this.lastPitch = null;
     this.DERIV_A   = 0.3;
 
-    // DPR throttle
     this._dprTs = 0;
-
     this._buildDOM();
     updateSidebar();
   }
@@ -538,15 +473,10 @@ class DeviceCard {
   setRecUI(on) {
     this.cardEl.classList.toggle('recording', on);
     this.cardEl.querySelector('.rec-badge').classList.toggle('on', on);
-    this._refreshSidebarDot();
-  }
-
-  _refreshSidebarDot() {
-    if (!this._sidebarItem) return;
-    const dot = this._sidebarItem.querySelector('.dot');
-    if (!dot) return;
-    const isRec = recActive && this.bleDevice && recData.has(this.bleDevice.id);
-    dot.className = 'dot ' + (isRec ? 'rec' : (this.isConnected() ? 'on' : ''));
+    if (this._sidebarItem) {
+      const dot = this._sidebarItem.querySelector('.dot');
+      if (dot) dot.className = 'dot '+(on?'rec':(this.isConnected()?'on':''));
+    }
   }
 
   _buildDOM() {
@@ -556,18 +486,19 @@ class DeviceCard {
     this.cardEl.innerHTML = `
       <div class="card-head">
         <div class="card-name name-el">Connecting…</div>
+        <button class="btn-rename">✎</button>
         <span class="pill Disconnected status-pill">Disconnected</span>
         <div class="rec-badge"><div class="dot rec"></div> REC</div>
-        <div class="card-rate rate-el" style="margin-left:auto">IMU — Hz | BLE — Hz</div>
+        <div class="card-rate rate-el" style="margin-left:auto">— Hz</div>
         <div class="card-pitch"><span class="pitch-el">—</span> <span>°</span></div>
       </div>
 
-      <div class="plot-toggle" id="pt-${devices.length}">
+      <div class="plot-toggle">
         <span class="plot-caret">▶</span>
         <span>Plot</span>
         <span class="pitch-mini" style="margin-left:4px;font-variant-numeric:tabular-nums;color:var(--accent2)"></span>
       </div>
-      <div class="plot-wrap" id="pw-${devices.length}">
+      <div class="plot-wrap">
         <canvas></canvas>
         <div class="plot-opts">
           <label><input type="checkbox" class="chk-pause"> Pause</label>
@@ -588,7 +519,6 @@ class DeviceCard {
       </div>`;
     grid.appendChild(this.cardEl);
 
-    // refs
     this.nameEl     = this.cardEl.querySelector('.name-el');
     this.statusPill = this.cardEl.querySelector('.status-pill');
     this.pitchEl    = this.cardEl.querySelector('.pitch-el');
@@ -600,7 +530,6 @@ class DeviceCard {
     this.canvas     = this.cardEl.querySelector('canvas');
     this.ctx        = this.canvas.getContext('2d');
 
-    // plot toggle
     const toggle = this.cardEl.querySelector('.plot-toggle');
     const wrap   = this.cardEl.querySelector('.plot-wrap');
     toggle.addEventListener('click', () => {
@@ -609,7 +538,7 @@ class DeviceCard {
       wrap.classList.toggle('open', this.plotOpen);
     });
 
-    // buttons
+    this.cardEl.querySelector('.btn-rename')    .onclick = () => openRenameModal(this);
     this.cardEl.querySelector('.btn-stream-on') .onclick = () => this.send('STREAM,ON');
     this.cardEl.querySelector('.btn-stream-off').onclick = () => this.send('STREAM,OFF');
     this.cardEl.querySelector('.btn-cal')       .onclick = () => this.send('CAL,3000');
@@ -620,29 +549,40 @@ class DeviceCard {
 
   setStatus(s) {
     this.statusPill.textContent = s;
-    this.statusPill.className   = 'pill ' + s.replace('…','').replace(/\s+/g,'');
-    this._refreshSidebarDot();
+    this.statusPill.className   = 'pill '+s.replace('…','').replace(/\s+/g,'');
   }
 
-  /* ── BLE ── */
+  /* ── BLE connect ── */
   async connect() {
     if (this.bleServer?.connected || this.connecting) return;
     this.connecting = true;
     try {
       this.setStatus('Requesting…');
       this.bleDevice = await navigator.bluetooth.requestDevice({
-        filters: [{ services: [NUS_SERVICE] }],
+        filters: [{ services:[NUS_SERVICE] }],
         optionalServices: [NUS_SERVICE]
       });
       this.bleDevice.addEventListener('gattserverdisconnected', () => this._drop());
 
-      // Smart naming: use firmware name if not generic, else number it
-      const raw = (this.bleDevice.name || '').trim();
-      const isGeneric = !raw || GENERIC_NAMES.some(g => raw.toUpperCase() === g.toUpperCase());
+      // 1. Raw BLE name
+      this.bleName = (this.bleDevice.name || '').trim();
+
+      // 2. Check localStorage for a saved custom name for this device ID
+      const saved = getSavedName(this.bleDevice.id);
+
+      // 3. Resolve display name:
+      //    saved name > firmware name (if not generic) > numbered fallback
+      const isGeneric = !this.bleName || GENERIC_NAMES.some(g => this.bleName.toUpperCase() === g.toUpperCase());
       const idx = devices.indexOf(this) + 1;
-      const base = isGeneric ? `IMU-${idx}` : raw;
-      this.name = devices.some(d => d !== this && d.name === base) ? `${base}-${idx}` : base;
-      this.nameEl.textContent = this.name;
+      const fromBLE = isGeneric ? `IMU-${idx}` : this.bleName;
+      this.displayName = saved || fromBLE;
+
+      // Deduplicate if two devices resolved to the same display name
+      if (!saved && devices.some(d => d !== this && d.displayName === this.displayName)) {
+        this.displayName = `${this.displayName}-${idx}`;
+      }
+
+      this.nameEl.textContent = this.displayName;
       updateSidebar();
 
       this.setStatus('Connecting…');
@@ -654,11 +594,11 @@ class DeviceCard {
       this._onNotify = ev => this._notify(ev);
       this.bleTx.addEventListener('characteristicvaluechanged', this._onNotify);
       this.setStatus('Connected');
-      log(`[${this.name}] Connected`);
+      log(`[${this.displayName}] Connected (BLE: "${this.bleName || 'unknown'}", ID: …${this.bleDevice.id.slice(-8)})`);
       updateSidebar();
     } catch(e) {
       this.setStatus('Disconnected');
-      log(`[${this.name||'?'}] ${e}`);
+      log(`[${this.displayName||'?'}] ${e}`);
     } finally { this.connecting = false; }
   }
 
@@ -672,25 +612,29 @@ class DeviceCard {
         }
       }
       if (this.bleDevice?.gatt?.connected) this.bleDevice.gatt.disconnect();
-    } catch(e) { log(`[${this.name}] ${e}`); }
-    finally { this.bleTx=this.bleRx=this.bleServer=null; this.setStatus('Disconnected'); updateSidebar(); }
+    } catch(e) { log(`[${this.displayName}] ${e}`); }
+    finally {
+      this.bleTx=this.bleRx=this.bleServer=null;
+      this.setStatus('Disconnected');
+      updateSidebar();
+    }
   }
 
   _drop() {
     this.bleTx=this.bleRx=this.bleServer=null;
     this.setStatus('Disconnected');
-    log(`[${this.name}] Disconnected.`);
+    log(`[${this.displayName}] Disconnected.`);
     updateSidebar();
   }
 
   async send(s) {
-    if (!this.bleRx) { log(`[${this.name}] Not connected`); return; }
+    if (!this.bleRx) { log(`[${this.displayName}] Not connected`); return; }
     const d = new TextEncoder().encode(s.endsWith('\n')?s:s+'\n');
     try {
       if ('writeValueWithoutResponse' in this.bleRx) await this.bleRx.writeValueWithoutResponse(d);
       else await this.bleRx.writeValue(d);
-      log(`[${this.name}] > ${s}`);
-    } catch(e) { log(`[${this.name}] Write error: ${e}`); }
+      log(`[${this.displayName}] > ${s}`);
+    } catch(e) { log(`[${this.displayName}] Write error: ${e}`); }
   }
 
   /* ── Notify ── */
@@ -699,51 +643,63 @@ class DeviceCard {
     if (!s) return;
     for (const line of s.split(/\n+/)) {
       if (line.startsWith('PITCH,')) {
-        const p = line.split(',');
-        const v = parseFloat(p[1]);
-        const t = p[2] ? parseInt(p[2],10) : null;
+        const p   = line.split(',');
+        const v   = parseFloat(p[1]);
+        // p[2] is device ticks_ms from firmware — use it if present
+        const tms = p[2] ? parseInt(p[2], 10) : null;
         if (!isNaN(v) && !this.chkPause.checked) {
-          this.pitchEl.textContent  = v.toFixed(2);
+          this.pitchEl.textContent   = v.toFixed(2);
           this.pitchMini.textContent = v.toFixed(1)+'°';
-          this._push(v, t);
+          this._push(v, tms);
         }
       } else if (line.startsWith('RATE ')) {
         const m = line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
-        if (m) this.rateEl.textContent = `IMU ${(+m[1]).toFixed(0)} Hz | BLE ${(+m[2]).toFixed(0)} Hz`;
-      } else { log(`[${this.name}] ${line}`); }
+        if (m) this.rateEl.textContent = `IMU ${(+m[1]).toFixed(0)}Hz | BLE ${(+m[2]).toFixed(0)}Hz`;
+      } else { log(`[${this.displayName}] ${line}`); }
     }
   }
 
   /* ── Buffer ── */
-  _push(v, devMs) {
-    let t_abs;
-    if (devMs!=null && isFinite(devMs)) {
-      if (this._t0ms==null) this._t0ms=devMs;
-      t_abs = (devMs-this._t0ms)/1000;
-    } else t_abs = performance.now()/1000;
-
-    this.pitchBuf.push(v); this.timeBuf.push(t_abs); this.sampleIdx++;
-    if (this.lastPitch==null) this.lastPitch=v;
-    const rv=v-this.lastPitch, lv=this.velBuf.length?this.velBuf[this.velBuf.length-1]:rv;
-    const vel=lv+this.DERIV_A*(rv-lv);
-    this.velBuf.push(vel); this.lastPitch=v;
-
-    if (recActive && this.bleDevice && recData.has(this.bleDevice.id)) {
-      const t_rel=(performance.now()-recStartTime)/1000;
-      recData.get(this.bleDevice.id).samples.push({t_abs,t_rel,pitch:v,vel});
+  _push(v, tms) {
+    // Use device ticks_ms if available — eliminates BLE burst timestamp duplicates
+    // tms is device ms; we store raw tms and compute t_rel at save time
+    if (tms != null && isFinite(tms)) {
+      if (this._t0tms == null) this._t0tms = tms;
+    } else {
+      // fallback: synthesise a tms from performance.now
+      tms = Math.round(performance.now());
+      if (this._t0tms == null) this._t0tms = tms;
     }
 
-    if (this.pitchBuf.length>this.BUF_MAX) {
-      const drop=Math.max(this.pitchBuf.length-this.BUF_MAX,100);
-      this.pitchBuf.splice(0,drop); this.timeBuf.splice(0,drop); this.velBuf.splice(0,drop);
+    this.pitchBuf.push(v);
+    this.tmsBuf.push(tms);
+    this.sampleIdx++;
+
+    if (this.lastPitch == null) this.lastPitch = v;
+    const rv = v - this.lastPitch;
+    const lv = this.velBuf.length ? this.velBuf[this.velBuf.length-1] : rv;
+    // vel_ema uses dt from device timestamps for accuracy
+    const dt_s = Math.max(0.001, (tms - (this.tmsBuf[this.tmsBuf.length-2] ?? tms)) / 1000);
+    const vel  = lv + this.DERIV_A * ((rv / dt_s) - lv);
+    this.velBuf.push(vel);
+    this.lastPitch = v;
+
+    if (recActive && this.bleDevice && recData.has(this.bleDevice.id)) {
+      const t_rel = (performance.now() - recStartTime) / 1000;
+      recData.get(this.bleDevice.id).samples.push({ tms, t_rel, pitch: v, vel });
+    }
+
+    if (this.pitchBuf.length > this.BUF_MAX) {
+      const drop = Math.max(this.pitchBuf.length - this.BUF_MAX, 100);
+      this.pitchBuf.splice(0,drop); this.tmsBuf.splice(0,drop); this.velBuf.splice(0,drop);
     }
   }
 
-  /* ── Canvas — only called when plot is open ── */
+  /* ── Canvas ── */
   _resizeDPR() {
-    const now=performance.now();
-    if (now-this._dprTs < 500) return;
-    this._dprTs=now;
+    const now = performance.now();
+    if (now - this._dprTs < 500) return;
+    this._dprTs = now;
     const dpr=devicePixelRatio||1, r=this.canvas.getBoundingClientRect();
     const w=Math.max(1,Math.round(r.width*dpr)), h=Math.max(1,Math.round(r.height*dpr));
     if (this.canvas.width!==w||this.canvas.height!==h) {
@@ -758,8 +714,6 @@ class DeviceCard {
     const PL=40,PR=8,PT=10,PB=24;
 
     ctx.clearRect(0,0,W,H);
-
-    // axes — plain lines, no blur, no gradients
     ctx.strokeStyle='#2a2a2a'; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(PL,PT); ctx.lineTo(PL,H-PB); ctx.lineTo(W-PR,H-PB); ctx.stroke();
 
@@ -769,23 +723,21 @@ class DeviceCard {
       ctx.fillText('Waiting…',W/2,H/2); return;
     }
 
-    const ys=this.pitchBuf.slice(Math.max(0,this.pitchBuf.length-this.WIN));
-    let y0=-90,y1=90;
+    const ys = this.pitchBuf.slice(Math.max(0,this.pitchBuf.length-this.WIN));
+    let y0=-90, y1=90;
     if (this.chkAuto.checked) {
-      let mn=Infinity,mx=-Infinity;
+      let mn=Infinity, mx=-Infinity;
       for (const v of ys){if(v<mn)mn=v;if(v>mx)mx=v;}
       const pad=Math.max(2,0.1*(mx-mn+1e-6)); y0=mn-pad; y1=mx+pad;
     } else { const r=Math.abs(+this.inRange.value||90); y0=-r; y1=r; }
 
-    const mapX=i=>PL+(i/Math.max(1,this.WIN))*(W-PL-PR);
-    const mapY=v=>(H-PB)-((v-y0)/(y1-y0+1e-9))*(H-PB-PT);
+    const mapX = i => PL+(i/Math.max(1,this.WIN))*(W-PL-PR);
+    const mapY = v => (H-PB)-((v-y0)/(y1-y0+1e-9))*(H-PB-PT);
 
-    // zero line
     ctx.strokeStyle='#222'; ctx.setLineDash([3,3]);
     ctx.beginPath(); ctx.moveTo(PL,mapY(0)); ctx.lineTo(W-PR,mapY(0)); ctx.stroke();
     ctx.setLineDash([]);
 
-    // signal — plain line, no shadow, no gradient fill
     const total=ys.length, step=Math.max(1,Math.floor(total/Math.max(1,W-PL-PR)));
     ctx.strokeStyle='#a78bfa'; ctx.lineWidth=1.5;
     ctx.beginPath();
@@ -796,43 +748,42 @@ class DeviceCard {
     }
     ctx.stroke();
 
-    // Y ticks
-    ctx.fillStyle='#444'; ctx.font='10px system-ui';
-    ctx.textAlign='right'; ctx.textBaseline='middle';
-    for (let i=0;i<=4;i++) { const v=y0+(y1-y0)*(i/4); ctx.fillText(v.toFixed(0),PL-3,mapY(v)); }
+    ctx.fillStyle='#444'; ctx.font='10px system-ui'; ctx.textAlign='right'; ctx.textBaseline='middle';
+    for (let i=0;i<=4;i++){const v=y0+(y1-y0)*(i/4);ctx.fillText(v.toFixed(0),PL-3,mapY(v));}
 
-    // axis labels
     ctx.save();
     ctx.fillStyle='#444'; ctx.font='10px system-ui'; ctx.textAlign='center';
-    ctx.textBaseline='alphabetic';
-    ctx.fillText('samples',(PL+W-PR)/2,H-4);
+    ctx.textBaseline='alphabetic'; ctx.fillText('samples',(PL+W-PR)/2,H-4);
     ctx.translate(12,(PT+H-PB)/2); ctx.rotate(-Math.PI/2);
     ctx.textBaseline='top'; ctx.fillText('pitch°',0,0);
     ctx.restore();
   }
 
-  /* ── Individual CSV ── */
+  /* ── Individual CSV — uses device tms as primary timestamp ── */
   async saveCsv() {
-    if (!this.pitchBuf.length) { log(`[${this.name}] Nothing to save.`); return; }
-    const t0=this.timeBuf[0], si=this.sampleIdx-this.pitchBuf.length+1;
-    const csv='timestamp_s,t_rel_s,sample_index,pitch_deg,vel_ema\n'
-      + this.pitchBuf.map((p,i)=>
-          `${this.timeBuf[i].toFixed(6)},${(this.timeBuf[i]-t0).toFixed(6)},${si+i},${p.toFixed(6)},${(this.velBuf[i]??0).toFixed(6)}`
-        ).join('\n');
-    const blob=new Blob([csv],{type:'text/csv'});
-    const safe=this.name.replace(/[^a-z0-9]/gi,'-');
-    const fn=`MAVEN_${safe}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
+    if (!this.pitchBuf.length) { log(`[${this.displayName}] Nothing to save.`); return; }
+    const t0 = this._t0tms ?? this.tmsBuf[0];
+    const si = this.sampleIdx - this.pitchBuf.length + 1;
+    const csv = 'device_tms_ms,t_rel_s,sample_index,pitch_deg,vel_ema\n'
+      + this.pitchBuf.map((p,i) => {
+          const tms   = this.tmsBuf[i];
+          const t_rel = (tms - t0) / 1000;
+          return `${tms},${t_rel.toFixed(6)},${si+i},${p.toFixed(6)},${(this.velBuf[i]??0).toFixed(6)}`;
+        }).join('\n');
+    const blob = new Blob([csv],{type:'text/csv'});
+    const safe = this.displayName.replace(/[^a-z0-9]/gi,'-');
+    const fn   = `MAVEN_${safe}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
     if ('showSaveFilePicker' in window) {
       try {
         const h=await window.showSaveFilePicker({suggestedName:fn,types:[{description:'CSV',accept:{'text/csv':['.csv']}}]});
         const w=await h.createWritable(); await w.write(blob); await w.close();
-        log(`[${this.name}] Saved ${h.name||fn}`); return;
-      } catch(e) { if(e?.name==='AbortError'){log(`[${this.name}] Canceled.`);return;} }
+        log(`[${this.displayName}] Saved ${h.name||fn}`); return;
+      } catch(e) { if(e?.name==='AbortError'){log(`[${this.displayName}] Canceled.`);return;} }
     }
-    const url=URL.createObjectURL(blob),a=document.createElement('a');
-    a.href=url;a.download=fn;document.body.appendChild(a);a.click();
-    document.body.removeChild(a);URL.revokeObjectURL(url);
-    log(`[${this.name}] Downloaded ${fn}`);
+    const url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url; a.download=fn; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+    log(`[${this.displayName}] Downloaded ${fn}`);
   }
 }
 </script>
