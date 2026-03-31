@@ -647,7 +647,6 @@ class DeviceCard {
   
       if (line.startsWith('ID,')) {
         log(`[${this.displayName}] GOT ${line}`);
-      }
   
       } else if (line.startsWith('PITCH,')) {
         const p   = line.split(',');
@@ -656,7 +655,7 @@ class DeviceCard {
   
         if (!isNaN(v) && !this.chkPause.checked) {
           this.pitchEl.textContent   = v.toFixed(2);
-          this.pitchMini.textContent = v.toFixed(1)+'°';
+          this.pitchMini.textContent = v.toFixed(1) + '°';
           this._push(v, tms);
         }
   
