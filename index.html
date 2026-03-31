@@ -368,8 +368,9 @@ async function stopRecording() {
   let idx=1;
   for (const [,{name,samples}] of entries) {
     if (!samples.length) { log(`[${name}] No samples.`); idx++; continue; }
-    const csv='device_tms_ms,t_rel_s,pitch_deg,vel_ema\n'
-      +samples.map(s=>`${s.tms},${s.t_rel.toFixed(6)},${s.pitch.toFixed(6)},${s.vel.toFixed(6)}`).join('\n');
+    const t0dev = samples[0].tms;
+    const csv='device_tms_ms,t_since_boot_s,t_since_first_s,pitch_deg,vel_ema\n'
+      +samples.map(s=>`${s.tms},${(s.tms/1000).toFixed(6)},${((s.tms-t0dev)/1000).toFixed(6)},${s.pitch.toFixed(6)},${s.vel.toFixed(6)}`).join('\n');
     const blob=new Blob([csv],{type:'text/csv'});
     const safe=name.replace(/[^a-z0-9]/gi,'-');
     const fn=`MAVEN_${idx}-${safe}_${stamp}.csv`;
@@ -744,8 +745,7 @@ class DeviceCard {
     this.velBuf.push(vel); this.lastPitch=v;
 
     if(recActive&&this.bleDevice&&recData.has(this.bleDevice.id)){
-      const t_rel=(performance.now()-recStartTime)/1000;
-      recData.get(this.bleDevice.id).samples.push({tms,t_rel,pitch:v,vel});
+      recData.get(this.bleDevice.id).samples.push({tms,pitch:v,vel});
     }
     if(this.pitchBuf.length>this.BUF_MAX){
       const drop=Math.max(this.pitchBuf.length-this.BUF_MAX,100);
@@ -813,10 +813,10 @@ class DeviceCard {
     if(!this.pitchBuf.length){log(`[${this.displayName}] Nothing to save.`);return;}
     const t0=this._t0tms??this.tmsBuf[0];
     const si=this.sampleIdx-this.pitchBuf.length+1;
-    const csv='device_tms_ms,t_rel_s,sample_index,pitch_deg,vel_ema\n'
+    const csv='device_tms_ms,t_since_boot_s,t_since_first_s,sample_index,pitch_deg,vel_ema\n'
       +this.pitchBuf.map((p,i)=>{
         const tms=this.tmsBuf[i];
-        return `${tms},${((tms-t0)/1000).toFixed(6)},${si+i},${p.toFixed(6)},${(this.velBuf[i]??0).toFixed(6)}`;
+        return `${tms},${(tms/1000).toFixed(6)},${((tms-t0)/1000).toFixed(6)},${si+i},${p.toFixed(6)},${(this.velBuf[i]??0).toFixed(6)}`;
       }).join('\n');
     const blob=new Blob([csv],{type:'text/csv'});
     const safe=this.displayName.replace(/[^a-z0-9]/gi,'-');
