@@ -362,8 +362,10 @@ async function stopRecording() {
   log(`Recording stopped — ${devEntries.length} device(s). Saving to folder…`);
 
   // Build and save one CSV per device
+  const usedFilenames = new Set();
+  let devIndex = 1;
   for (const [_id, {name, samples}] of devEntries) {
-    if (!samples.length) { log(`[${name}] No samples — skipped.`); continue; }
+    if (!samples.length) { log(`[${name}] No samples — skipped.`); devIndex++; continue; }
 
     const header = 'timestamp_s,t_rel_s,pitch_deg,vel_ema';
     const rows   = samples.map(s =>
@@ -372,7 +374,10 @@ async function stopRecording() {
     const csv  = header + '\n' + rows.join('\n');
     const blob = new Blob([csv], {type:'text/csv'});
     const safe = name.replace(/[^a-z0-9]/gi,'-');
-    const fn   = `MAVEN_${safe}_${stamp}.csv`;
+    // Always include index so files never overwrite each other even if names collide
+    let fn = `MAVEN_${devIndex}-${safe}_${stamp}.csv`;
+    usedFilenames.add(fn);
+    devIndex++;
 
     // Save to chosen folder if available
     if (recDirHandle) {
@@ -510,11 +515,19 @@ class DeviceCard {
     try {
       this.setStatus('Requesting…');
       this.bleDevice = await navigator.bluetooth.requestDevice({
-        filters:[{services:[NUS_SERVICE]},{namePrefix:'C3-'}],
+        filters:[{services:[NUS_SERVICE]}],
         optionalServices:[NUS_SERVICE]
       });
       this.bleDevice.addEventListener('gattserverdisconnected', ()=>this._onDrop());
-      this.name = this.bleDevice.name || ('IMU-'+(devices.indexOf(this)+1));
+      // Use firmware advertised name; deduplicate if two sensors share the same name
+      const rawName = (this.bleDevice.name || '').trim();
+      const GENERIC = ['MPY-ESP32','ESP32','BLE','UART'];
+      const isGeneric = !rawName || GENERIC.some(g => rawName.toUpperCase() === g.toUpperCase());
+      const idx = devices.indexOf(this) + 1;
+      const baseName = isGeneric ? `IMU-${idx}` : rawName;
+      // If another connected device already uses this base name, append index
+      const nameCollision = devices.some(d => d !== this && d.name === baseName);
+      this.name = nameCollision ? `${baseName}-${idx}` : baseName;
       this.titleEl.textContent = this.name;
       updateSidebarList();
       this.setStatus('Connecting…');
