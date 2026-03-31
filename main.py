@@ -264,11 +264,11 @@ def adv_payload(name=None):
 NUS_UUID_LE = bytes((
     0x9E,0xCA,0xDC,0x24,0x0E,0xE5,0xA9,0xE0,0x93,0xF3,0xA3,0xB5,0x01,0x00,0x40,0x6E
 ))
-#adv  = adv_payload(NAME)
-#resp = bytes((len(NUS_UUID_LE) + 1, 0x07)) + NUS_UUID_LE
-adv = bytes((2, 0x01, 0x06)) + bytes((len(NUS_UUID_LE)+1, 0x07)) + NUS_UUID_LE
-_n = NAME.encode()[:29]
-resp = bytes((len(_n)+1, 0x09)) + _n
+adv  = adv_payload(NAME)
+resp = bytes((len(NUS_UUID_LE) + 1, 0x07)) + NUS_UUID_LE
+#adv = bytes((2, 0x01, 0x06)) + bytes((len(NUS_UUID_LE)+1, 0x07)) + NUS_UUID_LE
+#_n = NAME.encode()[:29]
+#resp = bytes((len(_n)+1, 0x09)) + _n
 
 ble.irq(on_ble)
 ble.gap_advertise(ADV_US, adv_data=adv, resp_data=resp)
