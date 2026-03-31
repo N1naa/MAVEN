@@ -1,4 +1,4 @@
-# === ESP32-C3 Bluetooth PWM Controller + IMU Pitch (MicroPython) ===
+# === ESP32-C3 and ESP32 Bluetooth PWM Controller + IMU Pitch (MicroPython) ===
 # Updated:
 # - IMU parse/update target set to 100 Hz
 # - BLE pitch stream target set to 100 Hz
@@ -20,16 +20,16 @@ import time, struct
 time.sleep(3) # otherwise sometimes stuck when opening thonny
 
 # ---------- USER CONFIG ----------
-NAME     = "NameBLEIMU1" # change here
+NAME     = "NameBLEIMU3" # change here
+IMU_ID   = 3 # change here
 PIN_NUM  = 3
-
 # BNO08x RVC
-IMU_UID  = 1
+IMU_UID  = 1 
 
 # change here
 # ESP32-C3 - SEEED
-IMU_RX   = 6   # IMU TX -> ESP RX
-IMU_TX   = 6   # UART needs a TX pin even if not used
+#IMU_RX   = 6   # IMU TX -> ESP RX
+#IMU_TX   = 6   # UART needs a TX pin even if not used
 
 # ESP32 - pico- D4
 IMU_RX   = 4   # IMU TX -> ESP RX
@@ -215,7 +215,8 @@ def on_ble(event, data):
                         _notify("ACK STREAM " + ("ON" if stream_enabled else "OFF"))
                     else:
                         raise ValueError("STREAM expects STREAM,ON or STREAM,OFF")
-
+                elif up == "ID?":
+                    _notify("ID,%d" % IMU_ID) # added this
                 else:
                     raise ValueError("Unknown cmd")
 
@@ -362,3 +363,4 @@ while True:
 
     # --- short sleep to support 100 Hz loop timing ---
     time.sleep_ms(1)
+
