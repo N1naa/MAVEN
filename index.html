@@ -261,7 +261,7 @@ _rafId = requestAnimationFrame(globalLoop);
 let recActive    = false;
 let recStartTime = null;
 let recTimerInt  = null;
-let recData      = new Map();   // name -> [{t_abs, t_rel, pitch, vel}]
+let recData      = new Map();   // deviceId -> {name, samples:[{t_abs,t_rel,pitch,vel}]}
 let recDirHandle = null;        // chosen save folder
 
 document.getElementById('btnAddDevice').onclick    = addDevice;
@@ -312,7 +312,7 @@ function updateSidebarList() {
   devices.forEach((d, i) => {
     const item = document.createElement('div');
     item.className = 'dev-list-item';
-    const isRec = recActive && recData.has(d.name);
+    const isRec = recActive && d.bleDevice && recData.has(d.bleDevice.id);
     item.innerHTML = `
       <div class="dot-status ${d.isConnected()?(isRec?'recording':'connected'):''}"></div>
       <div class="dev-name">${d.name||'Device '+(i+1)}</div>`;
@@ -327,7 +327,7 @@ function startRecording() {
   recActive    = true;
   recStartTime = performance.now();
   recData      = new Map();
-  connected.forEach(d => { recData.set(d.name, []); d.setRecordingUI(true); });
+  connected.forEach(d => { recData.set(d.bleDevice.id, {name: d.name, samples:[]}); d.setRecordingUI(true); });
   document.getElementById('btnRecStart').disabled = true;
   document.getElementById('btnRecStop').disabled  = false;
   document.getElementById('recDot').classList.add('active');
@@ -355,15 +355,14 @@ async function stopRecording() {
   document.getElementById('recTimer').textContent = '';
   updateSidebarList();
 
-  const devNames = [...recData.keys()];
-  if (!devNames.length) { log('No data recorded.'); return; }
+  const devEntries = [...recData.entries()];
+  if (!devEntries.length) { log('No data recorded.'); return; }
 
   const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  log(`Recording stopped — ${devNames.length} device(s). Saving to folder…`);
+  log(`Recording stopped — ${devEntries.length} device(s). Saving to folder…`);
 
   // Build and save one CSV per device
-  for (const name of devNames) {
-    const samples = recData.get(name);
+  for (const [_id, {name, samples}] of devEntries) {
     if (!samples.length) { log(`[${name}] No samples — skipped.`); continue; }
 
     const header = 'timestamp_s,t_rel_s,pitch_deg,vel_ema';
@@ -603,9 +602,9 @@ class DeviceCard {
     this.velBuf.push(vel);
     this.lastPitch=v;
 
-    if (recActive && recData.has(this.name)) {
+    if (recActive && this.bleDevice && recData.has(this.bleDevice.id)) {
       const t_rel=(performance.now()-recStartTime)/1000;
-      recData.get(this.name).push({t_abs,t_rel,pitch:v,vel});
+      recData.get(this.bleDevice.id).samples.push({t_abs,t_rel,pitch:v,vel});
     }
 
     if (this.pitchBuf.length>this.BUF_MAX) {
