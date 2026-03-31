@@ -646,7 +646,18 @@ class DeviceCard {
     for (const line of s.split(/\n+/)) {
   
       if (line.startsWith('ID,')) {
-        log(`[${this.displayName}] GOT ${line}`);
+        const imuId = parseInt(line.split(',')[1], 10);
+        if (!isNaN(imuId)) {
+          this.displayName = `IMU-${imuId}`;
+          this.nameEl.textContent = this.displayName;
+          updateSidebar();
+  
+          if (this.bleDevice?.id) {
+            setSavedName(this.bleDevice.id, this.displayName);
+          }
+  
+          log(`[${this.displayName}] Assigned from firmware ID`);
+        }
   
       } else if (line.startsWith('PITCH,')) {
         const p   = line.split(',');
