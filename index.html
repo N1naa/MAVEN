@@ -1,223 +1,345 @@
 <!doctype html>
 <html lang="en">
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>MAVEN</title>
 <style>
   :root {
-    --muted: #9ca3af;
-    --line: rgba(124,58,237,0.55);
-    --line-w: 3px;
-    --sidebar-w: 250px;
-    --accent: #f97316;
-    --bg: #000000;
-    --card-bg: rgba(255,255,255,0.05);
-    --text: #ffffff;
-    --text-secondary: rgba(255,255,255,0.7);
+    --bg:       #0a0a0a;
+    --bg2:      #111111;
+    --bg3:      #1a1a1a;
+    --border:   #2a2a2a;
+    --accent:   #7c3aed;
+    --accent2:  #a78bfa;
+    --text:     #ffffff;
+    --muted:    #6b7280;
+    --green:    #22c55e;
+    --orange:   #f97316;
+    --red:      #ef4444;
   }
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    margin:0; padding:0;
-    color:var(--text); background:var(--bg);
-    position:relative; overflow-x:hidden;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    background: var(--bg);
+    color: var(--text);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 100vh;
   }
-  body::before {
-    content:'';
-    position:fixed; top:0; left:0; width:100%; height:100%;
-    z-index:0; pointer-events:none;
-    background:
-      radial-gradient(circle at 20% 20%, rgba(124,58,237,0.15) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(249,115,22,0.15) 0%, transparent 50%),
-      radial-gradient(circle at 50% 50%, rgba(124,58,237,0.1) 0%, transparent 50%);
-    animation: bgFloat 20s ease-in-out infinite;
-  }
-  @keyframes bgFloat {
-    0%,100% { transform:translate(0,0) scale(1); opacity:1; }
-    33%      { transform:translate(50px,-50px) scale(1.1); opacity:.8; }
-    66%      { transform:translate(-30px,30px) scale(.9); opacity:.9; }
-  }
-  body > * { position:relative; z-index:1; }
-
-  .app { display:grid; grid-template-columns:var(--sidebar-w) 1fr; min-height:100vh; }
 
   /* ── Sidebar ── */
-  .sidebar {
-    background:rgba(124,58,237,0.12);
-    border-right:1px solid rgba(124,58,237,0.35);
-    padding:16px 14px;
-    display:flex; flex-direction:column; gap:12px;
-    backdrop-filter:blur(10px); overflow:auto;
-    position:sticky; top:0; height:100vh;
+  aside {
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
   }
-  .brand { display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem; }
-  .brand .dot { width:8px; height:8px; border-radius:999px; background:var(--accent); box-shadow:0 0 0 3px rgba(249,115,22,.35); }
-
-  .panel { border:var(--line-w) solid var(--line); border-radius:12px; padding:10px 12px; background:var(--card-bg); backdrop-filter:blur(10px); }
-  .panel .title { font-weight:700; font-size:.95rem; margin-bottom:8px; }
-
-  button, input {
-    padding:7px 10px; border-radius:10px;
-    border:var(--line-w) solid rgba(124,58,237,0.40);
-    background:var(--card-bg); color:var(--text); font:inherit;
-    cursor:pointer; transition:all .15s ease; backdrop-filter:blur(10px);
+  .brand {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--accent2);
+    padding: 2px 0 8px;
+    border-bottom: 1px solid var(--border);
   }
-  button:hover  { transform:translateY(-1px); background:rgba(124,58,237,0.2); }
-  button:active { transform:translateY(0); }
-  button:disabled { opacity:.45; cursor:not-allowed; transform:none !important; }
-  .btn-primary { background:#7c3aed; color:#fff; border-color:#7c3aed; }
-  .btn-primary:hover { background:#6d28d9; }
-  .btn-danger  { background:#ef4444; color:#fff; border-color:#ef4444; }
-  .btn-danger:hover { background:#dc2626; }
-  .btn-success { background:#16a34a; color:#fff; border-color:#16a34a; }
-  .btn-success:hover { background:#15803d; }
+  .s-panel {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .s-panel .t {
+    font-weight: 700;
+    font-size: .8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 7px;
+  }
+  .s-panel.rec-panel .t { color: var(--orange); }
 
-  .dev-list { display:flex; flex-direction:column; gap:6px; margin-top:6px; }
+  /* dev list */
+  .dev-list { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
   .dev-list-item {
-    display:flex; align-items:center; gap:8px;
-    padding:6px 8px; border-radius:8px;
-    background:rgba(124,58,237,0.12);
-    border:1px solid rgba(124,58,237,0.25);
-    font-size:.82rem;
+    display: flex; align-items: center; gap: 7px;
+    padding: 4px 6px; border-radius: 5px;
+    background: var(--bg);
+    font-size: .82rem; color: var(--muted);
   }
-  .dot-status { width:8px; height:8px; border-radius:999px; flex-shrink:0; background:#9ca3af; }
-  .dot-status.connected { background:#22c55e; box-shadow:0 0 0 2px rgba(34,197,94,.3); }
-  .dot-status.recording { background:#f97316; box-shadow:0 0 0 2px rgba(249,115,22,.4); animation:recPulse 1s ease-in-out infinite; }
-  @keyframes recPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-  .dev-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+  .dot.on  { background: var(--green); }
+  .dot.rec { background: var(--orange); animation: blink 1s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-  .rec-panel { border-color:rgba(249,115,22,0.55); }
-  .rec-panel .title { color:#fb923c; }
-  .rec-status { font-size:.82rem; color:var(--muted); margin-top:6px; display:flex; align-items:center; gap:6px; }
-  .rec-dot { width:8px; height:8px; border-radius:999px; background:#9ca3af; flex-shrink:0; }
-  .rec-dot.active { background:#f97316; animation:recPulse 1s ease-in-out infinite; }
-  .rec-timer { font-variant-numeric:tabular-nums; font-weight:700; color:var(--text); }
+  /* rec timer */
+  .rec-row { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: .82rem; color: var(--muted); }
+  .rec-timer { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--text); }
+  .rec-note { font-size: .75rem; color: var(--muted); margin-top: 5px; line-height: 1.4; }
 
+  /* folder status */
+  .folder-name {
+    font-size: .78rem; color: var(--accent2);
+    margin-bottom: 5px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  /* log */
+  .log-panel { margin-top: auto; }
   .console {
-    border:var(--line-w) solid var(--line); border-radius:10px;
-    background:rgba(0,0,0,0.3); color:var(--text-secondary);
-    padding:8px; height:150px; overflow:auto;
-    white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word;
-    font-size:.82rem; margin-top:8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px;
+    height: 140px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: .75rem;
+    color: var(--muted);
+    margin-top: 6px;
+    font-family: monospace;
   }
-  .log-panel { margin-top:auto; }
+
+  /* ── Buttons ── */
+  button {
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text);
+    font: inherit;
+    font-size: .82rem;
+    cursor: pointer;
+    transition: background .1s;
+  }
+  button:hover    { background: #222; }
+  button:active   { background: #2a2a2a; }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #6d28d9; }
+  .btn-success { background: #15803d; border-color: #15803d; color: #fff; }
+  .btn-success:hover { background: #166534; }
+  .btn-danger  { background: #b91c1c; border-color: #b91c1c; color: #fff; }
+  .btn-danger:hover  { background: #991b1b; }
+  .btn-ghost   { background: transparent; border-color: transparent; color: var(--muted); }
+  .btn-ghost:hover   { color: var(--red); background: transparent; }
+  .btn-row { display: flex; gap: 5px; }
+  .btn-row button { flex: 1; }
+
+  /* ── Inputs ── */
+  input[type=number], input[type=text] {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font: inherit;
+    font-size: .82rem;
+    padding: 3px 6px;
+  }
+
+  /* ── Status pills ── */
+  .pill {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 600;
+    background: var(--bg3);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .pill.Connected   { background: #14532d; color: var(--green); border-color: #166534; }
+  .pill.Connecting,
+  .pill.Requesting  { background: #431407; color: var(--orange); border-color: #9a3412; }
+  .pill.Disconnected{ background: var(--bg3); color: var(--muted); }
+  .pill.Recording   { background: #431407; color: var(--orange); border-color: #9a3412; animation: blink 1s ease-in-out infinite; }
 
   /* ── Main ── */
-  .main { padding:20px; display:flex; flex-direction:column; gap:16px; }
+  main {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+  }
   #emptyState {
-    display:flex; flex-direction:column; align-items:center;
-    justify-content:center; height:60vh; gap:12px;
-    color:var(--muted); text-align:center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    gap: 8px;
+    color: var(--muted);
+    text-align: center;
   }
+  #emptyState strong { color: var(--text); font-size: 1rem; }
 
+  /* ── Device grid ── */
   .device-grid {
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(460px, 1fr));
-    gap:16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 10px;
   }
 
+  /* ── Device card ── */
   .device-card {
-    border:var(--line-w) solid var(--line); border-radius:14px;
-    padding:14px; background:var(--card-bg); backdrop-filter:blur(10px);
-    display:flex; flex-direction:column; gap:10px;
-    transition:border-color .2s;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
-  .device-card.recording { border-color:rgba(249,115,22,0.7); }
+  .device-card.recording { border-color: var(--orange); }
 
-  .dev-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  .dev-title { font-weight:700; font-size:.98rem; }
-  .rate-info { font-size:.78rem; color:var(--muted); }
-  .pitch-display { margin-left:auto; font-size:1.4rem; font-weight:800; color:#a78bfa; font-variant-numeric:tabular-nums; }
-  .pitch-display span { font-size:.8rem; font-weight:400; color:var(--muted); }
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .card-name  { font-weight: 700; font-size: .9rem; }
+  .card-pitch {
+    margin-left: auto;
+    font-size: 1.3rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent2);
+  }
+  .card-pitch span { font-size: .75rem; font-weight: 400; color: var(--muted); }
+  .card-rate  { font-size: .75rem; color: var(--muted); }
 
-  .pill { display:inline-block; padding:2px 8px; border-radius:999px; font-size:.75rem; font-weight:600; background:rgba(255,255,255,0.08); color:var(--muted); }
-  .pill.Connected  { background:linear-gradient(135deg,#22c55e,#16a34a); color:#fff; }
-  .pill.Connecting,.pill.Requesting { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; }
-  .pill.Disconnected { background:rgba(255,255,255,0.08); color:var(--muted); }
+  /* collapsible plot */
+  .plot-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+    font-size: .8rem;
+    color: var(--muted);
+    padding: 2px 0;
+  }
+  .plot-toggle:hover { color: var(--text); }
+  .plot-caret { font-size: .7rem; transition: transform .15s; display: inline-block; }
+  .plot-toggle.open .plot-caret { transform: rotate(90deg); }
+  .plot-wrap { display: none; }
+  .plot-wrap.open { display: block; }
 
-  /* canvas is just a display surface — no height in CSS, set by JS */
-  canvas { width:100%; height:240px; background:rgba(0,0,0,0.3); border:var(--line-w) solid var(--line); border-radius:10px; display:block; }
+  canvas {
+    width: 100%;
+    height: 200px;
+    display: block;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
 
-  .plot-options { display:flex; align-items:center; gap:12px; font-size:.82rem; color:var(--muted); flex-wrap:wrap; }
-  .plot-options label { display:flex; align-items:center; gap:4px; cursor:pointer; }
-  .plot-options input[type=number] { width:55px; padding:2px 5px; }
+  .plot-opts {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: .78rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .plot-opts label { display: flex; align-items: center; gap: 3px; cursor: pointer; }
+  .plot-opts input[type=number] { width: 48px; }
 
-  .imu-controls { display:flex; gap:6px; flex-wrap:wrap; }
-  .imu-controls button { flex:1; min-width:90px; font-size:.82rem; padding:5px 8px; }
+  .card-controls {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .card-controls button { font-size: .78rem; padding: 4px 8px; }
 
-  .card-footer { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; }
-  .btn-remove { font-size:.78rem; padding:4px 10px; color:#ef4444; border-color:rgba(239,68,68,0.4); background:transparent; }
-  .btn-remove:hover { background:rgba(239,68,68,0.15); }
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .card-foot button { font-size: .75rem; padding: 3px 8px; }
 
-  .rec-badge { font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:999px; background:rgba(249,115,22,0.2); border:1px solid rgba(249,115,22,0.5); color:#fb923c; display:none; align-items:center; gap:4px; }
-  .rec-badge.active { display:flex; }
-  .rec-badge-dot { width:6px; height:6px; border-radius:999px; background:#f97316; animation:recPulse 1s ease-in-out infinite; }
+  /* rec badge */
+  .rec-badge {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    font-size: .72rem;
+    color: var(--orange);
+    font-weight: 700;
+  }
+  .rec-badge.on { display: flex; }
 
-  @media (max-width:700px) {
-    .app { grid-template-columns:1fr; }
-    .sidebar { position:static; height:auto; }
-    .device-grid { grid-template-columns:1fr; }
-    canvas { height:clamp(180px,35vh,260px); }
-    button, input { min-height:44px; font-size:1rem; }
+  @media (max-width: 640px) {
+    body { grid-template-columns: 1fr; }
+    aside { position: static; height: auto; }
+    .device-grid { grid-template-columns: 1fr; }
   }
 </style>
 
 <body>
-<div class="app">
 
-  <!-- ═══ SIDEBAR ═══ -->
-  <aside class="sidebar">
-    <div class="brand"><span class="dot"></span> MAVEN</div>
+<!-- ═══ SIDEBAR ═══ -->
+<aside>
+  <div class="brand">MAVEN</div>
 
-    <div class="panel">
-      <div class="title">Devices</div>
-      <button id="btnAddDevice" class="btn-primary" style="width:100%">＋ Add Device</button>
-      <div class="dev-list" id="devList"></div>
+  <div class="s-panel">
+    <div class="t">Devices</div>
+    <button id="btnAdd" class="btn-primary" style="width:100%">＋ Add Device</button>
+    <div class="dev-list" id="devList"></div>
+  </div>
+
+  <div class="s-panel rec-panel">
+    <div class="t">Combined Recording</div>
+    <button id="btnFolder" style="width:100%;margin-bottom:5px">📁 Choose Folder</button>
+    <div class="folder-name" id="folderName">No folder selected</div>
+    <div class="btn-row">
+      <button id="btnRecStart" class="btn-success">▶ Start</button>
+      <button id="btnRecStop"  class="btn-danger" disabled>⏹ Stop</button>
     </div>
-
-    <div class="panel rec-panel">
-      <div class="title">⬤ Combined Recording</div>
-      <button id="btnChooseFolder" style="width:100%;margin-bottom:6px;">📁 Choose Save Folder</button>
-      <div id="folderStatus" style="font-size:.78rem;color:var(--muted);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">No folder selected</div>
-      <div style="display:flex;gap:6px;">
-        <button id="btnRecStart" class="btn-success" style="flex:1">▶ Start</button>
-        <button id="btnRecStop"  class="btn-danger"  style="flex:1" disabled>⏹ Stop</button>
-      </div>
-      <div class="rec-status">
-        <div class="rec-dot" id="recDot"></div>
-        <span id="recStatusText">Idle</span>
-        &nbsp;<span class="rec-timer" id="recTimer"></span>
-      </div>
-      <div style="font-size:.78rem;color:var(--muted);margin-top:4px;">
-        Saves one CSV per device into chosen folder on stop.
-      </div>
+    <div class="rec-row">
+      <div class="dot" id="recDot"></div>
+      <span id="recStatus">Idle</span>
+      <span class="rec-timer" id="recTimer"></span>
     </div>
+    <div class="rec-note">Saves one CSV per device to folder on stop.</div>
+  </div>
 
-    <div class="panel log-panel">
-      <div class="title">Log</div>
-      <button id="btnClearLog" style="width:100%">Clear Log</button>
-      <div id="logEl" class="console"></div>
-    </div>
-  </aside>
+  <div class="s-panel log-panel">
+    <div class="t">Log</div>
+    <button id="btnClearLog" style="width:100%">Clear</button>
+    <div id="logEl" class="console"></div>
+  </div>
+</aside>
 
-  <!-- ═══ MAIN ═══ -->
-  <main class="main">
-    <div id="emptyState">
-      <div style="font-size:3rem">📶</div>
-      <div style="font-size:1.1rem;font-weight:700;color:var(--text)">No devices connected</div>
-      <div style="font-size:.9rem">Click <strong>＋ Add Device</strong> to pair an IMU via BLE.</div>
-    </div>
-    <div class="device-grid" id="deviceGrid"></div>
-  </main>
-</div>
+<!-- ═══ MAIN ═══ -->
+<main>
+  <div id="emptyState">
+    <div style="font-size:2.5rem">📶</div>
+    <strong>No devices connected</strong>
+    <div>Click <strong>＋ Add Device</strong> to pair an IMU via BLE.</div>
+  </div>
+  <div class="device-grid" id="deviceGrid"></div>
+</main>
 
 <script>
 /* ─── BLE UUIDs ─── */
 const NUS_SERVICE = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
 const NUS_TX      = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 const NUS_RX      = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
+const GENERIC_NAMES = ['MPY-ESP32','ESP32','BLE','UART'];
 
-/* ─── Global log (batched) ─── */
+/* ─── Log ─── */
 const logEl = document.getElementById('logEl');
 let _lb=[], _lt=null;
 function log(s) {
@@ -229,184 +351,159 @@ function log(s) {
   }, 80);
 }
 
-/* ─── Device registry ─── */
+/* ─── Devices ─── */
 const devices = [];
-
-/* ════════════════════════════════════
-   SINGLE SHARED RAF LOOP
-   One requestAnimationFrame drives ALL
-   canvas redraws — eliminates redundant
-   layout reads and GPU flushes.
-════════════════════════════════════ */
-const FRAME_MS  = 50;   // ~20 fps is plenty for visual smoothness; data unaffected
-let   _rafId    = null;
-let   _lastTs   = 0;
-
-function globalLoop(ts) {
-  _rafId = requestAnimationFrame(globalLoop);
-  if (ts - _lastTs < FRAME_MS) return;
-  _lastTs = ts;
-
-  for (const d of devices) {
-    // Only resize DPR if canvas rect changed (throttled inside _resizeDPR)
-    d._resizeDPR();
-    d._draw();
-  }
-}
-
-// Start the single loop once
-_rafId = requestAnimationFrame(globalLoop);
 
 /* ─── Combined recording ─── */
 let recActive    = false;
 let recStartTime = null;
 let recTimerInt  = null;
-let recData      = new Map();   // deviceId -> {name, samples:[{t_abs,t_rel,pitch,vel}]}
-let recDirHandle = null;        // chosen save folder
+let recData      = new Map();  // bleDevice.id -> {name, samples}
+let recDirHandle = null;
 
-document.getElementById('btnAddDevice').onclick    = addDevice;
-document.getElementById('btnClearLog').onclick     = () => logEl.textContent='';
-document.getElementById('btnRecStart').onclick     = startRecording;
-document.getElementById('btnRecStop').onclick      = stopRecording;
-document.getElementById('btnChooseFolder').onclick = chooseFolder;
-
-async function chooseFolder() {
-  if (!('showDirectoryPicker' in window)) {
-    alert('Folder saving requires Chrome or Edge desktop.');
-    return;
-  }
-  try {
-    recDirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
-    document.getElementById('folderStatus').textContent = '\u{1F4C2} ' + recDirHandle.name;
-    document.getElementById('folderStatus').style.color = '#a78bfa';
-    log('Save folder set: ' + recDirHandle.name);
-  } catch(e) {
-    if (e?.name !== 'AbortError') log('Folder error: ' + e);
+/* ─── Single shared RAF loop ─── */
+const FRAME_MS = 50;  // 20fps — enough for visual, data unaffected
+let _lastTs = 0;
+function globalLoop(ts) {
+  requestAnimationFrame(globalLoop);
+  if (ts - _lastTs < FRAME_MS) return;
+  _lastTs = ts;
+  for (const d of devices) {
+    if (d.plotOpen) { d._resizeDPR(); d._draw(); }
   }
 }
+requestAnimationFrame(globalLoop);
+
+/* ─── Wiring ─── */
+document.getElementById('btnAdd').onclick       = addDevice;
+document.getElementById('btnClearLog').onclick  = () => logEl.textContent = '';
+document.getElementById('btnFolder').onclick    = chooseFolder;
+document.getElementById('btnRecStart').onclick  = startRecording;
+document.getElementById('btnRecStop').onclick   = stopRecording;
 
 function addDevice() {
   if (!navigator.bluetooth) { alert('Web Bluetooth not supported.'); return; }
   const card = new DeviceCard();
   devices.push(card);
-  updateEmptyState();
+  updateEmpty();
   card.connect();
 }
 
 function removeDevice(card) {
   card.disconnect();
   card.cardEl.remove();
-  const i = devices.indexOf(card);
-  if (i !== -1) devices.splice(i, 1);
-  updateSidebarList();
-  updateEmptyState();
+  devices.splice(devices.indexOf(card), 1);
+  updateSidebar();
+  updateEmpty();
 }
 
-function updateEmptyState() {
+function updateEmpty() {
   document.getElementById('emptyState').style.display = devices.length ? 'none' : 'flex';
 }
 
-function updateSidebarList() {
+function updateSidebar() {
   const list = document.getElementById('devList');
   list.innerHTML = '';
   devices.forEach((d, i) => {
     const item = document.createElement('div');
     item.className = 'dev-list-item';
     const isRec = recActive && d.bleDevice && recData.has(d.bleDevice.id);
-    item.innerHTML = `
-      <div class="dot-status ${d.isConnected()?(isRec?'recording':'connected'):''}"></div>
-      <div class="dev-name">${d.name||'Device '+(i+1)}</div>`;
+    const dotCls = isRec ? 'rec' : (d.isConnected() ? 'on' : '');
+    item.innerHTML = `<div class="dot ${dotCls}"></div><span>${d.name || 'Device '+(i+1)}</span>`;
     d._sidebarItem = item;
     list.appendChild(item);
   });
 }
 
+/* ─── Folder ─── */
+async function chooseFolder() {
+  if (!('showDirectoryPicker' in window)) { alert('Requires Chrome/Edge desktop.'); return; }
+  try {
+    recDirHandle = await window.showDirectoryPicker({ mode:'readwrite' });
+    document.getElementById('folderName').textContent = '📂 ' + recDirHandle.name;
+    log('Folder: ' + recDirHandle.name);
+  } catch(e) { if (e?.name !== 'AbortError') log('Folder error: '+e); }
+}
+
+/* ─── Recording ─── */
 function startRecording() {
   const connected = devices.filter(d => d.isConnected());
-  if (!connected.length) { log('No connected devices to record.'); return; }
-  recActive    = true;
+  if (!connected.length) { log('No connected devices.'); return; }
+  recActive = true;
   recStartTime = performance.now();
-  recData      = new Map();
-  connected.forEach(d => { recData.set(d.bleDevice.id, {name: d.name, samples:[]}); d.setRecordingUI(true); });
+  recData = new Map();
+  connected.forEach(d => {
+    recData.set(d.bleDevice.id, { name: d.name, samples: [] });
+    d.setRecUI(true);
+  });
   document.getElementById('btnRecStart').disabled = true;
   document.getElementById('btnRecStop').disabled  = false;
-  document.getElementById('recDot').classList.add('active');
-  document.getElementById('recStatusText').textContent =
-    `Recording ${connected.length} device${connected.length>1?'s':''}`;
+  document.getElementById('recDot').className     = 'dot rec';
+  document.getElementById('recStatus').textContent = `${connected.length} device${connected.length>1?'s':''}`;
   recTimerInt = setInterval(() => {
-    const e=(performance.now()-recStartTime)/1000;
-    const m=Math.floor(e/60).toString().padStart(2,'0');
-    const s=(e%60).toFixed(1).padStart(4,'0');
-    document.getElementById('recTimer').textContent=`${m}:${s}`;
+    const e = (performance.now()-recStartTime)/1000;
+    const m = Math.floor(e/60).toString().padStart(2,'0');
+    const s = (e%60).toFixed(1).padStart(4,'0');
+    document.getElementById('recTimer').textContent = `${m}:${s}`;
   }, 100);
   log(`Recording started — ${connected.map(d=>d.name).join(', ')}`);
-  updateSidebarList();
+  updateSidebar();
 }
 
 async function stopRecording() {
   if (!recActive) return;
   recActive = false;
   clearInterval(recTimerInt);
-  devices.forEach(d => d.setRecordingUI(false));
+  devices.forEach(d => d.setRecUI(false));
   document.getElementById('btnRecStart').disabled = false;
   document.getElementById('btnRecStop').disabled  = true;
-  document.getElementById('recDot').classList.remove('active');
-  document.getElementById('recStatusText').textContent = 'Idle';
-  document.getElementById('recTimer').textContent = '';
-  updateSidebarList();
+  document.getElementById('recDot').className     = 'dot';
+  document.getElementById('recStatus').textContent = 'Idle';
+  document.getElementById('recTimer').textContent  = '';
+  updateSidebar();
 
-  const devEntries = [...recData.entries()];
-  if (!devEntries.length) { log('No data recorded.'); return; }
+  const entries = [...recData.entries()];
+  if (!entries.length) { log('No data.'); return; }
 
   const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  log(`Recording stopped — ${devEntries.length} device(s). Saving to folder…`);
+  log(`Stopped — ${entries.length} device(s). Saving…`);
 
-  // Build and save one CSV per device
-  const usedFilenames = new Set();
-  let devIndex = 1;
-  for (const [_id, {name, samples}] of devEntries) {
-    if (!samples.length) { log(`[${name}] No samples — skipped.`); devIndex++; continue; }
+  let idx = 1;
+  for (const [, {name, samples}] of entries) {
+    if (!samples.length) { log(`[${name}] No samples — skipped.`); idx++; continue; }
 
-    const header = 'timestamp_s,t_rel_s,pitch_deg,vel_ema';
-    const rows   = samples.map(s =>
-      `${s.t_abs.toFixed(6)},${s.t_rel.toFixed(6)},${s.pitch.toFixed(6)},${s.vel.toFixed(6)}`
-    );
-    const csv  = header + '\n' + rows.join('\n');
+    const csv  = 'timestamp_s,t_rel_s,pitch_deg,vel_ema\n'
+               + samples.map(s=>`${s.t_abs.toFixed(6)},${s.t_rel.toFixed(6)},${s.pitch.toFixed(6)},${s.vel.toFixed(6)}`).join('\n');
     const blob = new Blob([csv], {type:'text/csv'});
     const safe = name.replace(/[^a-z0-9]/gi,'-');
-    // Always include index so files never overwrite each other even if names collide
-    let fn = `MAVEN_${devIndex}-${safe}_${stamp}.csv`;
-    usedFilenames.add(fn);
-    devIndex++;
+    const fn   = `MAVEN_${idx}-${safe}_${stamp}.csv`;
 
-    // Save to chosen folder if available
     if (recDirHandle) {
       try {
-        const ok = (recDirHandle.queryPermission  && await recDirHandle.queryPermission({mode:'readwrite'}) === 'granted')
-                || (recDirHandle.requestPermission && await recDirHandle.requestPermission({mode:'readwrite'}) === 'granted');
-        if (ok) {
+        const perm = recDirHandle.queryPermission
+          ? await recDirHandle.queryPermission({mode:'readwrite'})
+          : await recDirHandle.requestPermission({mode:'readwrite'});
+        if (perm === 'granted' || recDirHandle.requestPermission && await recDirHandle.requestPermission({mode:'readwrite'}) === 'granted') {
           const fh = await recDirHandle.getFileHandle(fn, {create:true});
           const w  = await fh.createWritable();
           await w.write(blob); await w.close();
-          log(`[${name}] Saved to folder: ${fn}`);
-          continue;
+          log(`[${name}] → ${fn}`); idx++; continue;
         }
-      } catch(e) { log(`[${name}] Folder save error: ${e} — falling back to download`); }
+      } catch(e) { log(`[${name}] Folder error: ${e} — downloading instead`); }
     }
 
-    // Fallback: auto-download
-    const url = URL.createObjectURL(blob);
-    const a   = document.createElement('a');
-    a.href=url; a.download=fn;
-    document.body.appendChild(a); a.click();
+    // fallback download
+    const url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url; a.download=fn; document.body.appendChild(a); a.click();
     document.body.removeChild(a); URL.revokeObjectURL(url);
     log(`[${name}] Downloaded: ${fn}`);
+    idx++;
   }
 }
 
-/* ════════════════════════════════════
+/* ════════════════════════════
    DeviceCard
-════════════════════════════════════ */
+════════════════════════════ */
 class DeviceCard {
   constructor() {
     this.name       = '';
@@ -416,7 +513,9 @@ class DeviceCard {
     this.bleRx      = null;
     this._onNotify  = null;
     this.connecting = false;
+    this.plotOpen   = false;   // collapsed by default
 
+    // buffers
     this.BUF_MAX   = 1800;
     this.WIN       = 400;
     this.pitchBuf  = [];
@@ -427,24 +526,27 @@ class DeviceCard {
     this.lastPitch = null;
     this.DERIV_A   = 0.3;
 
-    // DPR resize throttle — only re-measure canvas every 500 ms
-    this._lastDprCheck = 0;
-    this._canvasW = 0;
-    this._canvasH = 0;
+    // DPR throttle
+    this._dprTs = 0;
 
     this._buildDOM();
-    updateSidebarList();
+    updateSidebar();
   }
 
   isConnected() { return !!this.bleServer?.connected; }
 
-  setRecordingUI(active) {
-    this.cardEl.classList.toggle('recording', active);
-    this.cardEl.querySelector('.rec-badge').classList.toggle('active', active);
-    if (this._sidebarItem) {
-      const dot = this._sidebarItem.querySelector('.dot-status');
-      if (dot) dot.className='dot-status'+(active?' recording':(this.isConnected()?' connected':''));
-    }
+  setRecUI(on) {
+    this.cardEl.classList.toggle('recording', on);
+    this.cardEl.querySelector('.rec-badge').classList.toggle('on', on);
+    this._refreshSidebarDot();
+  }
+
+  _refreshSidebarDot() {
+    if (!this._sidebarItem) return;
+    const dot = this._sidebarItem.querySelector('.dot');
+    if (!dot) return;
+    const isRec = recActive && this.bleDevice && recData.has(this.bleDevice.id);
+    dot.className = 'dot ' + (isRec ? 'rec' : (this.isConnected() ? 'on' : ''));
   }
 
   _buildDOM() {
@@ -452,60 +554,74 @@ class DeviceCard {
     this.cardEl = document.createElement('div');
     this.cardEl.className = 'device-card';
     this.cardEl.innerHTML = `
-      <div class="dev-head">
-        <div class="dev-title-el dev-title">Connecting…</div>
+      <div class="card-head">
+        <div class="card-name name-el">Connecting…</div>
         <span class="pill Disconnected status-pill">Disconnected</span>
-        <div class="rec-badge"><div class="rec-badge-dot"></div> REC</div>
-        <div class="rate-info" style="margin-left:auto">
-          IMU <strong class="imu-hz">—</strong> Hz &nbsp;|&nbsp;
-          BLE <strong class="ble-hz">—</strong> Hz
+        <div class="rec-badge"><div class="dot rec"></div> REC</div>
+        <div class="card-rate rate-el" style="margin-left:auto">IMU — Hz | BLE — Hz</div>
+        <div class="card-pitch"><span class="pitch-el">—</span> <span>°</span></div>
+      </div>
+
+      <div class="plot-toggle" id="pt-${devices.length}">
+        <span class="plot-caret">▶</span>
+        <span>Plot</span>
+        <span class="pitch-mini" style="margin-left:4px;font-variant-numeric:tabular-nums;color:var(--accent2)"></span>
+      </div>
+      <div class="plot-wrap" id="pw-${devices.length}">
+        <canvas></canvas>
+        <div class="plot-opts">
+          <label><input type="checkbox" class="chk-pause"> Pause</label>
+          <label><input type="checkbox" class="chk-auto" checked> Autoscale</label>
+          <label>Fixed ±<input type="number" class="in-range" value="90">°</label>
         </div>
-        <div class="pitch-display"><span class="pitch-val">—</span> <span>°</span></div>
       </div>
-      <canvas></canvas>
-      <div class="plot-options">
-        <label><input type="checkbox" class="chk-pause"> Pause</label>
-        <label><input type="checkbox" class="chk-auto" checked> Autoscale Y</label>
-        <label>Fixed ±<input type="number" class="in-range" value="90">°</label>
-      </div>
-      <div class="imu-controls">
+
+      <div class="card-controls">
         <button class="btn-stream-on">▶ Stream</button>
         <button class="btn-stream-off">⏹ Stop</button>
-        <button class="btn-cal">⚖ Cal (3s)</button>
-        <button class="btn-reconnect btn-primary">⟳ Reconnect</button>
+        <button class="btn-cal">⚖ Cal 3s</button>
+        <button class="btn-reconnect btn-primary">⟳</button>
       </div>
-      <div class="card-footer">
-        <button class="btn-save-ind">💾 Save CSV</button>
-        <button class="btn-remove">✕ Remove</button>
+      <div class="card-foot">
+        <button class="btn-save">💾 Save CSV</button>
+        <button class="btn-remove btn-ghost">✕ Remove</button>
       </div>`;
     grid.appendChild(this.cardEl);
 
-    this.titleEl    = this.cardEl.querySelector('.dev-title-el');
+    // refs
+    this.nameEl     = this.cardEl.querySelector('.name-el');
     this.statusPill = this.cardEl.querySelector('.status-pill');
-    this.pitchValEl = this.cardEl.querySelector('.pitch-val');
-    this.imuHzEl    = this.cardEl.querySelector('.imu-hz');
-    this.bleHzEl    = this.cardEl.querySelector('.ble-hz');
+    this.pitchEl    = this.cardEl.querySelector('.pitch-el');
+    this.pitchMini  = this.cardEl.querySelector('.pitch-mini');
+    this.rateEl     = this.cardEl.querySelector('.rate-el');
     this.chkPause   = this.cardEl.querySelector('.chk-pause');
     this.chkAuto    = this.cardEl.querySelector('.chk-auto');
     this.inRange    = this.cardEl.querySelector('.in-range');
     this.canvas     = this.cardEl.querySelector('canvas');
     this.ctx        = this.canvas.getContext('2d');
 
+    // plot toggle
+    const toggle = this.cardEl.querySelector('.plot-toggle');
+    const wrap   = this.cardEl.querySelector('.plot-wrap');
+    toggle.addEventListener('click', () => {
+      this.plotOpen = !this.plotOpen;
+      toggle.classList.toggle('open', this.plotOpen);
+      wrap.classList.toggle('open', this.plotOpen);
+    });
+
+    // buttons
     this.cardEl.querySelector('.btn-stream-on') .onclick = () => this.send('STREAM,ON');
     this.cardEl.querySelector('.btn-stream-off').onclick = () => this.send('STREAM,OFF');
     this.cardEl.querySelector('.btn-cal')       .onclick = () => this.send('CAL,3000');
     this.cardEl.querySelector('.btn-reconnect') .onclick = () => this.connect();
-    this.cardEl.querySelector('.btn-save-ind')  .onclick = () => this.saveCsv();
+    this.cardEl.querySelector('.btn-save')      .onclick = () => this.saveCsv();
     this.cardEl.querySelector('.btn-remove')    .onclick = () => removeDevice(this);
   }
 
   setStatus(s) {
     this.statusPill.textContent = s;
-    this.statusPill.className   = 'pill '+s.replace('…','').replace(/\s+/g,'');
-    if (this._sidebarItem) {
-      const dot = this._sidebarItem.querySelector('.dot-status');
-      if (dot) dot.className='dot-status'+(this.isConnected()?' connected':'');
-    }
+    this.statusPill.className   = 'pill ' + s.replace('…','').replace(/\s+/g,'');
+    this._refreshSidebarDot();
   }
 
   /* ── BLE ── */
@@ -515,21 +631,20 @@ class DeviceCard {
     try {
       this.setStatus('Requesting…');
       this.bleDevice = await navigator.bluetooth.requestDevice({
-        filters:[{services:[NUS_SERVICE]}],
-        optionalServices:[NUS_SERVICE]
+        filters: [{ services: [NUS_SERVICE] }],
+        optionalServices: [NUS_SERVICE]
       });
-      this.bleDevice.addEventListener('gattserverdisconnected', ()=>this._onDrop());
-      // Use firmware advertised name; deduplicate if two sensors share the same name
-      const rawName = (this.bleDevice.name || '').trim();
-      const GENERIC = ['MPY-ESP32','ESP32','BLE','UART'];
-      const isGeneric = !rawName || GENERIC.some(g => rawName.toUpperCase() === g.toUpperCase());
+      this.bleDevice.addEventListener('gattserverdisconnected', () => this._drop());
+
+      // Smart naming: use firmware name if not generic, else number it
+      const raw = (this.bleDevice.name || '').trim();
+      const isGeneric = !raw || GENERIC_NAMES.some(g => raw.toUpperCase() === g.toUpperCase());
       const idx = devices.indexOf(this) + 1;
-      const baseName = isGeneric ? `IMU-${idx}` : rawName;
-      // If another connected device already uses this base name, append index
-      const nameCollision = devices.some(d => d !== this && d.name === baseName);
-      this.name = nameCollision ? `${baseName}-${idx}` : baseName;
-      this.titleEl.textContent = this.name;
-      updateSidebarList();
+      const base = isGeneric ? `IMU-${idx}` : raw;
+      this.name = devices.some(d => d !== this && d.name === base) ? `${base}-${idx}` : base;
+      this.nameEl.textContent = this.name;
+      updateSidebar();
+
       this.setStatus('Connecting…');
       this.bleServer = await this.bleDevice.gatt.connect();
       const svc  = await this.bleServer.getPrimaryService(NUS_SERVICE);
@@ -540,11 +655,11 @@ class DeviceCard {
       this.bleTx.addEventListener('characteristicvaluechanged', this._onNotify);
       this.setStatus('Connected');
       log(`[${this.name}] Connected`);
-      updateSidebarList();
+      updateSidebar();
     } catch(e) {
       this.setStatus('Disconnected');
-      log(`[${this.name||'?'}] Connect error: ${e}`);
-    } finally { this.connecting=false; }
+      log(`[${this.name||'?'}] ${e}`);
+    } finally { this.connecting = false; }
   }
 
   async disconnect() {
@@ -553,24 +668,24 @@ class DeviceCard {
         try { await this.bleTx.stopNotifications(); } catch(_){}
         if (this._onNotify) {
           this.bleTx.removeEventListener('characteristicvaluechanged', this._onNotify);
-          this._onNotify=null;
+          this._onNotify = null;
         }
       }
       if (this.bleDevice?.gatt?.connected) this.bleDevice.gatt.disconnect();
-    } catch(e) { log(`[${this.name}] Disconnect error: ${e}`); }
-    finally { this.bleTx=this.bleRx=this.bleServer=null; this.setStatus('Disconnected'); updateSidebarList(); }
+    } catch(e) { log(`[${this.name}] ${e}`); }
+    finally { this.bleTx=this.bleRx=this.bleServer=null; this.setStatus('Disconnected'); updateSidebar(); }
   }
 
-  _onDrop() {
+  _drop() {
     this.bleTx=this.bleRx=this.bleServer=null;
     this.setStatus('Disconnected');
     log(`[${this.name}] Disconnected.`);
-    updateSidebarList();
+    updateSidebar();
   }
 
   async send(s) {
     if (!this.bleRx) { log(`[${this.name}] Not connected`); return; }
-    const d=new TextEncoder().encode(s.endsWith('\n')?s:s+'\n');
+    const d = new TextEncoder().encode(s.endsWith('\n')?s:s+'\n');
     try {
       if ('writeValueWithoutResponse' in this.bleRx) await this.bleRx.writeValueWithoutResponse(d);
       else await this.bleRx.writeValue(d);
@@ -578,42 +693,40 @@ class DeviceCard {
     } catch(e) { log(`[${this.name}] Write error: ${e}`); }
   }
 
-  /* ── Notify — called by BLE, NOT by RAF ── */
+  /* ── Notify ── */
   _notify(ev) {
-    const s=new TextDecoder().decode(ev.target.value).trim();
+    const s = new TextDecoder().decode(ev.target.value).trim();
     if (!s) return;
     for (const line of s.split(/\n+/)) {
       if (line.startsWith('PITCH,')) {
-        const p=line.split(',');
-        const v=parseFloat(p[1]);
-        const t=p[2]?parseInt(p[2],10):null;
+        const p = line.split(',');
+        const v = parseFloat(p[1]);
+        const t = p[2] ? parseInt(p[2],10) : null;
         if (!isNaN(v) && !this.chkPause.checked) {
-          // DOM write batched — just set textContent, no layout triggered
-          this.pitchValEl.textContent=v.toFixed(2);
-          this._push(v,t);
+          this.pitchEl.textContent  = v.toFixed(2);
+          this.pitchMini.textContent = v.toFixed(1)+'°';
+          this._push(v, t);
         }
       } else if (line.startsWith('RATE ')) {
-        const m=line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
-        if (m) { this.imuHzEl.textContent=(+m[1]).toFixed(1); this.bleHzEl.textContent=(+m[2]).toFixed(1); }
+        const m = line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
+        if (m) this.rateEl.textContent = `IMU ${(+m[1]).toFixed(0)} Hz | BLE ${(+m[2]).toFixed(0)} Hz`;
       } else { log(`[${this.name}] ${line}`); }
     }
   }
 
-  /* ── Buffer push — O(1), no layout reads ── */
+  /* ── Buffer ── */
   _push(v, devMs) {
     let t_abs;
     if (devMs!=null && isFinite(devMs)) {
       if (this._t0ms==null) this._t0ms=devMs;
-      t_abs=(devMs-this._t0ms)/1000;
-    } else t_abs=performance.now()/1000;
+      t_abs = (devMs-this._t0ms)/1000;
+    } else t_abs = performance.now()/1000;
 
     this.pitchBuf.push(v); this.timeBuf.push(t_abs); this.sampleIdx++;
     if (this.lastPitch==null) this.lastPitch=v;
-    const rv=v-this.lastPitch;
-    const lv=this.velBuf.length?this.velBuf[this.velBuf.length-1]:rv;
+    const rv=v-this.lastPitch, lv=this.velBuf.length?this.velBuf[this.velBuf.length-1]:rv;
     const vel=lv+this.DERIV_A*(rv-lv);
-    this.velBuf.push(vel);
-    this.lastPitch=v;
+    this.velBuf.push(vel); this.lastPitch=v;
 
     if (recActive && this.bleDevice && recData.has(this.bleDevice.id)) {
       const t_rel=(performance.now()-recStartTime)/1000;
@@ -626,44 +739,40 @@ class DeviceCard {
     }
   }
 
-  /* ── DPR resize — throttled to once per 500ms ── */
+  /* ── Canvas — only called when plot is open ── */
   _resizeDPR() {
     const now=performance.now();
-    if (now-this._lastDprCheck < 500) return;
-    this._lastDprCheck=now;
-    const dpr=devicePixelRatio||1;
-    const r=this.canvas.getBoundingClientRect();
-    const w=Math.max(1,Math.round(r.width*dpr));
-    const h=Math.max(1,Math.round(r.height*dpr));
+    if (now-this._dprTs < 500) return;
+    this._dprTs=now;
+    const dpr=devicePixelRatio||1, r=this.canvas.getBoundingClientRect();
+    const w=Math.max(1,Math.round(r.width*dpr)), h=Math.max(1,Math.round(r.height*dpr));
     if (this.canvas.width!==w||this.canvas.height!==h) {
       this.canvas.width=w; this.canvas.height=h;
       this.ctx.setTransform(dpr,0,0,dpr,0,0);
-      this._canvasW=w; this._canvasH=h;
     }
   }
 
-  /* ── Draw — called by global loop, not per-device RAF ── */
   _draw() {
     const dpr=devicePixelRatio||1, ctx=this.ctx;
     const W=this.canvas.width/dpr, H=this.canvas.height/dpr;
-    const PL=46,PR=10,PT=12,PB=28;
+    const PL=40,PR=8,PT=10,PB=24;
 
     ctx.clearRect(0,0,W,H);
 
-    // axes
-    ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=1;
+    // axes — plain lines, no blur, no gradients
+    ctx.strokeStyle='#2a2a2a'; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(PL,PT); ctx.lineTo(PL,H-PB); ctx.lineTo(W-PR,H-PB); ctx.stroke();
 
     if (!this.pitchBuf.length) {
-      ctx.fillStyle='rgba(255,255,255,0.25)'; ctx.font='13px system-ui';
+      ctx.fillStyle='#444'; ctx.font='12px system-ui';
       ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText('Waiting for data…',W/2,H/2); return;
+      ctx.fillText('Waiting…',W/2,H/2); return;
     }
 
     const ys=this.pitchBuf.slice(Math.max(0,this.pitchBuf.length-this.WIN));
-    let y0=-90, y1=90;
+    let y0=-90,y1=90;
     if (this.chkAuto.checked) {
-      let mn=Infinity, mx=-Infinity;
+      let mn=Infinity,mx=-Infinity;
       for (const v of ys){if(v<mn)mn=v;if(v>mx)mx=v;}
       const pad=Math.max(2,0.1*(mx-mn+1e-6)); y0=mn-pad; y1=mx+pad;
     } else { const r=Math.abs(+this.inRange.value||90); y0=-r; y1=r; }
@@ -672,71 +781,58 @@ class DeviceCard {
     const mapY=v=>(H-PB)-((v-y0)/(y1-y0+1e-9))*(H-PB-PT);
 
     // zero line
-    ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(255,255,255,0.12)';
+    ctx.strokeStyle='#222'; ctx.setLineDash([3,3]);
     ctx.beginPath(); ctx.moveTo(PL,mapY(0)); ctx.lineTo(W-PR,mapY(0)); ctx.stroke();
     ctx.setLineDash([]);
 
-    // decimate to pixel-width — no point drawing more points than pixels
-    const total=ys.length;
-    const pxWide=Math.max(1,Math.floor(W-PL-PR));
-    const step=Math.max(1,Math.floor(total/pxWide));
-    const xp=[],yp=[];
-    for (let k=0;k<total;k+=step){xp.push(mapX(k));yp.push(mapY(ys[k]));}
-
-    // gradient fill
-    if (xp.length>1) {
-      const g=ctx.createLinearGradient(0,PT,0,H-PB);
-      g.addColorStop(0,'rgba(124,58,237,0.25)'); g.addColorStop(1,'rgba(124,58,237,0.00)');
-      ctx.save(); ctx.fillStyle=g;
-      ctx.beginPath(); ctx.moveTo(xp[0],yp[0]);
-      for (let i=1;i<xp.length;i++) ctx.lineTo(xp[i],yp[i]);
-      ctx.lineTo(xp[xp.length-1],H-PB); ctx.lineTo(xp[0],H-PB);
-      ctx.closePath(); ctx.fill(); ctx.restore();
-    }
-
-    // signal line
-    ctx.strokeStyle='#a78bfa'; ctx.lineWidth=2.2;
-    ctx.shadowColor='rgba(167,139,250,0.35)'; ctx.shadowBlur=5;
+    // signal — plain line, no shadow, no gradient fill
+    const total=ys.length, step=Math.max(1,Math.floor(total/Math.max(1,W-PL-PR)));
+    ctx.strokeStyle='#a78bfa'; ctx.lineWidth=1.5;
     ctx.beginPath();
-    for (let i=0;i<xp.length;i++){if(!i)ctx.moveTo(xp[i],yp[i]);else ctx.lineTo(xp[i],yp[i]);}
-    ctx.stroke(); ctx.shadowBlur=0;
+    let first=true;
+    for (let k=0;k<total;k+=step) {
+      const x=mapX(k), y=mapY(ys[k]);
+      if (first){ctx.moveTo(x,y);first=false;} else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
 
     // Y ticks
-    ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.font='11px system-ui';
+    ctx.fillStyle='#444'; ctx.font='10px system-ui';
     ctx.textAlign='right'; ctx.textBaseline='middle';
-    for (let i=0;i<=5;i++){const v=y0+(y1-y0)*(i/5);ctx.fillText(v.toFixed(0),PL-4,mapY(v));}
+    for (let i=0;i<=4;i++) { const v=y0+(y1-y0)*(i/4); ctx.fillText(v.toFixed(0),PL-3,mapY(v)); }
 
     // axis labels
     ctx.save();
-    ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='11px system-ui';
-    ctx.textAlign='center'; ctx.textBaseline='alphabetic';
-    ctx.fillText('Sample index',(PL+W-PR)/2,H-4);
-    ctx.translate(13,(PT+H-PB)/2); ctx.rotate(-Math.PI/2);
-    ctx.textBaseline='top'; ctx.fillText('Pitch (°)',0,0);
+    ctx.fillStyle='#444'; ctx.font='10px system-ui'; ctx.textAlign='center';
+    ctx.textBaseline='alphabetic';
+    ctx.fillText('samples',(PL+W-PR)/2,H-4);
+    ctx.translate(12,(PT+H-PB)/2); ctx.rotate(-Math.PI/2);
+    ctx.textBaseline='top'; ctx.fillText('pitch°',0,0);
     ctx.restore();
   }
 
   /* ── Individual CSV ── */
   async saveCsv() {
-    if (!this.pitchBuf.length){log(`[${this.name}] Nothing to save.`);return;}
+    if (!this.pitchBuf.length) { log(`[${this.name}] Nothing to save.`); return; }
     const t0=this.timeBuf[0], si=this.sampleIdx-this.pitchBuf.length+1;
-    let csv='timestamp_s,t_rel_s,sample_index,pitch_deg,vel_ema\n';
-    for (let i=0;i<this.pitchBuf.length;i++)
-      csv+=`${this.timeBuf[i].toFixed(6)},${(this.timeBuf[i]-t0).toFixed(6)},${si+i},${this.pitchBuf[i].toFixed(6)},${(this.velBuf[i]??0).toFixed(6)}\n`;
+    const csv='timestamp_s,t_rel_s,sample_index,pitch_deg,vel_ema\n'
+      + this.pitchBuf.map((p,i)=>
+          `${this.timeBuf[i].toFixed(6)},${(this.timeBuf[i]-t0).toFixed(6)},${si+i},${p.toFixed(6)},${(this.velBuf[i]??0).toFixed(6)}`
+        ).join('\n');
     const blob=new Blob([csv],{type:'text/csv'});
-    const safe=(this.name).replace(/[^a-z0-9]/gi,'-');
+    const safe=this.name.replace(/[^a-z0-9]/gi,'-');
     const fn=`MAVEN_${safe}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
     if ('showSaveFilePicker' in window) {
       try {
         const h=await window.showSaveFilePicker({suggestedName:fn,types:[{description:'CSV',accept:{'text/csv':['.csv']}}]});
-        const w=await h.createWritable();await w.write(blob);await w.close();
-        log(`[${this.name}] Saved ${h.name||fn}`);return;
-      } catch(e){if(e?.name==='AbortError'){log(`[${this.name}] Save canceled.`);return;}}
+        const w=await h.createWritable(); await w.write(blob); await w.close();
+        log(`[${this.name}] Saved ${h.name||fn}`); return;
+      } catch(e) { if(e?.name==='AbortError'){log(`[${this.name}] Canceled.`);return;} }
     }
     const url=URL.createObjectURL(blob),a=document.createElement('a');
     a.href=url;a.download=fn;document.body.appendChild(a);a.click();
     document.body.removeChild(a);URL.revokeObjectURL(url);
-    log(`[${this.name}] Saved ${fn}`);
+    log(`[${this.name}] Downloaded ${fn}`);
   }
 }
 </script>
