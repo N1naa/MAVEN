@@ -594,6 +594,7 @@ class DeviceCard {
       this._onNotify = ev => this._notify(ev);
       this.bleTx.addEventListener('characteristicvaluechanged', this._onNotify);
       this.setStatus('Connected');
+      await this.send('ID?');
       log(`[${this.displayName}] Connected (BLE: "${this.bleName || 'unknown'}", ID: …${this.bleDevice.id.slice(-8)})`);
       updateSidebar();
     } catch(e) {
@@ -645,19 +646,8 @@ class DeviceCard {
     for (const line of s.split(/\n+/)) {
   
       if (line.startsWith('ID,')) {
-        const imuId = parseInt(line.split(',')[1], 10);
-        if (!isNaN(imuId)) {
-          this.displayName = `IMU-${imuId}`;
-          this.nameEl.textContent = this.displayName;
-          updateSidebar();
-  
-          // save it in localStorage too, using bleDevice.id
-          if (this.bleDevice?.id) {
-            setSavedName(this.bleDevice.id, this.displayName);
-          }
-  
-          log(`[${this.displayName}] Assigned from firmware ID`);
-        }
+        log(`[${this.displayName}] GOT ${line}`);
+      }
   
       } else if (line.startsWith('PITCH,')) {
         const p   = line.split(',');
