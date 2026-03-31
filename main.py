@@ -20,12 +20,13 @@ import time, struct
 time.sleep(3) # otherwise sometimes stuck when opening thonny
 
 # ---------- USER CONFIG ----------
-NAME     = "NameBLEIMU1"
+NAME     = "NameBLEIMU1" # change here
 PIN_NUM  = 3
 
 # BNO08x RVC
 IMU_UID  = 1
 
+# change here
 # ESP32-C3 - SEEED
 IMU_RX   = 6   # IMU TX -> ESP RX
 IMU_TX   = 6   # UART needs a TX pin even if not used
