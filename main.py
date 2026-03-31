@@ -77,6 +77,7 @@ _batt_last = time.ticks_ms()
 # ---------- BLE setup ----------
 ble = bt.BLE()
 ble.active(True)
+ble.config(mtu=128)
 
 _UART_UUID = bt.UUID("6E400001-B5A3-F393-E0A9-E50E24DCCA9E")
 _TX_UUID   = bt.UUID("6E400003-B5A3-F393-E0A9-E50E24DCCA9E")  # Notify
@@ -112,6 +113,8 @@ cal_deadline = 0
 cal_sum = 0.0
 cal_n = 0
 pitch_offset = 0.0
+_last_yaw = 0.0; _last_roll = 0.0
+_last_ax  = 0.0; _last_ay  = 0.0; _last_az = 0.0
 
 def _notify(msg: str):
     try:
@@ -296,8 +299,10 @@ def _parse_rvc_latest():
         rvc_buf = rvc_buf[i+19:]
         if (sum(frame[0:16]) & 0xFF) != frame[16]:
             continue
-        y_i, p_i, r_i, _, _, _ = struct.unpack('<hhhhhh', frame[1:13])
-        out = (y_i/100.0, p_i/100.0, r_i/100.0)
+        #y_i, p_i, r_i, _, _, _ = struct.unpack('<hhhhhh', frame[1:13])
+        #out = (y_i/100.0, p_i/100.0, r_i/100.0)
+        y_i, p_i, r_i, ax_i, ay_i, az_i = struct.unpack('<hhhhhh', frame[1:13]) # changé ça
+        out = (y_i/100.0, p_i/100.0, r_i/100.0, ax_i/100.0, ay_i/100.0, az_i/100.0) # changé ça
         imu_frames += 1
     return out
 
@@ -328,7 +333,9 @@ while True:
 
         v = _parse_rvc_latest()
         if v:
-            p_raw = _wrap180(v[1])
+            _last_yaw, p_raw_raw, _last_roll, _last_ax, _last_ay, _last_az = v
+            p_raw = _wrap180(p_raw_raw)
+            #p_raw = _wrap180(v[1]) # changé ça
             _update_calibration(p_raw)
             p = _wrap180(p_raw - pitch_offset)
 
@@ -339,8 +346,10 @@ while True:
 
     # --- transmit at PRINT_HZ with no deadband ---
     if (conn_handle is not None) and stream_enabled and (pitch_f is not None) and (time.ticks_diff(now, last_tx) >= TX_DT):
-        #_notify(f"PITCH,{pitch_f:.2f}")
-        _notify(f"PITCH,{pitch_f:.2f},{now}")
+        #_notify(f"PITCH,{pitch_f:.2f}") # changé ça
+        #_notify(f"PITCH,{pitch_f:.2f},{now}")
+        #_notify(f"PITCH,{pitch_f:.2f},{now},{_last_yaw:.2f},{_last_roll:.2f},{_last_ax:.2f},{_last_ay:.2f},{_last_az:.2f}")
+        _notify(f"PITCH,{pitch_f:.2f},{now},{_last_yaw:.1f},{_last_roll:.1f},{_last_ax:.1f},{_last_ay:.1f},{_last_az:.1f}")
         ble_msgs += 1
         last_tx = now
 
@@ -363,4 +372,3 @@ while True:
 
     # --- short sleep to support 100 Hz loop timing ---
     time.sleep_ms(1)
-
