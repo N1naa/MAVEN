@@ -92,7 +92,6 @@
   .card-pitch { margin-left:auto; font-size:1.3rem; font-weight:800; font-variant-numeric:tabular-nums; color:var(--accent2); }
   .card-pitch span { font-size:.75rem; font-weight:400; color:var(--muted); }
   .card-rate { font-size:.75rem; color:var(--muted); }
-  /* ++ live extra values row */
   .card-vals { display:flex; gap:12px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); font-variant-numeric:tabular-nums; }
   .card-vals b { color:var(--text); font-weight:600; }
   .btn-rename { font-size:.7rem; padding:1px 6px; color:var(--muted); border-color:var(--border); background:transparent; }
@@ -280,10 +279,10 @@ async function stopRecording() {
   let idx=1;
   for (const [,{name,samples}] of entries) {
     if (!samples.length){log(`[${name}] No samples.`);idx++;continue;}
-    // ++ added yaw,roll,ax,ay,az columns
-    const csv='device_tms_ms,t_rel_s,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema\n'
+    const t0_dev = samples[0].tms;
+    const csv='device_tms_ms,device_t_rel_s,t_rel_s,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema\n'
       +samples.map(s=>
-        `${s.tms},${s.t_rel.toFixed(6)},${s.pitch.toFixed(2)},${s.yaw.toFixed(2)},${s.roll.toFixed(2)},${s.ax.toFixed(2)},${s.ay.toFixed(2)},${s.az.toFixed(2)},${s.vel.toFixed(6)}`
+        `${s.tms},${((s.tms-t0_dev)/1000).toFixed(6)},${s.t_rel.toFixed(6)},${s.pitch.toFixed(2)},${s.yaw.toFixed(2)},${s.roll.toFixed(2)},${s.ax.toFixed(2)},${s.ay.toFixed(2)},${s.az.toFixed(2)},${s.vel.toFixed(6)}`
       ).join('\n');
     const blob=new Blob([csv],{type:'text/csv'});
     const safe=name.replace(/[^a-z0-9]/gi,'-');
@@ -334,9 +333,6 @@ document.getElementById('renameCancel').onclick=closeRenameModal;
 document.getElementById('renameModal').addEventListener('click',e=>{if(e.target===document.getElementById('renameModal'))closeRenameModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRenameModal();});
 
-/* ════════════════════════════════
-   DeviceCard — same as working version, minimal additions marked ++
-════════════════════════════════ */
 class DeviceCard {
   constructor() {
     this.bleName=''; this.displayName='';
@@ -346,7 +342,6 @@ class DeviceCard {
     this.plotSignal='pitch';
     this.BUF_MAX=1800; this.WIN=400;
     this.pitchBuf=[]; this.tmsBuf=[]; this.velBuf=[];
-    // ++ extra signal buffers
     this.yawBuf=[]; this.rollBuf=[]; this.axBuf=[]; this.ayBuf=[]; this.azBuf=[];
     this.sampleIdx=0; this._t0tms=null; this.lastPitch=null; this.DERIV_A=0.3;
     this._dprTs=0;
@@ -373,8 +368,8 @@ class DeviceCard {
         <div class="card-rate rate-el" style="margin-left:auto">— Hz</div>
         <div class="card-pitch"><span class="pitch-el">—</span> <span>°</span></div>
       </div>
-      <!-- ++ live extra values -->
       <div class="card-vals">
+        <span>Pitch <b class="pitch-val-el">—</b>°</span>
         <span>Yaw <b class="yaw-el">—</b>°</span>
         <span>Roll <b class="roll-el">—</b>°</span>
         <span>Ax <b class="ax-el">—</b></span>
@@ -428,7 +423,7 @@ class DeviceCard {
     this.selSignal.addEventListener('change',()=>{ this.plotSignal=this.selSignal.value; });
     this.canvas    =this.cardEl.querySelector('canvas');
     this.ctx       =this.canvas.getContext('2d');
-    // ++ extra display refs
+    this.pitchValEl=this.cardEl.querySelector('.pitch-val-el');
     this.yawEl =this.cardEl.querySelector('.yaw-el');
     this.rollEl=this.cardEl.querySelector('.roll-el');
     this.axEl  =this.cardEl.querySelector('.ax-el');
@@ -521,10 +516,8 @@ class DeviceCard {
         }
       } else if (line.startsWith('PITCH,')) {
         const p=line.split(',');
-        const v  =parseFloat(p[1]);   // pitch (same position as before)
+        const v  =parseFloat(p[1]);
         const tms=p[2]?parseInt(p[2],10):null;
-        // ++ read extra fields if present (new firmware format)
-        // new format: PITCH,pitch,tms,yaw,roll,ax,ay,az
         const yaw =p[3]?parseFloat(p[3]):0;
         const roll=p[4]?parseFloat(p[4]):0;
         const ax  =p[5]?parseFloat(p[5]):0;
@@ -533,7 +526,7 @@ class DeviceCard {
         if(!isNaN(v)&&!this.chkPause.checked){
           this.pitchEl.textContent  =v.toFixed(2);
           this.pitchMini.textContent=v.toFixed(1)+'°';
-          // ++ update live display
+          this.pitchValEl.textContent=v.toFixed(1);
           this.yawEl.textContent =yaw.toFixed(1);
           this.rollEl.textContent=roll.toFixed(1);
           this.axEl.textContent  =ax.toFixed(2);
@@ -548,13 +541,11 @@ class DeviceCard {
     }
   }
 
-  // ++ added yaw,roll,ax,ay,az parameters (default 0 for backward compat)
   _push(v, tms, yaw=0, roll=0, ax=0, ay=0, az=0) {
     if(tms!=null&&isFinite(tms)){if(this._t0tms==null)this._t0tms=tms;}
     else{tms=Math.round(performance.now());if(this._t0tms==null)this._t0tms=tms;}
 
     this.pitchBuf.push(v); this.tmsBuf.push(tms); this.sampleIdx++;
-    // ++ push extra signals
     this.yawBuf.push(yaw); this.rollBuf.push(roll);
     this.axBuf.push(ax);   this.ayBuf.push(ay); this.azBuf.push(az);
 
@@ -568,7 +559,6 @@ class DeviceCard {
 
     if(recActive&&this.bleDevice&&recData.has(this.bleDevice.id)){
       const t_rel=(performance.now()-recStartTime)/1000;
-      // ++ include extra fields in recording
       recData.get(this.bleDevice.id).samples.push({tms,t_rel,pitch:v,yaw,roll,ax,ay,az,vel:this.velBuf[this.velBuf.length-1]});
     }
 
@@ -587,7 +577,6 @@ class DeviceCard {
     if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;this.ctx.setTransform(dpr,0,0,dpr,0,0);}
   }
 
-  // unchanged from working version — plots pitch only
   _draw(){
     const dpr=devicePixelRatio||1,ctx=this.ctx;
     const W=this.canvas.width/dpr,H=this.canvas.height/dpr;
@@ -629,13 +618,14 @@ class DeviceCard {
   async saveCsv(){
     if(!this.pitchBuf.length){log(`[${this.displayName}] Nothing to save.`);return;}
     const t0=this._t0tms??this.tmsBuf[0];
+    const t0_dev=this.tmsBuf[0];
     const si=this.sampleIdx-this.pitchBuf.length+1;
-    // ++ added yaw,roll,ax,ay,az columns
-    const csv='device_tms_ms,t_rel_s,sample_index,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema\n'
+    const csv='device_tms_ms,device_t_rel_s,t_rel_s,sample_index,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema\n'
       +this.pitchBuf.map((p,i)=>{
         const tms=this.tmsBuf[i];
         const t_rel=((tms-t0)/1000).toFixed(6);
-        return `${tms},${t_rel},${si+i},${p.toFixed(2)},${(this.yawBuf[i]||0).toFixed(2)},${(this.rollBuf[i]||0).toFixed(2)},${(this.axBuf[i]||0).toFixed(2)},${(this.ayBuf[i]||0).toFixed(2)},${(this.azBuf[i]||0).toFixed(2)},${(this.velBuf[i]??0).toFixed(6)}`;
+        const dev_t_rel=((tms-t0_dev)/1000).toFixed(6);
+        return `${tms},${dev_t_rel},${t_rel},${si+i},${p.toFixed(2)},${(this.yawBuf[i]||0).toFixed(2)},${(this.rollBuf[i]||0).toFixed(2)},${(this.axBuf[i]||0).toFixed(2)},${(this.ayBuf[i]||0).toFixed(2)},${(this.azBuf[i]||0).toFixed(2)},${(this.velBuf[i]??0).toFixed(6)}`;
       }).join('\n');
     const blob=new Blob([csv],{type:'text/csv'});
     const safe=this.displayName.replace(/[^a-z0-9]/gi,'-');
