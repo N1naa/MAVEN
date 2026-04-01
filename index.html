@@ -280,9 +280,10 @@ async function stopRecording() {
   for (const [,{name,samples}] of entries) {
     if (!samples.length){log(`[${name}] No samples.`);idx++;continue;}
     const t0_dev = samples[0].tms;
-    const csv='device_tms_ms,device_t_rel_s,t_rel_s,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema\n'
+    const t0_ble = samples[0].ble_ts;
+    const csv='device_tms_ms,device_t_rel_s,ble_t_rel_s,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema\n'
       +samples.map(s=>
-        `${s.tms},${((s.tms-t0_dev)/1000).toFixed(6)},${s.t_rel.toFixed(6)},${s.pitch.toFixed(2)},${s.yaw.toFixed(2)},${s.roll.toFixed(2)},${s.ax.toFixed(2)},${s.ay.toFixed(2)},${s.az.toFixed(2)},${s.vel.toFixed(6)}`
+        `${s.tms},${((s.tms-t0_dev)/1000).toFixed(6)},${((s.ble_ts-t0_ble)/1000).toFixed(6)},${s.pitch.toFixed(2)},${s.yaw.toFixed(2)},${s.roll.toFixed(2)},${s.ax.toFixed(2)},${s.ay.toFixed(2)},${s.az.toFixed(2)},${s.vel.toFixed(6)}`
       ).join('\n');
     const blob=new Blob([csv],{type:'text/csv'});
     const safe=name.replace(/[^a-z0-9]/gi,'-');
@@ -341,7 +342,7 @@ class DeviceCard {
 
     this.plotSignal='pitch';
     this.BUF_MAX=1800; this.WIN=400;
-    this.pitchBuf=[]; this.tmsBuf=[]; this.velBuf=[];
+    this.pitchBuf=[]; this.tmsBuf=[]; this.velBuf=[]; this.bleTsBuf=[];
     this.yawBuf=[]; this.rollBuf=[]; this.axBuf=[]; this.ayBuf=[]; this.azBuf=[];
     this.sampleIdx=0; this._t0tms=null; this.lastPitch=null; this.DERIV_A=0.3;
     this._dprTs=0;
@@ -542,10 +543,11 @@ class DeviceCard {
   }
 
   _push(v, tms, yaw=0, roll=0, ax=0, ay=0, az=0) {
+    const bleTs=performance.now();
     if(tms!=null&&isFinite(tms)){if(this._t0tms==null)this._t0tms=tms;}
-    else{tms=Math.round(performance.now());if(this._t0tms==null)this._t0tms=tms;}
+    else{tms=Math.round(bleTs);if(this._t0tms==null)this._t0tms=tms;}
 
-    this.pitchBuf.push(v); this.tmsBuf.push(tms); this.sampleIdx++;
+    this.pitchBuf.push(v); this.tmsBuf.push(tms); this.bleTsBuf.push(bleTs); this.sampleIdx++;
     this.yawBuf.push(yaw); this.rollBuf.push(roll);
     this.axBuf.push(ax);   this.ayBuf.push(ay); this.azBuf.push(az);
 
@@ -558,13 +560,12 @@ class DeviceCard {
     this.lastPitch=v;
 
     if(recActive&&this.bleDevice&&recData.has(this.bleDevice.id)){
-      const t_rel=(performance.now()-recStartTime)/1000;
-      recData.get(this.bleDevice.id).samples.push({tms,t_rel,pitch:v,yaw,roll,ax,ay,az,vel:this.velBuf[this.velBuf.length-1]});
+      recData.get(this.bleDevice.id).samples.push({tms,ble_ts:bleTs,pitch:v,yaw,roll,ax,ay,az,vel:this.velBuf[this.velBuf.length-1]});
     }
 
     if(this.pitchBuf.length>this.BUF_MAX){
       const drop=Math.max(this.pitchBuf.length-this.BUF_MAX,100);
-      this.pitchBuf.splice(0,drop); this.tmsBuf.splice(0,drop); this.velBuf.splice(0,drop);
+      this.pitchBuf.splice(0,drop); this.tmsBuf.splice(0,drop); this.velBuf.splice(0,drop); this.bleTsBuf.splice(0,drop);
       this.yawBuf.splice(0,drop);   this.rollBuf.splice(0,drop);
       this.axBuf.splice(0,drop);    this.ayBuf.splice(0,drop);  this.azBuf.splice(0,drop);
     }
@@ -617,15 +618,15 @@ class DeviceCard {
 
   async saveCsv(){
     if(!this.pitchBuf.length){log(`[${this.displayName}] Nothing to save.`);return;}
-    const t0=this._t0tms??this.tmsBuf[0];
     const t0_dev=this.tmsBuf[0];
+    const t0_ble=this.bleTsBuf[0];
     const si=this.sampleIdx-this.pitchBuf.length+1;
-    const csv='device_tms_ms,device_t_rel_s,t_rel_s,sample_index,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema\n'
+    const csv='device_tms_ms,device_t_rel_s,ble_t_rel_s,sample_index,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema\n'
       +this.pitchBuf.map((p,i)=>{
         const tms=this.tmsBuf[i];
-        const t_rel=((tms-t0)/1000).toFixed(6);
         const dev_t_rel=((tms-t0_dev)/1000).toFixed(6);
-        return `${tms},${dev_t_rel},${t_rel},${si+i},${p.toFixed(2)},${(this.yawBuf[i]||0).toFixed(2)},${(this.rollBuf[i]||0).toFixed(2)},${(this.axBuf[i]||0).toFixed(2)},${(this.ayBuf[i]||0).toFixed(2)},${(this.azBuf[i]||0).toFixed(2)},${(this.velBuf[i]??0).toFixed(6)}`;
+        const ble_t_rel=((this.bleTsBuf[i]-t0_ble)/1000).toFixed(6);
+        return `${tms},${dev_t_rel},${ble_t_rel},${si+i},${p.toFixed(2)},${(this.yawBuf[i]||0).toFixed(2)},${(this.rollBuf[i]||0).toFixed(2)},${(this.axBuf[i]||0).toFixed(2)},${(this.ayBuf[i]||0).toFixed(2)},${(this.azBuf[i]||0).toFixed(2)},${(this.velBuf[i]??0).toFixed(6)}`;
       }).join('\n');
     const blob=new Blob([csv],{type:'text/csv'});
     const safe=this.displayName.replace(/[^a-z0-9]/gi,'-');
