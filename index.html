@@ -55,6 +55,8 @@
   .trig-lamp.on { background:var(--cyan); box-shadow:0 0 12px #22d3ee88; border-color:var(--cyan); }
   .trig-row { display:flex; align-items:center; gap:8px; margin-top:6px; font-size:.82rem; color:var(--muted); }
   .trig-count { font-variant-numeric:tabular-nums; font-weight:700; color:var(--text); }
+  .trig-scope { margin-top:8px; height:52px; background:var(--bg); border:1px solid var(--border); border-radius:5px; overflow:hidden; }
+  .trig-scope canvas { width:100%; height:100%; display:block; }
 
   /* per-card trigger badge */
   .trig-badge { display:inline-flex; align-items:center; padding:1px 7px; border-radius:999px;
@@ -155,6 +157,7 @@
       <div class="trig-lamp" id="trigLamp"></div>
       <span>count: <span class="trig-count" id="trigCount">0</span></span>
     </div>
+    <div class="trig-scope"><canvas id="trigScope"></canvas></div>
   </div>
 
   <div class="s-panel rec-panel">
@@ -236,9 +239,15 @@ function classify(name, pitch, yaw, roll, ax, ay, az, history) {
 
 // ── trigger UI ────────────────────────────────────────────────────────────
 let trigTotal = 0;
-const trigLamp  = document.getElementById('trigLamp');
+const trigLamp    = document.getElementById('trigLamp');
 const trigCountEl = document.getElementById('trigCount');
-let _trigTimer  = null;
+const trigScope   = document.getElementById('trigScope');
+const trigCtx     = trigScope.getContext('2d');
+let _trigTimer    = null;
+
+// rolling history: {t: performance.now(), v: 0|1}
+const trigHistory = [];
+const SCOPE_WIN_MS = 8000;   // 8 seconds visible
 
 function _fireTrigger() {
   trigTotal++;
@@ -247,6 +256,100 @@ function _fireTrigger() {
   clearTimeout(_trigTimer);
   _trigTimer = setTimeout(() => trigLamp.classList.remove('on'), 150);
 }
+
+function _pushTrigHistory(v) {
+  trigHistory.push({t: performance.now(), v});
+  // prune old samples
+  const cutoff = performance.now() - SCOPE_WIN_MS - 500;
+  while (trigHistory.length && trigHistory[0].t < cutoff) trigHistory.shift();
+}
+
+function _drawScope() {
+  // resize to physical pixels
+  const dpr = devicePixelRatio || 1;
+  const rect = trigScope.getBoundingClientRect();
+  const W = Math.round(rect.width * dpr);
+  const H = Math.round(rect.height * dpr);
+  if (trigScope.width !== W || trigScope.height !== H) {
+    trigScope.width = W; trigScope.height = H;
+  }
+
+  const w = W / dpr, h = H / dpr;
+  trigCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  trigCtx.clearRect(0, 0, w, h);
+
+  const now   = performance.now();
+  const t_end = now;
+  const t_beg = now - SCOPE_WIN_MS;
+
+  // background grid lines (every 2s)
+  trigCtx.strokeStyle = '#1e1e1e';
+  trigCtx.lineWidth   = 1;
+  for (let tick = 2000; tick < SCOPE_WIN_MS; tick += 2000) {
+    const x = ((SCOPE_WIN_MS - tick) / SCOPE_WIN_MS) * w;
+    trigCtx.beginPath(); trigCtx.moveTo(x, 0); trigCtx.lineTo(x, h); trigCtx.stroke();
+  }
+
+  // baseline
+  const yLow  = h - 4;
+  const yHigh = 6;
+  trigCtx.strokeStyle = '#2a2a2a';
+  trigCtx.lineWidth   = 1;
+  trigCtx.beginPath(); trigCtx.moveTo(0, yLow); trigCtx.lineTo(w, yLow); trigCtx.stroke();
+
+  if (!trigHistory.length) return;
+
+  // build step waveform
+  const toX = t => ((t - t_beg) / SCOPE_WIN_MS) * w;
+
+  trigCtx.strokeStyle = '#22d3ee';
+  trigCtx.lineWidth   = 1.5;
+  trigCtx.beginPath();
+
+  let started = false;
+  let curV    = 0;
+
+  for (let i = 0; i < trigHistory.length; i++) {
+    const {t, v} = trigHistory[i];
+    const x = toX(t);
+    if (x < 0) { curV = v; continue; }
+
+    if (!started) {
+      trigCtx.moveTo(Math.max(0, x), curV ? yHigh : yLow);
+      started = true;
+    }
+
+    // draw horizontal segment then vertical step
+    trigCtx.lineTo(x, curV ? yHigh : yLow);
+    if (v !== curV) {
+      trigCtx.lineTo(x, v ? yHigh : yLow);
+      curV = v;
+    }
+  }
+  // extend to right edge
+  trigCtx.lineTo(w, curV ? yHigh : yLow);
+  trigCtx.stroke();
+
+  // fill under triggers
+  trigCtx.fillStyle = '#22d3ee22';
+  trigCtx.beginPath();
+  curV = 0; started = false;
+  for (let i = 0; i < trigHistory.length; i++) {
+    const {t, v} = trigHistory[i];
+    const x = Math.max(0, toX(t));
+    if (!started) { trigCtx.moveTo(x, yLow); started = true; }
+    trigCtx.lineTo(x, curV ? yHigh : yLow);
+    if (v !== curV) { trigCtx.lineTo(x, v ? yHigh : yLow); curV = v; }
+  }
+  trigCtx.lineTo(w, curV ? yHigh : yLow);
+  trigCtx.lineTo(w, yLow); trigCtx.closePath(); trigCtx.fill();
+}
+
+// redraw scope on every animation frame
+requestAnimationFrame(function scopeLoop() {
+  requestAnimationFrame(scopeLoop);
+  _drawScope();
+});
 
 // ── rest of original code (unchanged) ─────────────────────────────────────
 const NUS_SERVICE   = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
@@ -620,6 +723,7 @@ class DeviceCard {
           this.trigEl.classList.toggle('on', !!trig);
           this.cardEl.classList.toggle('triggered', !!trig);
           if(trig) _fireTrigger();
+          _pushTrigHistory(trig ? 1 : 0);
           // ─────────────────────────────────────────────────────────────────
 
           this._push(v, tms, yaw, roll, ax, ay, az, trig);
