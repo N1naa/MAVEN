@@ -5,140 +5,115 @@
 <title>MAVEN</title>
 <style>
   :root {
-    --bg:      #0a0a0a;
-    --bg2:     #111111;
-    --bg3:     #1a1a1a;
-    --border:  #2a2a2a;
-    --accent:  #7c3aed;
-    --accent2: #a78bfa;
-    --text:    #ffffff;
-    --muted:   #6b7280;
-    --green:   #22c55e;
-    --orange:  #f97316;
-    --red:     #ef4444;
-    --cyan:    #22d3ee;
+    --bg:#0a0a0a;--bg2:#111111;--bg3:#1a1a1a;--border:#2a2a2a;
+    --accent:#7c3aed;--accent2:#a78bfa;--text:#ffffff;--muted:#6b7280;
+    --green:#22c55e;--orange:#f97316;--red:#ef4444;--cyan:#22d3ee;--lime:#a3e635;
   }
-  * { box-sizing: border-box; margin:0; padding:0; }
-  body {
-    font-family: system-ui, -apple-system, sans-serif;
-    font-size: 13px;
-    background: var(--bg);
-    color: var(--text);
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    min-height: 100vh;
-  }
-  aside {
-    background: var(--bg2);
-    border-right: 1px solid var(--border);
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-  }
-  .brand { font-weight:800; font-size:1.1rem; color:var(--accent2); padding:2px 0 8px; border-bottom:1px solid var(--border); }
-  .s-panel { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:8px 10px; }
-  .s-panel .t { font-weight:700; font-size:.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:7px; }
-  .s-panel.rec-panel .t { color:var(--orange); }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:system-ui,-apple-system,sans-serif;font-size:13px;background:var(--bg);color:var(--text);display:grid;grid-template-columns:220px 1fr;min-height:100vh;}
+  aside{background:var(--bg2);border-right:1px solid var(--border);padding:12px;display:flex;flex-direction:column;gap:10px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+  .brand{font-weight:800;font-size:1.1rem;color:var(--accent2);padding:2px 0 8px;border-bottom:1px solid var(--border);}
+  .s-panel{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;}
+  .s-panel .t{font-weight:700;font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px;}
+  .s-panel.rec-panel .t{color:var(--orange);}
+  .s-panel.trig-panel .t{color:var(--cyan);}
+  .trig-lamp{width:26px;height:26px;border-radius:50%;background:#1a1a1a;border:2px solid #333;flex-shrink:0;transition:background .05s,box-shadow .05s;}
+  .trig-lamp.on{background:var(--cyan);box-shadow:0 0 12px #22d3ee88;border-color:var(--cyan);}
+  .trig-row{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:.82rem;color:var(--muted);}
+  .trig-count{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text);}
+  .trig-scope{margin-top:8px;height:52px;background:var(--bg);border:1px solid var(--border);border-radius:5px;overflow:hidden;}
+  .trig-scope canvas{width:100%;height:100%;display:block;}
+  .trig-badge{display:inline-flex;align-items:center;padding:1px 7px;border-radius:999px;font-size:.72rem;font-weight:700;background:var(--bg3);color:var(--muted);border:1px solid var(--border);transition:all .05s;}
+  .trig-badge.on{background:#083344;color:var(--cyan);border-color:#0e7490;}
+  .dev-list{display:flex;flex-direction:column;gap:4px;margin-top:4px;}
+  .dev-list-item{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:5px;background:var(--bg);font-size:.82rem;color:var(--muted);}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0;}
+  .dot.on{background:var(--green);}
+  .dot.rec{background:var(--orange);animation:blink 1s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+  .rec-row{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:.82rem;color:var(--muted);}
+  .rec-timer{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text);}
+  .rec-note{font-size:.75rem;color:var(--muted);margin-top:5px;line-height:1.4;}
+  .folder-name{font-size:.78rem;color:var(--accent2);margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .log-panel{margin-top:auto;}
+  .console{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px;height:140px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;font-size:.75rem;color:var(--muted);margin-top:6px;font-family:monospace;}
+  button{padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font:inherit;font-size:.82rem;cursor:pointer;transition:background .1s;}
+  button:hover{background:#222;}button:active{background:#2a2a2a;}
+  button:disabled{opacity:.4;cursor:not-allowed;}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .btn-primary:hover{background:#6d28d9;}
+  .btn-success{background:#15803d;border-color:#15803d;color:#fff;}
+  .btn-success:hover{background:#166534;}
+  .btn-danger{background:#b91c1c;border-color:#b91c1c;color:#fff;}
+  .btn-danger:hover{background:#991b1b;}
+  .btn-ghost{background:transparent;border-color:transparent;color:var(--muted);}
+  .btn-ghost:hover{color:var(--red);}
+  .btn-row{display:flex;gap:5px;}
+  .btn-row button{flex:1;}
+  input[type=number],input[type=text]{background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font:inherit;font-size:.82rem;padding:3px 6px;}
+  .pill{display:inline-block;padding:1px 7px;border-radius:999px;font-size:.72rem;font-weight:600;background:var(--bg3);color:var(--muted);border:1px solid var(--border);}
+  .pill.Connected{background:#14532d;color:var(--green);border-color:#166534;}
+  .pill.Connecting,.pill.Requesting{background:#431407;color:var(--orange);border-color:#9a3412;}
+  .pill.Disconnected{background:var(--bg3);color:var(--muted);}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:50;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;width:340px;display:flex;flex-direction:column;gap:12px;}
+  .modal h3{font-size:.95rem;font-weight:700;}
+  .modal .hint{font-size:.78rem;color:var(--muted);line-height:1.5;}
+  .modal input{width:100%;padding:6px 8px;font-size:.9rem;}
+  .modal-btns{display:flex;gap:8px;justify-content:flex-end;}
+  main{padding:16px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;}
+  #emptyState{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:8px;color:var(--muted);text-align:center;}
+  #emptyState strong{color:var(--text);font-size:1rem;}
+  .device-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:10px;}
+  .device-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
+  .device-card.recording{border-color:var(--orange);}
+  .device-card.triggered{border-color:var(--cyan);}
+  .card-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .card-name{font-weight:700;font-size:.9rem;}
+  .card-pitch{margin-left:auto;font-size:1.3rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent2);}
+  .card-pitch span{font-size:.75rem;font-weight:400;color:var(--muted);}
+  .card-rate{font-size:.75rem;color:var(--muted);}
+  .card-vals{display:flex;gap:12px;flex-wrap:wrap;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .card-vals b{color:var(--text);font-weight:600;}
+  .btn-rename{font-size:.7rem;padding:1px 6px;color:var(--muted);border-color:var(--border);background:transparent;}
+  .btn-rename:hover{color:var(--accent2);border-color:var(--accent2);}
+  .plot-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;font-size:.8rem;color:var(--muted);padding:2px 0;}
+  .plot-toggle:hover{color:var(--text);}
+  .plot-caret{font-size:.7rem;transition:transform .15s;display:inline-block;}
+  .plot-toggle.open .plot-caret{transform:rotate(90deg);}
+  .plot-wrap{display:none;}
+  .plot-wrap.open{display:block;}
+  canvas{width:100%;height:200px;display:block;background:var(--bg);border:1px solid var(--border);border-radius:6px;}
+  .plot-opts{display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--muted);flex-wrap:wrap;margin-top:4px;}
+  .plot-opts label{display:flex;align-items:center;gap:3px;cursor:pointer;}
+  .plot-opts input[type=number]{width:48px;}
+  .card-controls{display:flex;gap:5px;flex-wrap:wrap;}
+  .card-controls button{font-size:.78rem;padding:4px 8px;}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+  .card-foot button{font-size:.75rem;padding:3px 8px;}
+  .rec-badge{display:none;align-items:center;gap:4px;font-size:.72rem;color:var(--orange);font-weight:700;}
+  .rec-badge.on{display:flex;}
 
-  /* ── trigger panel ── */
-  .s-panel.trig-panel .t { color: var(--cyan); }
-  .trig-lamp {
-    width:26px; height:26px; border-radius:50%;
-    background:#1a1a1a; border:2px solid #333;
-    flex-shrink:0; transition:background .05s, box-shadow .05s;
-  }
-  .trig-lamp.on { background:var(--cyan); box-shadow:0 0 12px #22d3ee88; border-color:var(--cyan); }
-  .trig-row { display:flex; align-items:center; gap:8px; margin-top:6px; font-size:.82rem; color:var(--muted); }
-  .trig-count { font-variant-numeric:tabular-nums; font-weight:700; color:var(--text); }
-  .trig-scope { margin-top:8px; height:52px; background:var(--bg); border:1px solid var(--border); border-radius:5px; overflow:hidden; }
-  .trig-scope canvas { width:100%; height:100%; display:block; }
+  /* ── Features panel ── */
+  #featPanel{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px;display:none;}
+  #featPanel .fp-title{font-weight:700;font-size:.8rem;color:var(--lime);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  #featPanel .fp-title span{font-weight:400;font-size:.72rem;color:var(--muted);text-transform:none;letter-spacing:0;}
+  .feat-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .feat-group{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 10px;}
+  .feat-group-title{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+  .feat-row{display:flex;justify-content:space-between;align-items:center;padding:2px 0;border-bottom:1px solid #1e1e1e;font-size:.82rem;}
+  .feat-row:last-child{border-bottom:none;}
+  .feat-label{color:var(--muted);}
+  .feat-val{font-variant-numeric:tabular-nums;font-weight:700;color:var(--lime);min-width:70px;text-align:right;}
+  .feat-val.neg{color:#f87171;}
+  .feat-val.zero{color:var(--muted);}
+  /* sparkline for v_elev */
+  .feat-spark{margin-top:8px;height:60px;background:var(--bg);border:1px solid var(--border);border-radius:5px;overflow:hidden;position:relative;}
+  .feat-spark canvas{width:100%;height:100%;display:block;}
+  .feat-spark-label{position:absolute;top:3px;left:6px;font-size:.68rem;color:var(--muted);}
 
-  /* per-card trigger badge */
-  .trig-badge { display:inline-flex; align-items:center; padding:1px 7px; border-radius:999px;
-    font-size:.72rem; font-weight:700; background:var(--bg3); color:var(--muted);
-    border:1px solid var(--border); transition:all .05s; }
-  .trig-badge.on { background:#083344; color:var(--cyan); border-color:#0e7490; }
-
-  .dev-list { display:flex; flex-direction:column; gap:4px; margin-top:4px; }
-  .dev-list-item { display:flex; align-items:center; gap:7px; padding:4px 6px; border-radius:5px; background:var(--bg); font-size:.82rem; color:var(--muted); }
-  .dot { width:7px; height:7px; border-radius:50%; background:var(--border); flex-shrink:0; }
-  .dot.on  { background:var(--green); }
-  .dot.rec { background:var(--orange); animation:blink 1s ease-in-out infinite; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-  .rec-row { display:flex; align-items:center; gap:6px; margin-top:6px; font-size:.82rem; color:var(--muted); }
-  .rec-timer { font-variant-numeric:tabular-nums; font-weight:700; color:var(--text); }
-  .rec-note { font-size:.75rem; color:var(--muted); margin-top:5px; line-height:1.4; }
-  .folder-name { font-size:.78rem; color:var(--accent2); margin-bottom:5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .log-panel { margin-top:auto; }
-  .console { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:6px; height:140px; overflow-y:auto; white-space:pre-wrap; word-break:break-word; font-size:.75rem; color:var(--muted); margin-top:6px; font-family:monospace; }
-  button { padding:5px 10px; border-radius:6px; border:1px solid var(--border); background:var(--bg3); color:var(--text); font:inherit; font-size:.82rem; cursor:pointer; transition:background .1s; }
-  button:hover   { background:#222; }
-  button:active  { background:#2a2a2a; }
-  button:disabled { opacity:.4; cursor:not-allowed; }
-  .btn-primary { background:var(--accent); border-color:var(--accent); color:#fff; }
-  .btn-primary:hover { background:#6d28d9; }
-  .btn-success { background:#15803d; border-color:#15803d; color:#fff; }
-  .btn-success:hover { background:#166534; }
-  .btn-danger  { background:#b91c1c; border-color:#b91c1c; color:#fff; }
-  .btn-danger:hover  { background:#991b1b; }
-  .btn-ghost   { background:transparent; border-color:transparent; color:var(--muted); }
-  .btn-ghost:hover   { color:var(--red); }
-  .btn-row { display:flex; gap:5px; }
-  .btn-row button { flex:1; }
-  input[type=number], input[type=text] { background:var(--bg); border:1px solid var(--border); border-radius:5px; color:var(--text); font:inherit; font-size:.82rem; padding:3px 6px; }
-  .pill { display:inline-block; padding:1px 7px; border-radius:999px; font-size:.72rem; font-weight:600; background:var(--bg3); color:var(--muted); border:1px solid var(--border); }
-  .pill.Connected   { background:#14532d; color:var(--green); border-color:#166534; }
-  .pill.Connecting,.pill.Requesting { background:#431407; color:var(--orange); border-color:#9a3412; }
-  .pill.Disconnected{ background:var(--bg3); color:var(--muted); }
-  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:none; align-items:center; justify-content:center; z-index:50; }
-  .modal-overlay.open { display:flex; }
-  .modal { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; width:340px; display:flex; flex-direction:column; gap:12px; }
-  .modal h3 { font-size:.95rem; font-weight:700; }
-  .modal .hint { font-size:.78rem; color:var(--muted); line-height:1.5; }
-  .modal input { width:100%; padding:6px 8px; font-size:.9rem; }
-  .modal-btns { display:flex; gap:8px; justify-content:flex-end; }
-  main { padding:16px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; }
-  #emptyState { display:flex; flex-direction:column; align-items:center; justify-content:center; height:60vh; gap:8px; color:var(--muted); text-align:center; }
-  #emptyState strong { color:var(--text); font-size:1rem; }
-  .device-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(420px,1fr)); gap:10px; }
-  .device-card { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:10px 12px; display:flex; flex-direction:column; gap:8px; }
-  .device-card.recording { border-color:var(--orange); }
-  .device-card.triggered { border-color:var(--cyan); }
-  .card-head { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-  .card-name { font-weight:700; font-size:.9rem; }
-  .card-pitch { margin-left:auto; font-size:1.3rem; font-weight:800; font-variant-numeric:tabular-nums; color:var(--accent2); }
-  .card-pitch span { font-size:.75rem; font-weight:400; color:var(--muted); }
-  .card-rate { font-size:.75rem; color:var(--muted); }
-  .card-vals { display:flex; gap:12px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); font-variant-numeric:tabular-nums; }
-  .card-vals b { color:var(--text); font-weight:600; }
-  .btn-rename { font-size:.7rem; padding:1px 6px; color:var(--muted); border-color:var(--border); background:transparent; }
-  .btn-rename:hover { color:var(--accent2); border-color:var(--accent2); }
-  .plot-toggle { display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none; font-size:.8rem; color:var(--muted); padding:2px 0; }
-  .plot-toggle:hover { color:var(--text); }
-  .plot-caret { font-size:.7rem; transition:transform .15s; display:inline-block; }
-  .plot-toggle.open .plot-caret { transform:rotate(90deg); }
-  .plot-wrap { display:none; }
-  .plot-wrap.open { display:block; }
-  canvas { width:100%; height:200px; display:block; background:var(--bg); border:1px solid var(--border); border-radius:6px; }
-  .plot-opts { display:flex; align-items:center; gap:10px; font-size:.78rem; color:var(--muted); flex-wrap:wrap; margin-top:4px; }
-  .plot-opts label { display:flex; align-items:center; gap:3px; cursor:pointer; }
-  .plot-opts input[type=number] { width:48px; }
-  .card-controls { display:flex; gap:5px; flex-wrap:wrap; }
-  .card-controls button { font-size:.78rem; padding:4px 8px; }
-  .card-foot { display:flex; align-items:center; justify-content:space-between; gap:6px; }
-  .card-foot button { font-size:.75rem; padding:3px 8px; }
-  .rec-badge { display:none; align-items:center; gap:4px; font-size:.72rem; color:var(--orange); font-weight:700; }
-  .rec-badge.on { display:flex; }
-  @media (max-width:640px) {
-    body { grid-template-columns:1fr; }
-    aside { position:static; height:auto; }
-    .device-grid { grid-template-columns:1fr; }
-  }
+  @media(max-width:640px){body{grid-template-columns:1fr;}aside{position:static;height:auto;}.device-grid{grid-template-columns:1fr;}.feat-cols{grid-template-columns:1fr;}}
 </style>
 <body>
 
@@ -149,8 +124,6 @@
     <button id="btnAdd" class="btn-primary" style="width:100%">＋ Add Device</button>
     <div class="dev-list" id="devList"></div>
   </div>
-
-  <!-- ── TRIGGER PANEL (new) ── -->
   <div class="s-panel trig-panel">
     <div class="t">Trigger</div>
     <div class="trig-row">
@@ -159,14 +132,13 @@
     </div>
     <div class="trig-scope"><canvas id="trigScope"></canvas></div>
   </div>
-
   <div class="s-panel rec-panel">
     <div class="t">Combined Recording</div>
     <button id="btnFolder" style="width:100%;margin-bottom:5px">📁 Choose Folder</button>
     <div class="folder-name" id="folderName">No folder selected</div>
     <div class="btn-row">
       <button id="btnRecStart" class="btn-success">▶ Start</button>
-      <button id="btnRecStop"  class="btn-danger" disabled>⏹ Stop</button>
+      <button id="btnRecStop" class="btn-danger" disabled>⏹ Stop</button>
     </div>
     <div class="rec-row">
       <div class="dot" id="recDot"></div>
@@ -188,7 +160,43 @@
     <strong>No devices connected</strong>
     <div>Click <strong>＋ Add Device</strong> to pair an IMU via BLE.</div>
   </div>
+
+  <!-- IMU cards -->
   <div class="device-grid" id="deviceGrid"></div>
+
+  <!-- Features panel — shown when both ARM and TORSO are streaming -->
+  <div id="featPanel">
+    <div class="fp-title">
+      Features (Arnold et al. equivalent)
+      <span id="featStatus">— waiting for both IMUs</span>
+    </div>
+    <div class="feat-cols">
+      <!-- Relative angles -->
+      <div class="feat-group">
+        <div class="feat-group-title">Relative Angles</div>
+        <div class="feat-row"><span class="feat-label">elev (shoulder up/down)</span><span class="feat-val" id="fRelElev">—°</span></div>
+        <div class="feat-row"><span class="feat-label">horiz (fwd/back)</span><span class="feat-val" id="fRelHoriz">—°</span></div>
+        <div class="feat-row"><span class="feat-label">extn (rotation)</span><span class="feat-val" id="fRelExtn">—°</span></div>
+      </div>
+      <!-- Velocities -->
+      <div class="feat-group">
+        <div class="feat-group-title">Velocities (model input)</div>
+        <div class="feat-row"><span class="feat-label">v_elev  [arm.v_elev]</span><span class="feat-val" id="fVElev">—°/s</span></div>
+        <div class="feat-row"><span class="feat-label">v_horiz [arm.v_flex]</span><span class="feat-val" id="fVHoriz">—°/s</span></div>
+        <div class="feat-row"><span class="feat-label">v_extn  [arm.v_extn]</span><span class="feat-val" id="fVExtn">—°/s</span></div>
+      </div>
+    </div>
+    <!-- v_elev sparkline — most important signal -->
+    <div class="feat-spark" style="margin-top:10px">
+      <canvas id="sparkCanvas"></canvas>
+      <div class="feat-spark-label">v_elev  °/s  (6 s)</div>
+    </div>
+    <!-- featWindow dump -->
+    <div style="margin-top:8px;font-size:.72rem;color:var(--muted);">
+      featWindow (6×6) — <button id="btnLogWindow" style="font-size:.7rem;padding:1px 6px">log to console</button>
+      <pre id="featWindowDump" style="margin-top:4px;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:6px;font-size:.7rem;color:#666;overflow-x:auto;max-height:80px;"></pre>
+    </div>
+  </div>
 </main>
 
 <div class="modal-overlay" id="renameModal">
@@ -196,9 +204,7 @@
     <h3>Rename Device</h3>
     <div class="hint" id="renameHint"></div>
     <input type="text" id="renameInput" placeholder="e.g. Left Knee, IMU-3…" maxlength="32"/>
-    <div class="hint" style="color:var(--accent2)">
-      This name is saved permanently in your browser and will be remembered next time this device connects.
-    </div>
+    <div class="hint" style="color:var(--accent2)">Saved permanently in your browser.</div>
     <div class="modal-btns">
       <button id="renameClear" class="btn-ghost">Clear saved name</button>
       <button id="renameCancel">Cancel</button>
@@ -208,34 +214,198 @@
 </div>
 
 <script>
+// ════════════════════════════════════════════════════════════════════════════
+//  ★★★  CONFIG — set your IMU names here  ★★★
+// ════════════════════════════════════════════════════════════════════════════
+const ARM_NAME   = 'IMU-2';   // ← name shown in MAVEN log after connecting
+const TORSO_NAME = 'IMU-7';   // ← change to match yours
+
+// ════════════════════════════════════════════════════════════════════════════
+//  FEATURE COMPUTATION
+// ════════════════════════════════════════════════════════════════════════════
+const _latest = {};   // displayName → {pitch, yaw, roll, ax, ay, az, tms}
+
+const _velState = {
+  prev_elev: 0, prev_horiz: 0, prev_extn: 0,
+  v_elev:    0, v_horiz:    0, v_extn:    0,
+};
+const DT    = 0.01;  // BNO08x RVC always 100 Hz → fixed 10 ms, no need for timestamp math
+const EMA_A = 0.3;
+const FEAT_WIN = 6;
+
+const featWindow = [];          // rolling 6×6 model input window
+const vElevHist  = [];          // sparkline history {t, v}
+const SPARK_WIN_MS = 6000;
+
+// sample counter for throttled console logging
+let _logCounter = 0;
+
+function computeFeatures() {
+  const arm   = _latest[ARM_NAME];
+  const torso = _latest[TORSO_NAME];
+  if (!arm || !torso) return null;
+
+  // Step 1: relative angles — keep sign so up/down are distinguishable
+  const rel_elev  = arm.pitch - torso.pitch;
+  const rel_horiz = arm.yaw   - torso.yaw;
+  const rel_extn  = arm.roll  - torso.roll;
+
+  // Step 2: raw velocity (finite difference)
+  const v_raw_elev  = (rel_elev  - _velState.prev_elev)  / DT;
+  const v_raw_horiz = (rel_horiz - _velState.prev_horiz) / DT;
+  const v_raw_extn  = (rel_extn  - _velState.prev_extn)  / DT;
+
+  // Step 3: EMA smooth (Arnold et al. alpha = 0.3)
+  _velState.v_elev  += EMA_A * (v_raw_elev  - _velState.v_elev);
+  _velState.v_horiz += EMA_A * (v_raw_horiz - _velState.v_horiz);
+  _velState.v_extn  += EMA_A * (v_raw_extn  - _velState.v_extn);
+
+  // Step 4: update previous angles
+  _velState.prev_elev  = rel_elev;
+  _velState.prev_horiz = rel_horiz;
+  _velState.prev_extn  = rel_extn;
+
+  // Step 5: push 6-element feature vector (matches Arnold et al.)
+  featWindow.push([
+    _velState.v_elev,   // arm.v_elev
+    _velState.v_horiz,  // arm.v_flex proxy
+    _velState.v_extn,   // arm.v_extn
+    arm.ax,             // accel x (compression proxy)
+    arm.ay,             // accel y
+    arm.az,             // accel z
+  ]);
+  if (featWindow.length > FEAT_WIN) featWindow.shift();
+
+  // sparkline history
+  vElevHist.push({ t: performance.now(), v: _velState.v_elev });
+  const cutoff = performance.now() - SPARK_WIN_MS - 500;
+  while (vElevHist.length && vElevHist[0].t < cutoff) vElevHist.shift();
+
+  // throttled console log: every 50 samples (~0.5 s)
+  _logCounter++;
+  if (_logCounter % 50 === 0) {
+    console.log(
+      `[FEAT] elev=${rel_elev.toFixed(1)}°  v_elev=${_velState.v_elev.toFixed(1)}°/s` +
+      `  v_horiz=${_velState.v_horiz.toFixed(1)}  v_extn=${_velState.v_extn.toFixed(1)}`
+    );
+    console.log('[featWindow]', JSON.stringify(featWindow.map(r => r.map(x => +x.toFixed(2)))));
+  }
+
+  return {
+    rel_elev, rel_horiz, rel_extn,
+    v_elev:  _velState.v_elev,
+    v_horiz: _velState.v_horiz,
+    v_extn:  _velState.v_extn,
+    window:  featWindow,
+  };
+}
+
+// ── sparkline ─────────────────────────────────────────────────────────────
+const sparkCanvas = document.getElementById('sparkCanvas');
+const sparkCtx    = sparkCanvas.getContext('2d');
+
+function _drawSparkline() {
+  const dpr = devicePixelRatio || 1;
+  const r = sparkCanvas.getBoundingClientRect();
+  const W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);
+  if (sparkCanvas.width !== W || sparkCanvas.height !== H) {
+    sparkCanvas.width = W; sparkCanvas.height = H;
+  }
+  const w = W/dpr, h = H/dpr;
+  sparkCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  sparkCtx.clearRect(0, 0, w, h);
+  if (vElevHist.length < 2) return;
+
+  const now   = performance.now();
+  const t_beg = now - SPARK_WIN_MS;
+  const toX   = t => ((t - t_beg) / SPARK_WIN_MS) * w;
+
+  // y range: auto ±max with min of ±30
+  let mx = 30;
+  for (const {v} of vElevHist) if (Math.abs(v) > mx) mx = Math.abs(v);
+  const mapY = v => h/2 - (v / mx) * (h/2 - 4);
+
+  // zero line
+  sparkCtx.strokeStyle = '#2a2a2a'; sparkCtx.lineWidth = 1;
+  sparkCtx.setLineDash([3,3]);
+  sparkCtx.beginPath(); sparkCtx.moveTo(0, h/2); sparkCtx.lineTo(w, h/2); sparkCtx.stroke();
+  sparkCtx.setLineDash([]);
+
+  // signal
+  sparkCtx.strokeStyle = '#a3e635'; sparkCtx.lineWidth = 1.5;
+  sparkCtx.beginPath();
+  let first = true;
+  for (const {t, v} of vElevHist) {
+    const x = toX(t);
+    if (x < 0) continue;
+    first ? sparkCtx.moveTo(x, mapY(v)) : sparkCtx.lineTo(x, mapY(v));
+    first = false;
+  }
+  sparkCtx.stroke();
+
+  // y-axis labels
+  sparkCtx.fillStyle = '#444'; sparkCtx.font = '9px monospace';
+  sparkCtx.textAlign = 'left'; sparkCtx.textBaseline = 'middle';
+  sparkCtx.fillText(`+${mx.toFixed(0)}`, 2, 6);
+  sparkCtx.fillText(`-${mx.toFixed(0)}`, 2, h - 6);
+}
+
+requestAnimationFrame(function sparkLoop() {
+  requestAnimationFrame(sparkLoop);
+  _drawSparkline();
+});
+
+// ── update feature panel UI ───────────────────────────────────────────────
+function _updateFeatUI(feat) {
+  document.getElementById('featPanel').style.display = 'block';
+  document.getElementById('featStatus').textContent =
+    `arm=${ARM_NAME}  torso=${TORSO_NAME}  window=${featWindow.length}/${FEAT_WIN}`;
+
+  function setVal(id, v, unit='°') {
+    const el = document.getElementById(id);
+    const s  = isFinite(v) ? v.toFixed(1) + unit : '—';
+    el.textContent = s;
+    el.className   = 'feat-val' + (Math.abs(v) < 0.5 ? ' zero' : v < 0 ? ' neg' : '');
+  }
+  setVal('fRelElev',  feat.rel_elev);
+  setVal('fRelHoriz', feat.rel_horiz);
+  setVal('fRelExtn',  feat.rel_extn);
+  setVal('fVElev',    feat.v_elev,  '°/s');
+  setVal('fVHoriz',   feat.v_horiz, '°/s');
+  setVal('fVExtn',    feat.v_extn,  '°/s');
+
+  // update featWindow dump in UI (throttled)
+  if (_logCounter % 20 === 0) {
+    document.getElementById('featWindowDump').textContent =
+      featWindow.map((r,i) =>
+        `t-${FEAT_WIN-1-i}: [${r.map(x=>x.toFixed(1).padStart(6)).join(', ')}]`
+      ).join('\n');
+  }
+}
+
+document.getElementById('btnLogWindow').onclick = () => {
+  console.table(featWindow.map((r,i) => ({
+    step: `t-${FEAT_WIN-1-i}`,
+    v_elev:  r[0].toFixed(2), v_horiz: r[1].toFixed(2), v_extn: r[2].toFixed(2),
+    ax:      r[3].toFixed(2), ay:      r[4].toFixed(2), az:     r[5].toFixed(2),
+  })));
+};
 
 // ════════════════════════════════════════════════════════════════════════════
 //  ★★★  EDIT YOUR TRIGGER FUNCTION HERE  ★★★
-//
-//  Called on every IMU sample (~100 Hz).
-//  Return 1 to fire tVNS, return 0 to do nothing.
-//
-//  Available inputs:
-//    name          device name string (e.g. "IMU-4")
-//    pitch/yaw/roll  angles in degrees
-//    ax/ay/az      acceleration in m/s²
-//    history       array of the last 6 samples (most recent last)
-//                  each sample: {pitch, yaw, roll, ax, ay, az}
-//
-//  Example — trigger when pitch velocity exceeds 25 deg/s:
-//    const vel = Math.abs(pitch - history[0].pitch) / 0.05;
-//    return vel > 25 ? 1 : 0;
+//  featWindow is the 6×6 model input (most recent last).
+//  featWindow[5] = current sample, featWindow[0] = 50ms ago.
 // ════════════════════════════════════════════════════════════════════════════
 function classify(name, pitch, yaw, roll, ax, ay, az, history) {
-  if (history.length < 6) return 0;
+  if (featWindow.length < FEAT_WIN) return 0;
 
-  // ── your logic here ──────────────────────────────────────────────────────
-  const vel = Math.abs(pitch - history[0].pitch) / 0.05;  // deg/s over 50ms
-  return vel > 25 ? 1 : 0;
-  // ─────────────────────────────────────────────────────────────────────────
+  // current v_elev is featWindow last row, first element
+  const v_elev = featWindow[featWindow.length - 1][0];
+
+  // simple threshold — raise arm fast → trigger
+  return Math.abs(v_elev) > 30 ? 1 : 0;  // tune this threshold
 }
 // ════════════════════════════════════════════════════════════════════════════
-
 
 // ── trigger UI ────────────────────────────────────────────────────────────
 let trigTotal = 0;
@@ -244,10 +414,8 @@ const trigCountEl = document.getElementById('trigCount');
 const trigScope   = document.getElementById('trigScope');
 const trigCtx     = trigScope.getContext('2d');
 let _trigTimer    = null;
-
-// rolling history: {t: performance.now(), v: 0|1}
-const trigHistory = [];
-const SCOPE_WIN_MS = 8000;   // 8 seconds visible
+const trigHistory  = [];
+const SCOPE_WIN_MS = 8000;
 
 function _fireTrigger() {
   trigTotal++;
@@ -256,289 +424,121 @@ function _fireTrigger() {
   clearTimeout(_trigTimer);
   _trigTimer = setTimeout(() => trigLamp.classList.remove('on'), 150);
 }
-
 function _pushTrigHistory(v) {
   trigHistory.push({t: performance.now(), v});
-  // prune old samples
   const cutoff = performance.now() - SCOPE_WIN_MS - 500;
   while (trigHistory.length && trigHistory[0].t < cutoff) trigHistory.shift();
 }
-
 function _drawScope() {
-  // resize to physical pixels
   const dpr = devicePixelRatio || 1;
   const rect = trigScope.getBoundingClientRect();
-  const W = Math.round(rect.width * dpr);
-  const H = Math.round(rect.height * dpr);
-  if (trigScope.width !== W || trigScope.height !== H) {
-    trigScope.width = W; trigScope.height = H;
+  const W = Math.round(rect.width * dpr), H = Math.round(rect.height * dpr);
+  if (trigScope.width !== W || trigScope.height !== H) { trigScope.width=W; trigScope.height=H; }
+  const w=W/dpr, h=H/dpr;
+  trigCtx.setTransform(dpr,0,0,dpr,0,0);
+  trigCtx.clearRect(0,0,w,h);
+  const now=performance.now(), t_beg=now-SCOPE_WIN_MS;
+  trigCtx.strokeStyle='#1e1e1e'; trigCtx.lineWidth=1;
+  for(let tick=2000;tick<SCOPE_WIN_MS;tick+=2000){
+    const x=((SCOPE_WIN_MS-tick)/SCOPE_WIN_MS)*w;
+    trigCtx.beginPath();trigCtx.moveTo(x,0);trigCtx.lineTo(x,h);trigCtx.stroke();
   }
-
-  const w = W / dpr, h = H / dpr;
-  trigCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  trigCtx.clearRect(0, 0, w, h);
-
-  const now   = performance.now();
-  const t_end = now;
-  const t_beg = now - SCOPE_WIN_MS;
-
-  // background grid lines (every 2s)
-  trigCtx.strokeStyle = '#1e1e1e';
-  trigCtx.lineWidth   = 1;
-  for (let tick = 2000; tick < SCOPE_WIN_MS; tick += 2000) {
-    const x = ((SCOPE_WIN_MS - tick) / SCOPE_WIN_MS) * w;
-    trigCtx.beginPath(); trigCtx.moveTo(x, 0); trigCtx.lineTo(x, h); trigCtx.stroke();
-  }
-
-  // baseline
-  const yLow  = h - 4;
-  const yHigh = 6;
-  trigCtx.strokeStyle = '#2a2a2a';
-  trigCtx.lineWidth   = 1;
-  trigCtx.beginPath(); trigCtx.moveTo(0, yLow); trigCtx.lineTo(w, yLow); trigCtx.stroke();
-
-  if (!trigHistory.length) return;
-
-  // build step waveform
-  const toX = t => ((t - t_beg) / SCOPE_WIN_MS) * w;
-
-  trigCtx.strokeStyle = '#22d3ee';
-  trigCtx.lineWidth   = 1.5;
+  const yLow=h-4, yHigh=6;
+  trigCtx.strokeStyle='#2a2a2a';trigCtx.lineWidth=1;
+  trigCtx.beginPath();trigCtx.moveTo(0,yLow);trigCtx.lineTo(w,yLow);trigCtx.stroke();
+  if(!trigHistory.length)return;
+  const toX=t=>((t-t_beg)/SCOPE_WIN_MS)*w;
+  trigCtx.strokeStyle='#22d3ee';trigCtx.lineWidth=1.5;
   trigCtx.beginPath();
-
-  let started = false;
-  let curV    = 0;
-
-  for (let i = 0; i < trigHistory.length; i++) {
-    const {t, v} = trigHistory[i];
-    const x = toX(t);
-    if (x < 0) { curV = v; continue; }
-
-    if (!started) {
-      trigCtx.moveTo(Math.max(0, x), curV ? yHigh : yLow);
-      started = true;
-    }
-
-    // draw horizontal segment then vertical step
-    trigCtx.lineTo(x, curV ? yHigh : yLow);
-    if (v !== curV) {
-      trigCtx.lineTo(x, v ? yHigh : yLow);
-      curV = v;
-    }
+  let started=false,curV=0;
+  for(const{t,v}of trigHistory){
+    const x=toX(t);
+    if(x<0){curV=v;continue;}
+    if(!started){trigCtx.moveTo(Math.max(0,x),curV?yHigh:yLow);started=true;}
+    trigCtx.lineTo(x,curV?yHigh:yLow);
+    if(v!==curV){trigCtx.lineTo(x,v?yHigh:yLow);curV=v;}
   }
-  // extend to right edge
-  trigCtx.lineTo(w, curV ? yHigh : yLow);
-  trigCtx.stroke();
-
-  // fill under triggers
-  trigCtx.fillStyle = '#22d3ee22';
-  trigCtx.beginPath();
-  curV = 0; started = false;
-  for (let i = 0; i < trigHistory.length; i++) {
-    const {t, v} = trigHistory[i];
-    const x = Math.max(0, toX(t));
-    if (!started) { trigCtx.moveTo(x, yLow); started = true; }
-    trigCtx.lineTo(x, curV ? yHigh : yLow);
-    if (v !== curV) { trigCtx.lineTo(x, v ? yHigh : yLow); curV = v; }
+  trigCtx.lineTo(w,curV?yHigh:yLow);trigCtx.stroke();
+  trigCtx.fillStyle='#22d3ee22';
+  trigCtx.beginPath();curV=0;started=false;
+  for(const{t,v}of trigHistory){
+    const x=Math.max(0,toX(t));
+    if(!started){trigCtx.moveTo(x,yLow);started=true;}
+    trigCtx.lineTo(x,curV?yHigh:yLow);
+    if(v!==curV){trigCtx.lineTo(x,v?yHigh:yLow);curV=v;}
   }
-  trigCtx.lineTo(w, curV ? yHigh : yLow);
-  trigCtx.lineTo(w, yLow); trigCtx.closePath(); trigCtx.fill();
+  trigCtx.lineTo(w,curV?yHigh:yLow);trigCtx.lineTo(w,yLow);trigCtx.closePath();trigCtx.fill();
 }
+requestAnimationFrame(function scopeLoop(){requestAnimationFrame(scopeLoop);_drawScope();});
 
-// redraw scope on every animation frame
-requestAnimationFrame(function scopeLoop() {
-  requestAnimationFrame(scopeLoop);
-  _drawScope();
-});
-
-// ── rest of original code (unchanged) ─────────────────────────────────────
+// ── original BLE + UI code ─────────────────────────────────────────────────
 const NUS_SERVICE   = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
 const NUS_TX        = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 const NUS_RX        = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
 const GENERIC_NAMES = ['MPY-ESP32','ESP32','BLE','UART'];
 const LS_KEY        = 'maven_device_names';
-
-function loadNameTable() { try { return JSON.parse(localStorage.getItem(LS_KEY)||'{}'); } catch { return {}; } }
-function saveNameTable(t) { try { localStorage.setItem(LS_KEY,JSON.stringify(t)); } catch {} }
-function getSavedName(id) { return loadNameTable()[id]||null; }
-function setSavedName(id,name) { const t=loadNameTable(); t[id]=name.trim(); saveNameTable(t); }
-function clearSavedName(id) { const t=loadNameTable(); delete t[id]; saveNameTable(t); }
-
-const logEl = document.getElementById('logEl');
+function loadNameTable(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'{}');}catch{return{};}}
+function saveNameTable(t){try{localStorage.setItem(LS_KEY,JSON.stringify(t));}catch{}}
+function getSavedName(id){return loadNameTable()[id]||null;}
+function setSavedName(id,name){const t=loadNameTable();t[id]=name.trim();saveNameTable(t);}
+function clearSavedName(id){const t=loadNameTable();delete t[id];saveNameTable(t);}
+const logEl=document.getElementById('logEl');
 let _lb=[],_lt=null;
-function log(s) {
-  _lb.push(s);
-  if (!_lt) _lt=setTimeout(()=>{ logEl.textContent+=_lb.join('\n')+'\n'; _lb=[];_lt=null; logEl.scrollTop=logEl.scrollHeight; },80);
-}
-
+function log(s){_lb.push(s);if(!_lt)_lt=setTimeout(()=>{logEl.textContent+=_lb.join('\n')+'\n';_lb=[];_lt=null;logEl.scrollTop=logEl.scrollHeight;},80);}
 const devices=[];
 let recActive=false,recStartTime=null,recTimerInt=null;
 let recData=new Map(),recDirHandle=null;
-
-const FRAME_MS=50; let _lastTs=0;
-function globalLoop(ts) {
-  requestAnimationFrame(globalLoop);
-  if (ts-_lastTs<FRAME_MS) return;
-  _lastTs=ts;
-  for (const d of devices) if (d.plotOpen) { d._resizeDPR(); d._draw(); }
-}
+const FRAME_MS=50;let _lastTs=0;
+function globalLoop(ts){requestAnimationFrame(globalLoop);if(ts-_lastTs<FRAME_MS)return;_lastTs=ts;for(const d of devices)if(d.plotOpen){d._resizeDPR();d._draw();}}
 requestAnimationFrame(globalLoop);
-
-document.getElementById('btnAdd').onclick      = addDevice;
-document.getElementById('btnClearLog').onclick = ()=>logEl.textContent='';
-document.getElementById('btnFolder').onclick   = chooseFolder;
-document.getElementById('btnRecStart').onclick = startRecording;
-document.getElementById('btnRecStop').onclick  = stopRecording;
-
-function addDevice() {
-  if (!navigator.bluetooth){alert('Web Bluetooth not supported. Use Chrome.');return;}
-  const card=new DeviceCard(); devices.push(card); updateEmpty(); card.connect();
-}
-function removeDevice(card) {
-  card.disconnect(); card.cardEl.remove();
-  devices.splice(devices.indexOf(card),1); updateSidebar(); updateEmpty();
-}
-function updateEmpty() { document.getElementById('emptyState').style.display=devices.length?'none':'flex'; }
-function updateSidebar() {
-  const list=document.getElementById('devList'); list.innerHTML='';
+document.getElementById('btnAdd').onclick=addDevice;
+document.getElementById('btnClearLog').onclick=()=>logEl.textContent='';
+document.getElementById('btnFolder').onclick=chooseFolder;
+document.getElementById('btnRecStart').onclick=startRecording;
+document.getElementById('btnRecStop').onclick=stopRecording;
+function addDevice(){if(!navigator.bluetooth){alert('Web Bluetooth not supported. Use Chrome.');return;}const card=new DeviceCard();devices.push(card);updateEmpty();card.connect();}
+function removeDevice(card){card.disconnect();card.cardEl.remove();devices.splice(devices.indexOf(card),1);updateSidebar();updateEmpty();}
+function updateEmpty(){document.getElementById('emptyState').style.display=devices.length?'none':'flex';}
+function updateSidebar(){
+  const list=document.getElementById('devList');list.innerHTML='';
   devices.forEach((d,i)=>{
-    const item=document.createElement('div'); item.className='dev-list-item';
+    const item=document.createElement('div');item.className='dev-list-item';
     const isRec=recActive&&d.bleDevice&&recData.has(d.bleDevice.id);
     item.innerHTML=`<div class="dot ${isRec?'rec':(d.isConnected()?'on':'')}"></div><span>${d.displayName||'Device '+(i+1)}</span>`;
-    d._sidebarItem=item; list.appendChild(item);
+    d._sidebarItem=item;list.appendChild(item);
   });
 }
-
-async function chooseFolder() {
-  if (!('showDirectoryPicker' in window)){alert('Requires Chrome/Edge desktop.');return;}
-  try {
-    recDirHandle=await window.showDirectoryPicker({mode:'readwrite'});
-    document.getElementById('folderName').textContent='📂 '+recDirHandle.name;
-    log('Folder: '+recDirHandle.name);
-  } catch(e){if(e?.name!=='AbortError')log('Folder error: '+e);}
-}
-
-function startRecording() {
-  const connected=devices.filter(d=>d.isConnected());
-  if (!connected.length){log('No connected devices.');return;}
-  recActive=true; recStartTime=performance.now(); recData=new Map();
-  connected.forEach(d=>{recData.set(d.bleDevice.id,{name:d.displayName,samples:[]});d.setRecUI(true);});
-  document.getElementById('btnRecStart').disabled=true;
-  document.getElementById('btnRecStop').disabled=false;
-  document.getElementById('recDot').className='dot rec';
-  document.getElementById('recStatus').textContent=`${connected.length} device${connected.length>1?'s':''}`;
-  recTimerInt=setInterval(()=>{
-    const e=(performance.now()-recStartTime)/1000;
-    const m=Math.floor(e/60).toString().padStart(2,'0');
-    const s=(e%60).toFixed(1).padStart(4,'0');
-    document.getElementById('recTimer').textContent=`${m}:${s}`;
-  },100);
-  log(`Recording started — ${connected.map(d=>d.displayName).join(', ')}`);
-  updateSidebar();
-}
-
-async function stopRecording() {
-  if (!recActive) return;
-  recActive=false; clearInterval(recTimerInt);
-  devices.forEach(d=>d.setRecUI(false));
-  document.getElementById('btnRecStart').disabled=false;
-  document.getElementById('btnRecStop').disabled=true;
-  document.getElementById('recDot').className='dot';
-  document.getElementById('recStatus').textContent='Idle';
-  document.getElementById('recTimer').textContent='';
-  updateSidebar();
-
-  const entries=[...recData.entries()];
-  if (!entries.length){log('No data.');return;}
-  const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  log(`Stopped — ${entries.length} device(s). Saving…`);
-
-  let idx=1;
-  for (const [,{name,samples}] of entries) {
-    if (!samples.length){log(`[${name}] No samples.`);idx++;continue;}
-    const t0_dev = samples[0].tms;
-    const t0_ble = samples[0].ble_ts;
-    const csv='device_tms_ms,ble_tms_ms,device_t_rel_s,ble_t_rel_s,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema,trigger\n'
-      +samples.map(s=>
-        `${s.tms},${Math.round(s.ble_ts)},${((s.tms-t0_dev)/1000).toFixed(6)},${((s.ble_ts-t0_ble)/1000).toFixed(6)},${s.pitch.toFixed(2)},${s.yaw.toFixed(2)},${s.roll.toFixed(2)},${s.ax.toFixed(2)},${s.ay.toFixed(2)},${s.az.toFixed(2)},${s.vel.toFixed(6)},${s.trigger}`
-      ).join('\n');
-    const blob=new Blob([csv],{type:'text/csv'});
-    const safe=name.replace(/[^a-z0-9]/gi,'-');
-    const fn=`MAVEN_${idx}-${safe}_${stamp}.csv`;
-    if (recDirHandle) {
-      try {
-        const perm=await recDirHandle.queryPermission({mode:'readwrite'}).catch(()=>recDirHandle.requestPermission({mode:'readwrite'}));
-        if (perm==='granted') {
-          const fh=await recDirHandle.getFileHandle(fn,{create:true});
-          const w=await fh.createWritable(); await w.write(blob); await w.close();
-          log(`[${name}] → ${fn}`); idx++; continue;
-        }
-      } catch(e){log(`[${name}] Folder error: ${e} — downloading`);}
-    }
-    const url=URL.createObjectURL(blob),a=document.createElement('a');
-    a.href=url;a.download=fn;document.body.appendChild(a);a.click();
-    document.body.removeChild(a);URL.revokeObjectURL(url);
-    log(`[${name}] Downloaded: ${fn}`); idx++;
-  }
-}
-
+async function chooseFolder(){if(!('showDirectoryPicker'in window)){alert('Requires Chrome/Edge desktop.');return;}try{recDirHandle=await window.showDirectoryPicker({mode:'readwrite'});document.getElementById('folderName').textContent='📂 '+recDirHandle.name;log('Folder: '+recDirHandle.name);}catch(e){if(e?.name!=='AbortError')log('Folder error: '+e);}}
+function startRecording(){const connected=devices.filter(d=>d.isConnected());if(!connected.length){log('No connected devices.');return;}recActive=true;recStartTime=performance.now();recData=new Map();connected.forEach(d=>{recData.set(d.bleDevice.id,{name:d.displayName,samples:[]});d.setRecUI(true);});document.getElementById('btnRecStart').disabled=true;document.getElementById('btnRecStop').disabled=false;document.getElementById('recDot').className='dot rec';document.getElementById('recStatus').textContent=`${connected.length} device${connected.length>1?'s':''}`;recTimerInt=setInterval(()=>{const e=(performance.now()-recStartTime)/1000;const m=Math.floor(e/60).toString().padStart(2,'0');const s=(e%60).toFixed(1).padStart(4,'0');document.getElementById('recTimer').textContent=`${m}:${s}`;},100);log(`Recording started — ${connected.map(d=>d.displayName).join(', ')}`);updateSidebar();}
+async function stopRecording(){if(!recActive)return;recActive=false;clearInterval(recTimerInt);devices.forEach(d=>d.setRecUI(false));document.getElementById('btnRecStart').disabled=false;document.getElementById('btnRecStop').disabled=true;document.getElementById('recDot').className='dot';document.getElementById('recStatus').textContent='Idle';document.getElementById('recTimer').textContent='';updateSidebar();const entries=[...recData.entries()];if(!entries.length){log('No data.');return;}const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');log(`Stopped — ${entries.length} device(s). Saving…`);let idx=1;for(const[,{name,samples}]of entries){if(!samples.length){log(`[${name}] No samples.`);idx++;continue;}const t0_dev=samples[0].tms;const t0_ble=samples[0].ble_ts;const csv='device_tms_ms,ble_tms_ms,device_t_rel_s,ble_t_rel_s,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema,trigger\n'+samples.map(s=>`${s.tms},${Math.round(s.ble_ts)},${((s.tms-t0_dev)/1000).toFixed(6)},${((s.ble_ts-t0_ble)/1000).toFixed(6)},${s.pitch.toFixed(2)},${s.yaw.toFixed(2)},${s.roll.toFixed(2)},${s.ax.toFixed(2)},${s.ay.toFixed(2)},${s.az.toFixed(2)},${s.vel.toFixed(6)},${s.trigger}`).join('\n');const blob=new Blob([csv],{type:'text/csv'});const safe=name.replace(/[^a-z0-9]/gi,'-');const fn=`MAVEN_${idx}-${safe}_${stamp}.csv`;if(recDirHandle){try{const perm=await recDirHandle.queryPermission({mode:'readwrite'}).catch(()=>recDirHandle.requestPermission({mode:'readwrite'}));if(perm==='granted'){const fh=await recDirHandle.getFileHandle(fn,{create:true});const w=await fh.createWritable();await w.write(blob);await w.close();log(`[${name}] → ${fn}`);idx++;continue;}}catch(e){log(`[${name}] Folder error: ${e} — downloading`);}}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=fn;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);log(`[${name}] Downloaded: ${fn}`);idx++;}}
 let _renameCard=null;
-function openRenameModal(card) {
-  _renameCard=card;
-  const saved=card.bleDevice?getSavedName(card.bleDevice.id):null;
-  document.getElementById('renameHint').textContent=`BLE name: "${card.bleName||'?'}"  |  ID: ${card.bleDevice?.id?.slice(-8)||'?'}`;
-  document.getElementById('renameInput').value=saved||card.displayName||'';
-  document.getElementById('renameModal').classList.add('open');
-  setTimeout(()=>document.getElementById('renameInput').focus(),50);
-}
+function openRenameModal(card){_renameCard=card;const saved=card.bleDevice?getSavedName(card.bleDevice.id):null;document.getElementById('renameHint').textContent=`BLE name: "${card.bleName||'?'}"  |  ID: ${card.bleDevice?.id?.slice(-8)||'?'}`;document.getElementById('renameInput').value=saved||card.displayName||'';document.getElementById('renameModal').classList.add('open');setTimeout(()=>document.getElementById('renameInput').focus(),50);}
 function closeRenameModal(){document.getElementById('renameModal').classList.remove('open');_renameCard=null;}
-document.getElementById('renameSave').onclick=()=>{
-  if(!_renameCard)return;
-  const val=document.getElementById('renameInput').value.trim();
-  if(!val)return;
-  if(_renameCard.bleDevice)setSavedName(_renameCard.bleDevice.id,val);
-  _renameCard.displayName=val; _renameCard.nameEl.textContent=val;
-  updateSidebar(); log(`Renamed → "${val}"`); closeRenameModal();
-};
-document.getElementById('renameClear').onclick=()=>{
-  if(!_renameCard?.bleDevice)return;
-  clearSavedName(_renameCard.bleDevice.id);
-  _renameCard.displayName=_renameCard.bleName||_renameCard.displayName;
-  _renameCard.nameEl.textContent=_renameCard.displayName;
-  updateSidebar(); log('Cleared saved name'); closeRenameModal();
-};
+document.getElementById('renameSave').onclick=()=>{if(!_renameCard)return;const val=document.getElementById('renameInput').value.trim();if(!val)return;if(_renameCard.bleDevice)setSavedName(_renameCard.bleDevice.id,val);_renameCard.displayName=val;_renameCard.nameEl.textContent=val;updateSidebar();log(`Renamed → "${val}"`);closeRenameModal();};
+document.getElementById('renameClear').onclick=()=>{if(!_renameCard?.bleDevice)return;clearSavedName(_renameCard.bleDevice.id);_renameCard.displayName=_renameCard.bleName||_renameCard.displayName;_renameCard.nameEl.textContent=_renameCard.displayName;updateSidebar();log('Cleared saved name');closeRenameModal();};
 document.getElementById('renameCancel').onclick=closeRenameModal;
 document.getElementById('renameModal').addEventListener('click',e=>{if(e.target===document.getElementById('renameModal'))closeRenameModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRenameModal();});
 
 class DeviceCard {
-  constructor() {
-    this.bleName=''; this.displayName='';
-    this.bleDevice=null; this.bleServer=null; this.bleTx=null; this.bleRx=null;
-    this._onNotify=null; this.connecting=false; this.plotOpen=false;
-
+  constructor(){
+    this.bleName='';this.displayName='';
+    this.bleDevice=null;this.bleServer=null;this.bleTx=null;this.bleRx=null;
+    this._onNotify=null;this.connecting=false;this.plotOpen=false;
     this.plotSignal='pitch';
-    this.BUF_MAX=1800; this.WIN=400;
-    this.pitchBuf=[]; this.tmsBuf=[]; this.velBuf=[]; this.bleTsBuf=[];
-    this.yawBuf=[]; this.rollBuf=[]; this.axBuf=[]; this.ayBuf=[]; this.azBuf=[];
-    this.trigBuf=[];      // ← new
-    this.history=[];      // ← new: sliding window for classify()
-    this.sampleIdx=0; this._t0tms=null; this.lastPitch=null; this.DERIV_A=0.3;
+    this.BUF_MAX=1800;this.WIN=400;
+    this.pitchBuf=[];this.tmsBuf=[];this.velBuf=[];this.bleTsBuf=[];
+    this.yawBuf=[];this.rollBuf=[];this.axBuf=[];this.ayBuf=[];this.azBuf=[];
+    this.trigBuf=[];this.history=[];
+    this.sampleIdx=0;this._t0tms=null;this.lastPitch=null;this.DERIV_A=0.3;
     this._dprTs=0;
-    this._buildDOM(); updateSidebar();
+    this._buildDOM();updateSidebar();
   }
-
-  isConnected(){return !!this.bleServer?.connected;}
-
-  setRecUI(on){
-    this.cardEl.classList.toggle('recording',on);
-    this.cardEl.querySelector('.rec-badge').classList.toggle('on',on);
-    if(this._sidebarItem){const dot=this._sidebarItem.querySelector('.dot');if(dot)dot.className='dot '+(on?'rec':(this.isConnected()?'on':'')); }
-  }
-
-  _buildDOM() {
+  isConnected(){return!!this.bleServer?.connected;}
+  setRecUI(on){this.cardEl.classList.toggle('recording',on);this.cardEl.querySelector('.rec-badge').classList.toggle('on',on);if(this._sidebarItem){const dot=this._sidebarItem.querySelector('.dot');if(dot)dot.className='dot '+(on?'rec':(this.isConnected()?'on':''));}}
+  _buildDOM(){
     const grid=document.getElementById('deviceGrid');
-    this.cardEl=document.createElement('div'); this.cardEl.className='device-card';
+    this.cardEl=document.createElement('div');this.cardEl.className='device-card';
     this.cardEl.innerHTML=`
       <div class="card-head">
         <div class="card-name name-el">Connecting…</div>
@@ -557,24 +557,11 @@ class DeviceCard {
         <span>Az <b class="az-el">—</b> m/s²</span>
         <span class="trig-badge trig-el">TRIG —</span>
       </div>
-      <div class="plot-toggle">
-        <span class="plot-caret">▶</span>
-        <span>Plot</span>
-        <span class="pitch-mini" style="margin-left:4px;font-variant-numeric:tabular-nums;color:var(--accent2)"></span>
-      </div>
+      <div class="plot-toggle"><span class="plot-caret">▶</span><span>Plot</span><span class="pitch-mini" style="margin-left:4px;font-variant-numeric:tabular-nums;color:var(--accent2)"></span></div>
       <div class="plot-wrap">
         <canvas></canvas>
         <div class="plot-opts">
-          <label>Signal:
-            <select class="sel-signal" style="padding:2px 4px;margin-left:2px">
-              <option value="pitch">Pitch</option>
-              <option value="yaw">Yaw</option>
-              <option value="roll">Roll</option>
-              <option value="ax">Ax</option>
-              <option value="ay">Ay</option>
-              <option value="az">Az</option>
-            </select>
-          </label>
+          <label>Signal:<select class="sel-signal" style="padding:2px 4px;margin-left:2px"><option value="pitch">Pitch</option><option value="yaw">Yaw</option><option value="roll">Roll</option><option value="ax">Ax</option><option value="ay">Ay</option><option value="az">Az</option></select></label>
           <label><input type="checkbox" class="chk-pause"> Pause</label>
           <label><input type="checkbox" class="chk-auto" checked> Autoscale</label>
           <label>Fixed ±<input type="number" class="in-range" value="90">°</label>
@@ -591,50 +578,41 @@ class DeviceCard {
         <button class="btn-remove btn-ghost">✕ Remove</button>
       </div>`;
     grid.appendChild(this.cardEl);
-
-    this.nameEl    =this.cardEl.querySelector('.name-el');
+    this.nameEl=this.cardEl.querySelector('.name-el');
     this.statusPill=this.cardEl.querySelector('.status-pill');
-    this.pitchEl   =this.cardEl.querySelector('.pitch-el');
-    this.pitchMini =this.cardEl.querySelector('.pitch-mini');
-    this.rateEl    =this.cardEl.querySelector('.rate-el');
-    this.chkPause  =this.cardEl.querySelector('.chk-pause');
-    this.chkAuto   =this.cardEl.querySelector('.chk-auto');
-    this.inRange   =this.cardEl.querySelector('.in-range');
-    this.selSignal =this.cardEl.querySelector('.sel-signal');
-    this.selSignal.addEventListener('change',()=>{ this.plotSignal=this.selSignal.value; });
-    this.canvas    =this.cardEl.querySelector('canvas');
-    this.ctx       =this.canvas.getContext('2d');
+    this.pitchEl=this.cardEl.querySelector('.pitch-el');
+    this.pitchMini=this.cardEl.querySelector('.pitch-mini');
+    this.rateEl=this.cardEl.querySelector('.rate-el');
+    this.chkPause=this.cardEl.querySelector('.chk-pause');
+    this.chkAuto=this.cardEl.querySelector('.chk-auto');
+    this.inRange=this.cardEl.querySelector('.in-range');
+    this.selSignal=this.cardEl.querySelector('.sel-signal');
+    this.selSignal.addEventListener('change',()=>{this.plotSignal=this.selSignal.value;});
+    this.canvas=this.cardEl.querySelector('canvas');
+    this.ctx=this.canvas.getContext('2d');
     this.pitchValEl=this.cardEl.querySelector('.pitch-val-el');
-    this.yawEl     =this.cardEl.querySelector('.yaw-el');
-    this.rollEl    =this.cardEl.querySelector('.roll-el');
-    this.axEl      =this.cardEl.querySelector('.ax-el');
-    this.ayEl      =this.cardEl.querySelector('.ay-el');
-    this.azEl      =this.cardEl.querySelector('.az-el');
-    this.trigEl    =this.cardEl.querySelector('.trig-el');   // ← new
-
+    this.yawEl=this.cardEl.querySelector('.yaw-el');
+    this.rollEl=this.cardEl.querySelector('.roll-el');
+    this.axEl=this.cardEl.querySelector('.ax-el');
+    this.ayEl=this.cardEl.querySelector('.ay-el');
+    this.azEl=this.cardEl.querySelector('.az-el');
+    this.trigEl=this.cardEl.querySelector('.trig-el');
     const toggle=this.cardEl.querySelector('.plot-toggle');
-    const wrap  =this.cardEl.querySelector('.plot-wrap');
-    toggle.addEventListener('click',()=>{
-      this.plotOpen=!this.plotOpen;
-      toggle.classList.toggle('open',this.plotOpen);
-      wrap.classList.toggle('open',this.plotOpen);
-    });
-
-    this.cardEl.querySelector('.btn-rename')    .onclick=()=>openRenameModal(this);
-    this.cardEl.querySelector('.btn-stream-on') .onclick=()=>this.send('STREAM,ON');
+    const wrap=this.cardEl.querySelector('.plot-wrap');
+    toggle.addEventListener('click',()=>{this.plotOpen=!this.plotOpen;toggle.classList.toggle('open',this.plotOpen);wrap.classList.toggle('open',this.plotOpen);});
+    this.cardEl.querySelector('.btn-rename').onclick=()=>openRenameModal(this);
+    this.cardEl.querySelector('.btn-stream-on').onclick=()=>this.send('STREAM,ON');
     this.cardEl.querySelector('.btn-stream-off').onclick=()=>this.send('STREAM,OFF');
-    this.cardEl.querySelector('.btn-cal')       .onclick=()=>this.send('CAL,3000');
-    this.cardEl.querySelector('.btn-reconnect') .onclick=()=>this.connect();
-    this.cardEl.querySelector('.btn-save')      .onclick=()=>this.saveCsv();
-    this.cardEl.querySelector('.btn-remove')    .onclick=()=>removeDevice(this);
+    this.cardEl.querySelector('.btn-cal').onclick=()=>this.send('CAL,3000');
+    this.cardEl.querySelector('.btn-reconnect').onclick=()=>this.connect();
+    this.cardEl.querySelector('.btn-save').onclick=()=>this.saveCsv();
+    this.cardEl.querySelector('.btn-remove').onclick=()=>removeDevice(this);
   }
-
   setStatus(s){this.statusPill.textContent=s;this.statusPill.className='pill '+s.replace('…','').replace(/\s+/g,'');}
-
-  async connect() {
+  async connect(){
     if(this.bleServer?.connected||this.connecting)return;
     this.connecting=true;
-    try {
+    try{
       this.setStatus('Requesting…');
       this.bleDevice=await navigator.bluetooth.requestDevice({filters:[{services:[NUS_SERVICE]}],optionalServices:[NUS_SERVICE]});
       this.bleDevice.addEventListener('gattserverdisconnected',()=>this._drop());
@@ -644,9 +622,8 @@ class DeviceCard {
       const idx=devices.indexOf(this)+1;
       const fromBLE=isGeneric?`IMU-${idx}`:this.bleName;
       this.displayName=saved||fromBLE;
-      if(!saved&&devices.some(d=>d!==this&&d.displayName===this.displayName))
-        this.displayName=`${this.displayName}-${idx}`;
-      this.nameEl.textContent=this.displayName; updateSidebar();
+      if(!saved&&devices.some(d=>d!==this&&d.displayName===this.displayName))this.displayName=`${this.displayName}-${idx}`;
+      this.nameEl.textContent=this.displayName;updateSidebar();
       this.setStatus('Connecting…');
       this.bleServer=await this.bleDevice.gatt.connect();
       const svc=await this.bleServer.getPrimaryService(NUS_SERVICE);
@@ -659,92 +636,85 @@ class DeviceCard {
       await this.send('ID?');
       log(`[${this.displayName}] Connected (BLE:"${this.bleName||'?'}" ID:…${this.bleDevice.id.slice(-8)})`);
       updateSidebar();
-    } catch(e){this.setStatus('Disconnected');log(`[${this.displayName||'?'}] ${e}`);}
+    }catch(e){this.setStatus('Disconnected');log(`[${this.displayName||'?'}] ${e}`);}
     finally{this.connecting=false;}
   }
-
-  async disconnect() {
-    try {
-      if(this.bleTx){try{await this.bleTx.stopNotifications();}catch(_){}
-        if(this._onNotify){this.bleTx.removeEventListener('characteristicvaluechanged',this._onNotify);this._onNotify=null;}}
-      if(this.bleDevice?.gatt?.connected)this.bleDevice.gatt.disconnect();
-    }catch(e){log(`[${this.displayName}] ${e}`);}
+  async disconnect(){
+    try{if(this.bleTx){try{await this.bleTx.stopNotifications();}catch(_){}if(this._onNotify){this.bleTx.removeEventListener('characteristicvaluechanged',this._onNotify);this._onNotify=null;}}if(this.bleDevice?.gatt?.connected)this.bleDevice.gatt.disconnect();}
+    catch(e){log(`[${this.displayName}] ${e}`);}
     finally{this.bleTx=this.bleRx=this.bleServer=null;this.setStatus('Disconnected');updateSidebar();}
   }
-
   _drop(){this.bleTx=this.bleRx=this.bleServer=null;this.setStatus('Disconnected');log(`[${this.displayName}] Disconnected.`);updateSidebar();}
-
   async send(s){
     if(!this.bleRx){log(`[${this.displayName}] Not connected`);return;}
     const d=new TextEncoder().encode(s.endsWith('\n')?s:s+'\n');
-    try{
-      if('writeValueWithoutResponse'in this.bleRx)await this.bleRx.writeValueWithoutResponse(d);
-      else await this.bleRx.writeValue(d);
-      log(`[${this.displayName}] > ${s}`);
-    }catch(e){log(`[${this.displayName}] Write error: ${e}`);}
+    try{if('writeValueWithoutResponse'in this.bleRx)await this.bleRx.writeValueWithoutResponse(d);else await this.bleRx.writeValue(d);log(`[${this.displayName}] > ${s}`);}
+    catch(e){log(`[${this.displayName}] Write error: ${e}`);}
   }
-
-  _notify(ev) {
+  _notify(ev){
     const s=new TextDecoder().decode(ev.target.value).trim();
     if(!s)return;
-    for (const line of s.split(/\n+/)) {
-      if (line.startsWith('ID,')) {
+    for(const line of s.split(/\n+/)){
+      if(line.startsWith('ID,')){
         const imuId=parseInt(line.split(',')[1],10);
         if(!isNaN(imuId)){
-          this.displayName=`IMU-${imuId}`; this.nameEl.textContent=this.displayName;
+          this.displayName=`IMU-${imuId}`;this.nameEl.textContent=this.displayName;
           updateSidebar();
           if(this.bleDevice?.id)setSavedName(this.bleDevice.id,this.displayName);
           log(`[${this.displayName}] Assigned from firmware ID`);
         }
-      } else if (line.startsWith('PITCH,')) {
+      }else if(line.startsWith('PITCH,')){
         const p=line.split(',');
-        const v  =parseFloat(p[1]);
+        const v=parseFloat(p[1]);
         const tms=p[2]?parseInt(p[2],10):null;
-        const yaw =p[3]?parseFloat(p[3]):0;
+        const yaw=p[3]?parseFloat(p[3]):0;
         const roll=p[4]?parseFloat(p[4]):0;
-        const ax  =p[5]?parseFloat(p[5]):0;
-        const ay  =p[6]?parseFloat(p[6]):0;
-        const az  =p[7]?parseFloat(p[7]):0;
+        const ax=p[5]?parseFloat(p[5]):0;
+        const ay=p[6]?parseFloat(p[6]):0;
+        const az=p[7]?parseFloat(p[7]):0;
         if(!isNaN(v)&&!this.chkPause.checked){
-          this.pitchEl.textContent  =v.toFixed(2);
+          this.pitchEl.textContent=v.toFixed(2);
           this.pitchMini.textContent=v.toFixed(1)+'°';
           this.pitchValEl.textContent=v.toFixed(1);
-          this.yawEl.textContent =yaw.toFixed(1);
+          this.yawEl.textContent=yaw.toFixed(1);
           this.rollEl.textContent=roll.toFixed(1);
-          this.axEl.textContent  =ax.toFixed(2);
-          this.ayEl.textContent  =ay.toFixed(2);
-          this.azEl.textContent  =az.toFixed(2);
+          this.axEl.textContent=ax.toFixed(2);
+          this.ayEl.textContent=ay.toFixed(2);
+          this.azEl.textContent=az.toFixed(2);
 
-          // ── call classify() ───────────────────────────────────────────────
+          // update _latest for cross-device feature computation
+          _latest[this.displayName]={pitch:v,yaw,roll,ax,ay,az,tms};
+
+          // compute features + update panel
+          const feat=computeFeatures();
+          if(feat)_updateFeatUI(feat);
+
+          // classify using computed features
           this.history.push({pitch:v,yaw,roll,ax,ay,az});
-          if(this.history.length>6) this.history.shift();
-          const trig = classify(this.displayName, v, yaw, roll, ax, ay, az, this.history);
-          this.trigEl.textContent = trig ? 'TRIG ▲' : 'TRIG —';
-          this.trigEl.classList.toggle('on', !!trig);
-          this.cardEl.classList.toggle('triggered', !!trig);
-          if(trig) _fireTrigger();
-          _pushTrigHistory(trig ? 1 : 0);
-          // ─────────────────────────────────────────────────────────────────
+          if(this.history.length>FEAT_WIN)this.history.shift();
+          const trig=classify(this.displayName,v,yaw,roll,ax,ay,az,this.history);
+          this.trigEl.textContent=trig?'TRIG ▲':'TRIG —';
+          this.trigEl.classList.toggle('on',!!trig);
+          this.cardEl.classList.toggle('triggered',!!trig);
+          if(trig)_fireTrigger();
+          _pushTrigHistory(trig?1:0);
 
-          this._push(v, tms, yaw, roll, ax, ay, az, trig);
+          this._push(v,tms,yaw,roll,ax,ay,az,trig);
         }
-      } else if (line.startsWith('RATE ')) {
+      }else if(line.startsWith('RATE ')){
         const m=line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
         if(m)this.rateEl.textContent=`IMU ${(+m[1]).toFixed(0)}Hz | BLE ${(+m[2]).toFixed(0)}Hz`;
-      } else { log(`[${this.displayName}] ${line}`); }
+      }else{log(`[${this.displayName}] ${line}`);}
     }
   }
-
-  _push(v, tms, yaw=0, roll=0, ax=0, ay=0, az=0, trig=0) {
+  _push(v,tms,yaw=0,roll=0,ax=0,ay=0,az=0,trig=0){
     const bleTs=performance.now();
     if(tms!=null&&isFinite(tms)){if(this._t0tms==null)this._t0tms=tms;}
     else{tms=Math.round(bleTs);if(this._t0tms==null)this._t0tms=tms;}
-
-    this.pitchBuf.push(v); this.tmsBuf.push(tms); this.bleTsBuf.push(bleTs); this.sampleIdx++;
-    this.yawBuf.push(yaw); this.rollBuf.push(roll);
-    this.axBuf.push(ax);   this.ayBuf.push(ay); this.azBuf.push(az);
+    this.pitchBuf.push(v);this.tmsBuf.push(tms);this.bleTsBuf.push(bleTs);this.sampleIdx++;
+    this.yawBuf.push(yaw);this.rollBuf.push(roll);
+    this.axBuf.push(ax);this.ayBuf.push(ay);this.azBuf.push(az);
     this.trigBuf.push(trig);
-
     if(this.lastPitch==null)this.lastPitch=v;
     const rv=v-this.lastPitch;
     const lv=this.velBuf.length?this.velBuf[this.velBuf.length-1]:rv;
@@ -752,27 +722,23 @@ class DeviceCard {
     const dt_s=Math.max(0.001,(tms-prevTms)/1000);
     this.velBuf.push(lv+this.DERIV_A*((rv/dt_s)-lv));
     this.lastPitch=v;
-
     if(recActive&&this.bleDevice&&recData.has(this.bleDevice.id)){
       recData.get(this.bleDevice.id).samples.push({tms,ble_ts:bleTs,pitch:v,yaw,roll,ax,ay,az,vel:this.velBuf[this.velBuf.length-1],trigger:trig});
     }
-
     if(this.pitchBuf.length>this.BUF_MAX){
       const drop=Math.max(this.pitchBuf.length-this.BUF_MAX,100);
-      this.pitchBuf.splice(0,drop); this.tmsBuf.splice(0,drop); this.velBuf.splice(0,drop); this.bleTsBuf.splice(0,drop);
-      this.yawBuf.splice(0,drop);   this.rollBuf.splice(0,drop);
-      this.axBuf.splice(0,drop);    this.ayBuf.splice(0,drop);  this.azBuf.splice(0,drop);
+      this.pitchBuf.splice(0,drop);this.tmsBuf.splice(0,drop);this.velBuf.splice(0,drop);this.bleTsBuf.splice(0,drop);
+      this.yawBuf.splice(0,drop);this.rollBuf.splice(0,drop);
+      this.axBuf.splice(0,drop);this.ayBuf.splice(0,drop);this.azBuf.splice(0,drop);
       this.trigBuf.splice(0,drop);
     }
   }
-
   _resizeDPR(){
-    const now=performance.now(); if(now-this._dprTs<500)return; this._dprTs=now;
+    const now=performance.now();if(now-this._dprTs<500)return;this._dprTs=now;
     const dpr=devicePixelRatio||1,r=this.canvas.getBoundingClientRect();
     const w=Math.max(1,Math.round(r.width*dpr)),h=Math.max(1,Math.round(r.height*dpr));
     if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;this.ctx.setTransform(dpr,0,0,dpr,0,0);}
   }
-
   _draw(){
     const dpr=devicePixelRatio||1,ctx=this.ctx;
     const W=this.canvas.width/dpr,H=this.canvas.height/dpr;
@@ -780,33 +746,25 @@ class DeviceCard {
     ctx.clearRect(0,0,W,H);
     ctx.strokeStyle='#2a2a2a';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(PL,PT);ctx.lineTo(PL,H-PB);ctx.lineTo(W-PR,H-PB);ctx.stroke();
-    if(!this.pitchBuf.length){
-      ctx.fillStyle='#444';ctx.font='12px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.fillText('Waiting…',W/2,H/2);return;
-    }
-    const _sigMap={'pitch':this.pitchBuf,'yaw':this.yawBuf,'roll':this.rollBuf,'ax':this.axBuf,'ay':this.ayBuf,'az':this.azBuf};
-    const _sigBuf=_sigMap[this.plotSignal]||this.pitchBuf;
-    const ys=_sigBuf.slice(Math.max(0,_sigBuf.length-this.WIN));
+    if(!this.pitchBuf.length){ctx.fillStyle='#444';ctx.font='12px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Waiting…',W/2,H/2);return;}
+    const sigMap={pitch:this.pitchBuf,yaw:this.yawBuf,roll:this.rollBuf,ax:this.axBuf,ay:this.ayBuf,az:this.azBuf};
+    const buf=(sigMap[this.plotSignal]||this.pitchBuf).slice(Math.max(0,(sigMap[this.plotSignal]||this.pitchBuf).length-this.WIN));
     const trs=this.trigBuf.slice(Math.max(0,this.trigBuf.length-this.WIN));
     let y0=-90,y1=90;
-    if(this.chkAuto.checked){
-      let mn=Infinity,mx=-Infinity;
-      for(const v of ys){if(v<mn)mn=v;if(v>mx)mx=v;}
-      const pad=Math.max(2,0.1*(mx-mn+1e-6));y0=mn-pad;y1=mx+pad;
-    }else{const r=Math.abs(+this.inRange.value||90);y0=-r;y1=r;}
+    if(this.chkAuto.checked){let mn=Infinity,mx=-Infinity;for(const v of buf){if(v<mn)mn=v;if(v>mx)mx=v;}const pad=Math.max(2,0.1*(mx-mn+1e-6));y0=mn-pad;y1=mx+pad;}
+    else{const r=Math.abs(+this.inRange.value||90);y0=-r;y1=r;}
     const mapX=i=>PL+(i/Math.max(1,this.WIN))*(W-PL-PR);
     const mapY=v=>(H-PB)-((v-y0)/(y1-y0+1e-9))*(H-PB-PT);
-    // trigger highlights
     const bw=Math.max(1.5,(W-PL-PR)/this.WIN);
     ctx.fillStyle='#22d3ee18';
     trs.forEach((t,i)=>{if(t)ctx.fillRect(mapX(i),PT,bw,H-PB-PT);});
     ctx.strokeStyle='#222';ctx.setLineDash([3,3]);
     ctx.beginPath();ctx.moveTo(PL,mapY(0));ctx.lineTo(W-PR,mapY(0));ctx.stroke();
     ctx.setLineDash([]);
-    const total=ys.length,step=Math.max(1,Math.floor(total/Math.max(1,W-PL-PR)));
+    const total=buf.length,step=Math.max(1,Math.floor(total/Math.max(1,W-PL-PR)));
     ctx.strokeStyle='#a78bfa';ctx.lineWidth=1.5;
     ctx.beginPath();let first=true;
-    for(let k=0;k<total;k+=step){const x=mapX(k),y=mapY(ys[k]);if(first){ctx.moveTo(x,y);first=false;}else ctx.lineTo(x,y);}
+    for(let k=0;k<total;k+=step){const x=mapX(k),y=mapY(buf[k]);first?(ctx.moveTo(x,y),first=false):ctx.lineTo(x,y);}
     ctx.stroke();
     ctx.fillStyle='#444';ctx.font='10px system-ui';ctx.textAlign='right';ctx.textBaseline='middle';
     for(let i=0;i<=4;i++){const v=y0+(y1-y0)*(i/4);ctx.fillText(v.toFixed(0),PL-3,mapY(v));}
@@ -815,32 +773,16 @@ class DeviceCard {
     ctx.translate(12,(PT+H-PB)/2);ctx.rotate(-Math.PI/2);ctx.textBaseline='top';ctx.fillText(this.plotSignal+'°',0,0);
     ctx.restore();
   }
-
   async saveCsv(){
     if(!this.pitchBuf.length){log(`[${this.displayName}] Nothing to save.`);return;}
-    const t0_dev=this.tmsBuf[0];
-    const t0_ble=this.bleTsBuf[0];
-    const si=this.sampleIdx-this.pitchBuf.length+1;
+    const t0_dev=this.tmsBuf[0],t0_ble=this.bleTsBuf[0],si=this.sampleIdx-this.pitchBuf.length+1;
     const csv='device_tms_ms,ble_tms_ms,device_t_rel_s,ble_t_rel_s,sample_index,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema,trigger\n'
-      +this.pitchBuf.map((p,i)=>{
-        const tms=this.tmsBuf[i];
-        const dev_t_rel=((tms-t0_dev)/1000).toFixed(6);
-        const ble_t_rel=((this.bleTsBuf[i]-t0_ble)/1000).toFixed(6);
-        return `${tms},${Math.round(this.bleTsBuf[i])},${dev_t_rel},${ble_t_rel},${si+i},${p.toFixed(2)},${(this.yawBuf[i]||0).toFixed(2)},${(this.rollBuf[i]||0).toFixed(2)},${(this.axBuf[i]||0).toFixed(2)},${(this.ayBuf[i]||0).toFixed(2)},${(this.azBuf[i]||0).toFixed(2)},${(this.velBuf[i]??0).toFixed(6)},${this.trigBuf[i]??0}`;
-      }).join('\n');
+      +this.pitchBuf.map((p,i)=>{const tms=this.tmsBuf[i];return`${tms},${Math.round(this.bleTsBuf[i])},${((tms-t0_dev)/1000).toFixed(6)},${((this.bleTsBuf[i]-t0_ble)/1000).toFixed(6)},${si+i},${p.toFixed(2)},${(this.yawBuf[i]||0).toFixed(2)},${(this.rollBuf[i]||0).toFixed(2)},${(this.axBuf[i]||0).toFixed(2)},${(this.ayBuf[i]||0).toFixed(2)},${(this.azBuf[i]||0).toFixed(2)},${(this.velBuf[i]??0).toFixed(6)},${this.trigBuf[i]??0}`;}).join('\n');
     const blob=new Blob([csv],{type:'text/csv'});
     const safe=this.displayName.replace(/[^a-z0-9]/gi,'-');
     const fn=`MAVEN_${safe}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
-    if('showSaveFilePicker'in window){
-      try{
-        const h=await window.showSaveFilePicker({suggestedName:fn,types:[{description:'CSV',accept:{'text/csv':['.csv']}}]});
-        const w=await h.createWritable();await w.write(blob);await w.close();
-        log(`[${this.displayName}] Saved ${h.name||fn}`);return;
-      }catch(e){if(e?.name==='AbortError'){log(`[${this.displayName}] Canceled.`);return;}}
-    }
-    const url=URL.createObjectURL(blob),a=document.createElement('a');
-    a.href=url;a.download=fn;document.body.appendChild(a);a.click();
-    document.body.removeChild(a);URL.revokeObjectURL(url);
+    if('showSaveFilePicker'in window){try{const h=await window.showSaveFilePicker({suggestedName:fn,types:[{description:'CSV',accept:{'text/csv':['.csv']}}]});const w=await h.createWritable();await w.write(blob);await w.close();log(`[${this.displayName}] Saved ${h.name||fn}`);return;}catch(e){if(e?.name==='AbortError'){log(`[${this.displayName}] Canceled.`);return;}}}
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=fn;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
     log(`[${this.displayName}] Downloaded ${fn}`);
   }
 }
