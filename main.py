@@ -20,8 +20,8 @@ import time, struct
 time.sleep(3) # otherwise sometimes stuck when opening thonny
 
 # ---------- USER CONFIG ----------
-NAME     = "NameBLEIMU7" # change here
-IMU_ID   = 7 # change here
+NAME     = "NameBLEIMU8" # change here
+IMU_ID   = 8 # change here
 PIN_NUM  = 3
 # BNO08x RVC
 IMU_UID  = 1 
@@ -32,8 +32,12 @@ IMU_UID  = 1
 #IMU_TX   = 6   # UART needs a TX pin even if not used
 
 # ESP32 - pico- D4
-IMU_RX   = 4   # IMU TX -> ESP RX
-IMU_TX   = 4
+#IMU_RX   = 4   # IMU TX -> ESP RX
+#IMU_TX   = 4
+
+# ESP32-C6 - SEEED
+IMU_RX   = 22   # IMU TX -> ESP RX
+IMU_TX   = 22
 
 # continue
 BAUD     = 115200
@@ -372,3 +376,4 @@ while True:
 
     # --- short sleep to support 100 Hz loop timing ---
     time.sleep_ms(1)
+
