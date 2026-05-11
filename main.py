@@ -20,8 +20,8 @@ import time, struct
 time.sleep(3) # otherwise sometimes stuck when opening thonny
 
 # ---------- USER CONFIG ----------
-NAME     = "NameBLEIMU8" # change here
-IMU_ID   = 8 # change here
+NAME     = "NameBLEIMU1" # change here
+IMU_ID   = 1 # change here
 PIN_NUM  = 3
 # BNO08x RVC
 IMU_UID  = 1 
@@ -316,6 +316,7 @@ def _wrap180(x):
     return x
 
 pitch_f = None
+have_sample = False
 last_tx = time.ticks_ms()
 TX_DT   = max(1, int(1000 / PRINT_HZ))
 
@@ -338,22 +339,21 @@ while True:
         v = _parse_rvc_latest()
         if v:
             _last_yaw, p_raw_raw, _last_roll, _last_ax, _last_ay, _last_az = v
-            p_raw = _wrap180(p_raw_raw)
+            have_sample = True
+            #p_raw = _wrap180(p_raw_raw)
             #p_raw = _wrap180(v[1]) # changé ça
-            _update_calibration(p_raw)
-            p = _wrap180(p_raw - pitch_offset)
+            #_update_calibration(p_raw)
+            #p = _wrap180(p_raw - pitch_offset)
 
-            if pitch_f is None:
-                pitch_f = p
-            else:
-                pitch_f += EMA_A * (p - pitch_f)
+            #if pitch_f is None:
+                #pitch_f = p
+            #else:
+                #pitch_f += EMA_A * (p - pitch_f)
+            
 
     # --- transmit at PRINT_HZ with no deadband ---
-    if (conn_handle is not None) and stream_enabled and (pitch_f is not None) and (time.ticks_diff(now, last_tx) >= TX_DT):
-        #_notify(f"PITCH,{pitch_f:.2f}") # changé ça
-        #_notify(f"PITCH,{pitch_f:.2f},{now}")
-        #_notify(f"PITCH,{pitch_f:.2f},{now},{_last_yaw:.2f},{_last_roll:.2f},{_last_ax:.2f},{_last_ay:.2f},{_last_az:.2f}")
-        _notify(f"PITCH,{pitch_f:.2f},{now},{_last_yaw:.1f},{_last_roll:.1f},{_last_ax:.1f},{_last_ay:.1f},{_last_az:.1f}")
+    if (conn_handle is not None) and stream_enabled and have_sample and (time.ticks_diff(now, last_tx) >= TX_DT):
+        _notify(f"PITCH,{p_raw_raw:.2f},{now},{_last_yaw:.1f},{_last_roll:.1f},{_last_ax:.1f},{_last_ay:.1f},{_last_az:.1f}")
         ble_msgs += 1
         last_tx = now
 
@@ -376,4 +376,6 @@ while True:
 
     # --- short sleep to support 100 Hz loop timing ---
     time.sleep_ms(1)
+
+
 
