@@ -37,6 +37,20 @@
   .folder-name{font-size:.78rem;color:var(--accent2);margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .log-panel{margin-top:auto;}
   .console{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px;height:140px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;font-size:.75rem;color:var(--muted);margin-top:6px;font-family:monospace;}
+  /* Label panel & banner */
+  .s-panel.lab-panel .t{color:var(--lime);}
+  .lab-row{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin-top:4px;}
+  .lab-row b{color:var(--text);font-variant-numeric:tabular-nums;}
+  .lab-hint{font-size:.72rem;color:var(--muted);margin-top:6px;line-height:1.4;font-style:italic;}
+  .label-banner{position:fixed;top:0;left:220px;right:0;height:60px;background:#1a1a1a;border-bottom:1px solid var(--border);display:none;align-items:center;justify-content:space-between;padding:0 20px;z-index:30;transition:background .03s,color .03s;font-weight:700;font-size:1.1rem;letter-spacing:.05em;text-transform:uppercase;}
+  .label-banner.visible{display:flex;}
+  .label-banner.active{background:#7f1d1d;color:#fef2f2;box-shadow:inset 0 0 30px #ef4444;}
+  .label-banner .lb-l{display:flex;align-items:center;gap:14px;}
+  .label-banner .lb-r{display:flex;align-items:center;gap:14px;font-size:.85rem;font-weight:600;text-transform:none;letter-spacing:0;}
+  .label-banner .lb-dot{width:14px;height:14px;border-radius:50%;background:#555;flex-shrink:0;}
+  .label-banner.active .lb-dot{background:#fef2f2;box-shadow:0 0 12px #fef2f2;}
+  .label-banner .lb-stat{font-variant-numeric:tabular-nums;}
+  body.lab-active main{padding-top:64px;}
   button{padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font:inherit;font-size:.82rem;cursor:pointer;transition:background .1s;}
   button:hover{background:#222;}button:active{background:#2a2a2a;}
   button:disabled{opacity:.4;cursor:not-allowed;}
@@ -147,6 +161,13 @@
     </div>
     <div class="rec-note">Saves one CSV per device to folder on stop.</div>
   </div>
+  <div class="s-panel lab-panel">
+    <div class="t">Movement Labels</div>
+    <div class="lab-row"><span>Status</span><b id="labStatus">Idle</b></div>
+    <div class="lab-row"><span>Bouts</span><b id="labCount">0</b></div>
+    <div class="lab-row"><span>Marked</span><b id="labDur">0.0s</b></div>
+    <div class="lab-hint">Hold <b>SPACE</b> while subject is moving. Auto-starts/stops with recording.</div>
+  </div>
   <div class="s-panel log-panel">
     <div class="t">Log</div>
     <button id="btnClearLog" style="width:100%">Clear</button>
@@ -155,6 +176,10 @@
 </aside>
 
 <main>
+  <div id="labelBanner" class="label-banner">
+    <div class="lb-l"><div class="lb-dot"></div><span id="lbState">IDLE — HOLD SPACE</span></div>
+    <div class="lb-r"><span class="lb-stat">t=<b id="lbTime">0.0</b>s</span><span class="lb-stat">bouts=<b id="lbBouts">0</b></span><span class="lb-stat">marked=<b id="lbMarked">0.0</b>s</span></div>
+  </div>
   <div id="emptyState">
     <div style="font-size:2.5rem">📶</div>
     <strong>No devices connected</strong>
@@ -488,14 +513,178 @@ function log(s){_lb.push(s);if(!_lt)_lt=setTimeout(()=>{logEl.textContent+=_lb.j
 const devices=[];
 let recActive=false,recStartTime=null,recTimerInt=null;
 let recData=new Map(),recDirHandle=null;
+// === Label session state ===
+// Records movement labels via spacebar hold. Auto-starts with recording.
+// Each transition stores both performance.now() (browser clock, same as IMU's ble_tms_ms)
+// and Date.now() (wall clock) for downstream alignment flexibility.
+const labelState={
+  active:false,             // session running?
+  held:false,               // spacebar currently held?
+  recAnchorPerf:0,          // performance.now() at session start (matches recStartTime)
+  recAnchorWall:0,          // Date.now() at session start
+  bouts:[],                 // [{startPerf, endPerf, startWall, endWall}]
+  transitions:[],           // [{perf, wall, state}]
+  curBoutStartPerf:0,
+  curBoutStartWall:0,
+  lastReleasePerf:-Infinity,// for refractory check
+  uiTimer:null,
+};
+const REFRACTORY_MS=50;     // ignore release-then-press faster than this
 const FRAME_MS=50;let _lastTs=0;
 function globalLoop(ts){requestAnimationFrame(globalLoop);if(ts-_lastTs<FRAME_MS)return;_lastTs=ts;for(const d of devices)if(d.plotOpen){d._resizeDPR();d._draw();}}
 requestAnimationFrame(globalLoop);
 document.getElementById('btnAdd').onclick=addDevice;
 document.getElementById('btnClearLog').onclick=()=>logEl.textContent='';
 document.getElementById('btnFolder').onclick=chooseFolder;
-document.getElementById('btnRecStart').onclick=startRecording;
-document.getElementById('btnRecStop').onclick=stopRecording;
+document.getElementById('btnRecStart').onclick=()=>{startRecording();if(recActive)startLabelSession();};
+document.getElementById('btnRecStop').onclick=async()=>{const wasActive=labelState.active;if(labelState.active)stopLabelSession();const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');await stopRecording();if(wasActive)await _saveLabelFiles(stamp);};
+
+// === Label session functions ===
+function startLabelSession(){
+  labelState.active=true;
+  labelState.held=false;
+  labelState.recAnchorPerf=recStartTime;
+  labelState.recAnchorWall=Date.now()-(performance.now()-recStartTime);
+  labelState.bouts=[];
+  labelState.transitions=[];
+  labelState.lastReleasePerf=-Infinity;
+  const banner=document.getElementById('labelBanner');
+  banner.classList.add('visible');
+  banner.classList.remove('active');
+  document.body.classList.add('lab-active');
+  document.getElementById('labStatus').textContent='Recording';
+  document.getElementById('labCount').textContent='0';
+  document.getElementById('labDur').textContent='0.0s';
+  document.getElementById('lbState').textContent='IDLE — HOLD SPACE';
+  document.getElementById('lbBouts').textContent='0';
+  document.getElementById('lbMarked').textContent='0.0';
+  labelState.uiTimer=setInterval(_updateLabelBannerTime,100);
+  log('Label session started — hold SPACE while subject moves.');
+}
+function stopLabelSession(){
+  if(!labelState.active)return;
+  if(labelState.held){
+    // Close any open bout
+    _onSpaceRelease(performance.now(),Date.now(),true);
+  }
+  labelState.active=false;
+  clearInterval(labelState.uiTimer);labelState.uiTimer=null;
+  const banner=document.getElementById('labelBanner');
+  banner.classList.remove('visible','active');
+  document.body.classList.remove('lab-active');
+  document.getElementById('labStatus').textContent='Idle';
+}
+function _onSpacePress(perf,wall){
+  // Refractory: a press within REFRACTORY_MS of last release continues the previous bout
+  if(perf-labelState.lastReleasePerf<REFRACTORY_MS&&labelState.bouts.length){
+    // Re-open last bout
+    const last=labelState.bouts.pop();
+    labelState.curBoutStartPerf=last.startPerf;
+    labelState.curBoutStartWall=last.startWall;
+    // Drop the matching pair of close transitions
+    labelState.transitions.splice(-2,2);
+  }else{
+    labelState.curBoutStartPerf=perf;
+    labelState.curBoutStartWall=wall;
+  }
+  labelState.held=true;
+  labelState.transitions.push({perf,wall,state:1});
+  document.getElementById('labelBanner').classList.add('active');
+  document.getElementById('lbState').textContent='MOVEMENT';
+}
+function _onSpaceRelease(perf,wall,forced=false){
+  if(!labelState.held)return;
+  labelState.held=false;
+  labelState.lastReleasePerf=perf;
+  labelState.transitions.push({perf,wall,state:0});
+  labelState.bouts.push({
+    startPerf:labelState.curBoutStartPerf,
+    endPerf:perf,
+    startWall:labelState.curBoutStartWall,
+    endWall:wall,
+  });
+  document.getElementById('labelBanner').classList.remove('active');
+  document.getElementById('lbState').textContent='IDLE — HOLD SPACE';
+  // Update sidebar counters
+  document.getElementById('labCount').textContent=String(labelState.bouts.length);
+  document.getElementById('lbBouts').textContent=String(labelState.bouts.length);
+  const total=labelState.bouts.reduce((s,b)=>s+(b.endPerf-b.startPerf),0)/1000;
+  document.getElementById('labDur').textContent=total.toFixed(1)+'s';
+  document.getElementById('lbMarked').textContent=total.toFixed(1);
+}
+function _updateLabelBannerTime(){
+  if(!labelState.active)return;
+  const t=((performance.now()-labelState.recAnchorPerf)/1000).toFixed(1);
+  document.getElementById('lbTime').textContent=t;
+}
+// Keyboard handlers — installed once, gated by labelState.active
+window.addEventListener('keydown',(e)=>{
+  if(e.code!=='Space')return;
+  if(!labelState.active)return;
+  // Don't steal space if user is typing
+  const t=e.target;
+  if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
+  e.preventDefault();
+  if(e.repeat)return;  // ignore OS-level auto-repeat
+  if(labelState.held)return;
+  _onSpacePress(performance.now(),Date.now());
+});
+window.addEventListener('keyup',(e)=>{
+  if(e.code!=='Space')return;
+  if(!labelState.active)return;
+  e.preventDefault();
+  if(!labelState.held)return;
+  _onSpaceRelease(performance.now(),Date.now());
+});
+// Safety: release if window loses focus while held
+window.addEventListener('blur',()=>{
+  if(labelState.active&&labelState.held){
+    _onSpaceRelease(performance.now(),Date.now(),true);
+    log('Window blurred while marking — bout closed.');
+  }
+});
+// CSV builders — called from stopRecording
+async function _saveLabelFiles(stamp){
+  if(!labelState.bouts.length&&!labelState.transitions.length){
+    log('No labels recorded.');return;
+  }
+  const anchorPerf=labelState.recAnchorPerf;
+  // 1. Bouts CSV
+  const bHeader='bout_idx,start_perf_ms,end_perf_ms,start_wall_ms,end_wall_ms,start_t_rel_s,end_t_rel_s,duration_s\n';
+  const bRows=labelState.bouts.map((b,i)=>{
+    const sRel=((b.startPerf-anchorPerf)/1000).toFixed(6);
+    const eRel=((b.endPerf-anchorPerf)/1000).toFixed(6);
+    const dur=((b.endPerf-b.startPerf)/1000).toFixed(6);
+    return `${i+1},${b.startPerf.toFixed(3)},${b.endPerf.toFixed(3)},${b.startWall},${b.endWall},${sRel},${eRel},${dur}`;
+  }).join('\n');
+  await _writeOrDownload('labels_bouts',stamp,bHeader+bRows);
+  // 2. Transitions CSV
+  const tHeader='perf_ms,wall_ms,t_rel_s,state\n';
+  const tRows=labelState.transitions.map(tr=>{
+    const rel=((tr.perf-anchorPerf)/1000).toFixed(6);
+    return `${tr.perf.toFixed(3)},${tr.wall},${rel},${tr.state}`;
+  }).join('\n');
+  await _writeOrDownload('labels_transitions',stamp,tHeader+tRows);
+  log(`Labels saved: ${labelState.bouts.length} bout(s), ${labelState.transitions.length} transition(s).`);
+}
+async function _writeOrDownload(kind,stamp,csvText){
+  const blob=new Blob([csvText],{type:'text/csv'});
+  const fn=`MAVEN_${kind}_${stamp}.csv`;
+  if(recDirHandle){
+    try{
+      const perm=await recDirHandle.queryPermission({mode:'readwrite'}).catch(()=>recDirHandle.requestPermission({mode:'readwrite'}));
+      if(perm==='granted'){
+        const fh=await recDirHandle.getFileHandle(fn,{create:true});
+        const w=await fh.createWritable();await w.write(blob);await w.close();
+        log(`[labels] → ${fn}`);return;
+      }
+    }catch(e){log(`[labels] Folder error: ${e} — downloading`);}
+  }
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=fn;document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
+  log(`[labels] Downloaded: ${fn}`);
+}
 function addDevice(){if(!navigator.bluetooth){alert('Web Bluetooth not supported. Use Chrome.');return;}const card=new DeviceCard();devices.push(card);updateEmpty();card.connect();}
 function removeDevice(card){card.disconnect();card.cardEl.remove();devices.splice(devices.indexOf(card),1);updateSidebar();updateEmpty();}
 function updateEmpty(){document.getElementById('emptyState').style.display=devices.length?'none':'flex';}
