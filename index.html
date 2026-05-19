@@ -699,7 +699,7 @@ function updateSidebar(){
 }
 async function chooseFolder(){if(!('showDirectoryPicker'in window)){alert('Requires Chrome/Edge desktop.');return;}try{recDirHandle=await window.showDirectoryPicker({mode:'readwrite'});document.getElementById('folderName').textContent='📂 '+recDirHandle.name;log('Folder: '+recDirHandle.name);}catch(e){if(e?.name!=='AbortError')log('Folder error: '+e);}}
 function startRecording(){const connected=devices.filter(d=>d.isConnected());if(!connected.length){log('No connected devices.');return;}recActive=true;recStartTime=performance.now();recData=new Map();connected.forEach(d=>{recData.set(d.bleDevice.id,{name:d.displayName,samples:[]});d.setRecUI(true);});document.getElementById('btnRecStart').disabled=true;document.getElementById('btnRecStop').disabled=false;document.getElementById('recDot').className='dot rec';document.getElementById('recStatus').textContent=`${connected.length} device${connected.length>1?'s':''}`;recTimerInt=setInterval(()=>{const e=(performance.now()-recStartTime)/1000;const m=Math.floor(e/60).toString().padStart(2,'0');const s=(e%60).toFixed(1).padStart(4,'0');document.getElementById('recTimer').textContent=`${m}:${s}`;},100);log(`Recording started — ${connected.map(d=>d.displayName).join(', ')}`);updateSidebar();}
-async function stopRecording(){if(!recActive)return;recActive=false;clearInterval(recTimerInt);devices.forEach(d=>d.setRecUI(false));document.getElementById('btnRecStart').disabled=false;document.getElementById('btnRecStop').disabled=true;document.getElementById('recDot').className='dot';document.getElementById('recStatus').textContent='Idle';document.getElementById('recTimer').textContent='';updateSidebar();const entries=[...recData.entries()];if(!entries.length){log('No data.');return;}const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');log(`Stopped — ${entries.length} device(s). Saving…`);let idx=1;for(const[,{name,samples}]of entries){if(!samples.length){log(`[${name}] No samples.`);idx++;continue;}const t0_dev=samples[0].tms;const t0_ble=samples[0].ble_ts;const csv='device_tms_ms,ble_tms_ms,device_t_rel_s,ble_t_rel_s,qi,qj,qk,qr,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema,trigger\n'+samples.map(s=>`${s.tms},${Math.round(s.ble_ts)},${((s.tms-t0_dev)/1000).toFixed(6)},${((Math.round(s.ble_ts)-Math.round(t0_ble))/1000).toFixed(6)},${(s.qi??0).toFixed(6)},${(s.qj??0).toFixed(6)},${(s.qk??0).toFixed(6)},${(s.qr??1).toFixed(6)},${s.pitch.toFixed(2)},${s.yaw.toFixed(2)},${s.roll.toFixed(2)},${s.ax.toFixed(2)},${s.ay.toFixed(2)},${s.az.toFixed(2)},${s.vel.toFixed(6)},${s.trigger}`).join('\n');const blob=new Blob([csv],{type:'text/csv'});const safe=name.replace(/[^a-z0-9]/gi,'-');const fn=`MAVEN_${idx}-${safe}_${stamp}.csv`;if(recDirHandle){try{const perm=await recDirHandle.queryPermission({mode:'readwrite'}).catch(()=>recDirHandle.requestPermission({mode:'readwrite'}));if(perm==='granted'){const fh=await recDirHandle.getFileHandle(fn,{create:true});const w=await fh.createWritable();await w.write(blob);await w.close();log(`[${name}] → ${fn}`);idx++;continue;}}catch(e){log(`[${name}] Folder error: ${e} — downloading`);}}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=fn;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);log(`[${name}] Downloaded: ${fn}`);idx++;}}
+async function stopRecording(){if(!recActive)return;recActive=false;clearInterval(recTimerInt);devices.forEach(d=>d.setRecUI(false));document.getElementById('btnRecStart').disabled=false;document.getElementById('btnRecStop').disabled=true;document.getElementById('recDot').className='dot';document.getElementById('recStatus').textContent='Idle';document.getElementById('recTimer').textContent='';updateSidebar();const entries=[...recData.entries()];if(!entries.length){log('No data.');return;}const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');log(`Stopped — ${entries.length} device(s). Saving…`);let idx=1;for(const[,{name,samples}]of entries){if(!samples.length){log(`[${name}] No samples.`);idx++;continue;}const t0_dev=samples[0].tms;const t0_ble=samples[0].ble_ts;const csv='device_tms_ms,ble_tms_ms,device_t_rel_s,ble_t_rel_s,qi,qj,qk,qr,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,gx,gy,gz,trigger\n'+samples.map(s=>`${s.tms},${Math.round(s.ble_ts)},${((s.tms-t0_dev)/1000).toFixed(6)},${((Math.round(s.ble_ts)-Math.round(t0_ble))/1000).toFixed(6)},${(s.qi??0).toFixed(6)},${(s.qj??0).toFixed(6)},${(s.qk??0).toFixed(6)},${(s.qr??1).toFixed(6)},${s.pitch.toFixed(2)},${s.yaw.toFixed(2)},${s.roll.toFixed(2)},${s.ax.toFixed(2)},${s.ay.toFixed(2)},${s.az.toFixed(2)},${(s.gx??0).toFixed(4)},${(s.gy??0).toFixed(4)},${(s.gz??0).toFixed(4)},${s.trigger}`).join('\n');const blob=new Blob([csv],{type:'text/csv'});const safe=name.replace(/[^a-z0-9]/gi,'-');const fn=`MAVEN_${idx}-${safe}_${stamp}.csv`;if(recDirHandle){try{const perm=await recDirHandle.queryPermission({mode:'readwrite'}).catch(()=>recDirHandle.requestPermission({mode:'readwrite'}));if(perm==='granted'){const fh=await recDirHandle.getFileHandle(fn,{create:true});const w=await fh.createWritable();await w.write(blob);await w.close();log(`[${name}] → ${fn}`);idx++;continue;}}catch(e){log(`[${name}] Folder error: ${e} — downloading`);}}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=fn;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);log(`[${name}] Downloaded: ${fn}`);idx++;}}
 let _renameCard=null;
 function openRenameModal(card){_renameCard=card;const saved=card.bleDevice?getSavedName(card.bleDevice.id):null;document.getElementById('renameHint').textContent=`BLE name: "${card.bleName||'?'}"  |  ID: ${card.bleDevice?.id?.slice(-8)||'?'}`;document.getElementById('renameInput').value=saved||card.displayName||'';document.getElementById('renameModal').classList.add('open');setTimeout(()=>document.getElementById('renameInput').focus(),50);}
 function closeRenameModal(){document.getElementById('renameModal').classList.remove('open');_renameCard=null;}
@@ -716,10 +716,10 @@ class DeviceCard {
     this._onNotify=null;this.connecting=false;this.plotOpen=false;
     this.plotSignal='pitch';
     this.BUF_MAX=1800;this.WIN=400;
-    this.pitchBuf=[];this.tmsBuf=[];this.velBuf=[];this.bleTsBuf=[];
+    this.pitchBuf=[];this.tmsBuf=[];this.bleTsBuf=[];
     this.yawBuf=[];this.rollBuf=[];this.axBuf=[];this.ayBuf=[];this.azBuf=[];
     this.trigBuf=[];this.history=[];
-    this.sampleIdx=0;this._t0tms=null;this.lastPitch=null;this.DERIV_A=0.3;
+    this.sampleIdx=0;this._t0tms=null;this.lastPitch=null;
     this._dprTs=0;
     this._buildDOM();updateSidebar();
   }
@@ -897,6 +897,9 @@ class DeviceCard {
         const ax=p[6]?parseFloat(p[6]):0;
         const ay=p[7]?parseFloat(p[7]):0;
         const az=p[8]?parseFloat(p[8]):0;
+        const gx=p[9] ?parseFloat(p[9]) :0;
+        const gy=p[10]?parseFloat(p[10]):0;
+        const gz=p[11]?parseFloat(p[11]):0;
         // quat -> Euler (deg), DISPLAY ONLY. Same convention as your C++.
         const sqi=qi*qi, sqj=qj*qj, sqk=qk*qk, sqr=qr*qr;
         let yaw  = Math.atan2(2*(qi*qj+qk*qr), (sqi-sqj-sqk+sqr));
@@ -925,7 +928,7 @@ class DeviceCard {
           this.cardEl.classList.toggle('triggered',!!trig);
           if(trig)_fireTrigger();
           _pushTrigHistory(trig?1:0);
-          this._push(v,tms,yaw,roll,ax,ay,az,trig,qi,qj,qk,qr);
+          this._push(v,tms,yaw,roll,ax,ay,az,trig,qi,qj,qk,qr,gx,gy,gz);
         }
       }else if(line.startsWith('RATE ')){
         const m=line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
@@ -934,7 +937,7 @@ class DeviceCard {
     }
   }
   // _push(v,tms,yaw=0,roll=0,ax=0,ay=0,az=0,trig=0){
-  _push(v,tms,yaw=0,roll=0,ax=0,ay=0,az=0,trig=0,qi=0,qj=0,qk=0,qr=1){
+  _push(v,tms,yaw=0,roll=0,ax=0,ay=0,az=0,trig=0,qi=0,qj=0,qk=0,qr=1,gx=0,gy=0,gz=0){
 
     const bleTs=performance.now();
     if(tms!=null&&isFinite(tms)){if(this._t0tms==null)this._t0tms=tms;}
@@ -943,20 +946,15 @@ class DeviceCard {
     this.yawBuf.push(yaw);this.rollBuf.push(roll);
     this.axBuf.push(ax);this.ayBuf.push(ay);this.azBuf.push(az);
     this.trigBuf.push(trig);
-    if(this.lastPitch==null)this.lastPitch=v;
-    const rv=v-this.lastPitch;
-    const lv=this.velBuf.length?this.velBuf[this.velBuf.length-1]:rv;
-    const prevTms=this.tmsBuf[this.tmsBuf.length-2]??tms;
-    const dt_s=Math.max(0.001,(tms-prevTms)/1000);
-    this.velBuf.push(lv+this.DERIV_A*((rv/dt_s)-lv));
-    this.lastPitch=v;
     if(recActive&&this.bleDevice&&recData.has(this.bleDevice.id)){
       // recData.get(this.bleDevice.id).samples.push({tms,ble_ts:bleTs,pitch:v,yaw,roll,ax,ay,az,vel:this.velBuf[this.velBuf.length-1],trigger:trig});
-      recData.get(this.bleDevice.id).samples.push({tms,ble_ts:bleTs,pitch:v,yaw,roll,ax,ay,az,qi,qj,qk,qr,vel:this.velBuf[this.velBuf.length-1],trigger:trig});
+      //recData.get(this.bleDevice.id).samples.push({tms,ble_ts:bleTs,pitch:v,yaw,roll,ax,ay,az,qi,qj,qk,qr,gx,gy,gz,vel:this.velBuf[this.velBuf.length-1],trigger:trig});
+      recData.get(this.bleDevice.id).samples.push({tms,ble_ts:bleTs,pitch:v,yaw,roll,ax,ay,az,qi,qj,qk,qr,gx,gy,gz,trigger:trig});
     }
     if(this.pitchBuf.length>this.BUF_MAX){
       const drop=Math.max(this.pitchBuf.length-this.BUF_MAX,100);
-      this.pitchBuf.splice(0,drop);this.tmsBuf.splice(0,drop);this.velBuf.splice(0,drop);this.bleTsBuf.splice(0,drop);
+      //this.pitchBuf.splice(0,drop);this.tmsBuf.splice(0,drop);this.velBuf.splice(0,drop);this.bleTsBuf.splice(0,drop);
+      this.pitchBuf.splice(0,drop);this.tmsBuf.splice(0,drop);this.bleTsBuf.splice(0,drop);
       this.yawBuf.splice(0,drop);this.rollBuf.splice(0,drop);
       this.axBuf.splice(0,drop);this.ayBuf.splice(0,drop);this.azBuf.splice(0,drop);
       this.trigBuf.splice(0,drop);
