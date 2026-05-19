@@ -890,13 +890,53 @@ class DeviceCard {
 
           this._push(v,tms,yaw,roll,ax,ay,az,trig);
         }
+      }else if(line.startsWith('Q,')){
+        // Q,<tms>,qi,qj,qk,qr,ax,ay,az
+        const p=line.split(',');
+        const tms=p[1]?parseInt(p[1],10):null;
+        const qi=parseFloat(p[2]), qj=parseFloat(p[3]),
+              qk=parseFloat(p[4]), qr=parseFloat(p[5]);
+        const ax=p[6]?parseFloat(p[6]):0;
+        const ay=p[7]?parseFloat(p[7]):0;
+        const az=p[8]?parseFloat(p[8]):0;
+        // quat -> Euler (deg), DISPLAY ONLY. Same convention as your C++.
+        const sqi=qi*qi, sqj=qj*qj, sqk=qk*qk, sqr=qr*qr;
+        let yaw  = Math.atan2(2*(qi*qj+qk*qr), (sqi-sqj-sqk+sqr));
+        let pitch= Math.asin(Math.max(-1,Math.min(1,-2*(qi*qk-qj*qr)/(sqi+sqj+sqk+sqr))));
+        let roll = Math.atan2(2*(qj*qk+qi*qr), (-sqi-sqj+sqk+sqr));
+        const RAD=180/Math.PI; yaw*=RAD; pitch*=RAD; roll*=RAD;
+        const v=pitch;
+        if(!isNaN(qr)&&!this.chkPause.checked){
+          this.pitchEl.textContent=v.toFixed(2);
+          this.pitchMini.textContent=v.toFixed(1)+'°';
+          this.pitchValEl.textContent=v.toFixed(1);
+          this.yawEl.textContent=yaw.toFixed(1);
+          this.rollEl.textContent=roll.toFixed(1);
+          this.axEl.textContent=ax.toFixed(2);
+          this.ayEl.textContent=ay.toFixed(2);
+          this.azEl.textContent=az.toFixed(2);
+          _latest[this.displayName]={pitch:v,yaw,roll,ax,ay,az,tms,qi,qj,qk,qr};
+          const feat=computeFeatures();
+          if(feat)_updateFeatUI(feat);
+          this.history.push({pitch:v,yaw,roll,ax,ay,az});
+          if(this.history.length>FEAT_WIN)this.history.shift();
+          const trig=classify(this.displayName,v,yaw,roll,ax,ay,az,this.history);
+          this.trigEl.textContent=trig?'TRIG ▲':'TRIG —';
+          this.trigEl.classList.toggle('on',!!trig);
+          this.cardEl.classList.toggle('triggered',!!trig);
+          if(trig)_fireTrigger();
+          _pushTrigHistory(trig?1:0);
+          this._push(v,tms,yaw,roll,ax,ay,az,trig,qi,qj,qk,qr);
+        }
       }else if(line.startsWith('RATE ')){
         const m=line.match(/IMU~([\d.]+)Hz,\s*BLE~([\d.]+)Hz/i);
         if(m)this.rateEl.textContent=`IMU ${(+m[1]).toFixed(0)}Hz | BLE ${(+m[2]).toFixed(0)}Hz`;
       }else{log(`[${this.displayName}] ${line}`);}
     }
   }
-  _push(v,tms,yaw=0,roll=0,ax=0,ay=0,az=0,trig=0){
+  // _push(v,tms,yaw=0,roll=0,ax=0,ay=0,az=0,trig=0){
+  _push(v,tms,yaw=0,roll=0,ax=0,ay=0,az=0,trig=0,qi=0,qj=0,qk=0,qr=1){
+
     const bleTs=performance.now();
     if(tms!=null&&isFinite(tms)){if(this._t0tms==null)this._t0tms=tms;}
     else{tms=Math.round(bleTs);if(this._t0tms==null)this._t0tms=tms;}
@@ -912,7 +952,8 @@ class DeviceCard {
     this.velBuf.push(lv+this.DERIV_A*((rv/dt_s)-lv));
     this.lastPitch=v;
     if(recActive&&this.bleDevice&&recData.has(this.bleDevice.id)){
-      recData.get(this.bleDevice.id).samples.push({tms,ble_ts:bleTs,pitch:v,yaw,roll,ax,ay,az,vel:this.velBuf[this.velBuf.length-1],trigger:trig});
+      // recData.get(this.bleDevice.id).samples.push({tms,ble_ts:bleTs,pitch:v,yaw,roll,ax,ay,az,vel:this.velBuf[this.velBuf.length-1],trigger:trig});
+      recData.get(this.bleDevice.id).samples.push({tms,ble_ts:bleTs,pitch:v,yaw,roll,ax,ay,az,qi,qj,qk,qr,vel:this.velBuf[this.velBuf.length-1],trigger:trig});
     }
     if(this.pitchBuf.length>this.BUF_MAX){
       const drop=Math.max(this.pitchBuf.length-this.BUF_MAX,100);
@@ -965,7 +1006,9 @@ class DeviceCard {
   async saveCsv(){
     if(!this.pitchBuf.length){log(`[${this.displayName}] Nothing to save.`);return;}
     const t0_dev=this.tmsBuf[0],t0_ble=this.bleTsBuf[0],si=this.sampleIdx-this.pitchBuf.length+1;
-    const csv='device_tms_ms,ble_tms_ms,device_t_rel_s,ble_t_rel_s,sample_index,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema,trigger\n'
+    // const csv='device_tms_ms,ble_tms_ms,device_t_rel_s,ble_t_rel_s,sample_index,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema,trigger\n'
+    const csv='device_tms_ms,ble_tms_ms,device_t_rel_s,ble_t_rel_s,qi,qj,qk,qr,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema,trigger\n'+samples.map(s=>`${s.tms},${Math.round(s.ble_ts)},${((s.tms-t0_dev)/1000).toFixed(6)},${((s.ble_ts-t0_ble)/1000).toFixed(6)},${(s.qi??0).toFixed(6)},${(s.qj??0).toFixed(6)},${(s.qk??0).toFixed(6)},${(s.qr??1).toFixed(6)},${s.pitch.toFixed(2)},${s.yaw.toFixed(2)},${s.roll.toFixed(2)},${s.ax.toFixed(2)},${s.ay.toFixed(2)},${s.az.toFixed(2)},${s.vel.toFixed(6)},${s.trigger}`).join('\n');
+
       +this.pitchBuf.map((p,i)=>{const tms=this.tmsBuf[i];return`${tms},${Math.round(this.bleTsBuf[i])},${((tms-t0_dev)/1000).toFixed(6)},${((this.bleTsBuf[i]-t0_ble)/1000).toFixed(6)},${si+i},${p.toFixed(2)},${(this.yawBuf[i]||0).toFixed(2)},${(this.rollBuf[i]||0).toFixed(2)},${(this.axBuf[i]||0).toFixed(2)},${(this.ayBuf[i]||0).toFixed(2)},${(this.azBuf[i]||0).toFixed(2)},${(this.velBuf[i]??0).toFixed(6)},${this.trigBuf[i]??0}`;}).join('\n');
     const blob=new Blob([csv],{type:'text/csv'});
     const safe=this.displayName.replace(/[^a-z0-9]/gi,'-');
