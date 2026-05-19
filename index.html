@@ -900,7 +900,8 @@ class DeviceCard {
         // quat -> Euler (deg), DISPLAY ONLY. Same convention as your C++.
         const sqi=qi*qi, sqj=qj*qj, sqk=qk*qk, sqr=qr*qr;
         let yaw  = Math.atan2(2*(qi*qj+qk*qr), (sqi-sqj-sqk+sqr));
-        let pitch= Math.asin(Math.max(-1,Math.min(1,-2*(qi*qk-qj*qr)/(sqi+sqj+sqk+sqr))));
+        // let pitch= Math.asin(Math.max(-1,Math.min(1,-2*(qi*qk-qj*qr)/(sqi+sqj+sqk+sqr))));
+        let pitch= Math.asin(-2*(qi*qk-qj*qr)/(sqi+sqj+sqk+sqr))));
         let roll = Math.atan2(2*(qj*qk+qi*qr), (-sqi-sqj+sqk+sqr));
         const RAD=180/Math.PI; yaw*=RAD; pitch*=RAD; roll*=RAD;
         const v=pitch;
