@@ -763,7 +763,6 @@ class DeviceCard {
         <button class="btn-reconnect btn-primary">⟳</button>
       </div>
       <div class="card-foot">
-        <button class="btn-save">💾 Save CSV</button>
         <button class="btn-remove btn-ghost">✕ Remove</button>
       </div>`;
     grid.appendChild(this.cardEl);
@@ -794,7 +793,6 @@ class DeviceCard {
     this.cardEl.querySelector('.btn-stream-off').onclick=()=>this.send('STREAM,OFF');
     this.cardEl.querySelector('.btn-cal').onclick=()=>this.send('CAL,3000');
     this.cardEl.querySelector('.btn-reconnect').onclick=()=>this.connect();
-    this.cardEl.querySelector('.btn-save').onclick=()=>this.saveCsv();
     this.cardEl.querySelector('.btn-remove').onclick=()=>removeDevice(this);
   }
   setStatus(s){this.statusPill.textContent=s;this.statusPill.className='pill '+s.replace('…','').replace(/\s+/g,'');}
@@ -1002,21 +1000,6 @@ class DeviceCard {
     ctx.textBaseline='alphabetic';ctx.fillText('samples',(PL+W-PR)/2,H-4);
     ctx.translate(12,(PT+H-PB)/2);ctx.rotate(-Math.PI/2);ctx.textBaseline='top';ctx.fillText(this.plotSignal+'°',0,0);
     ctx.restore();
-  }
-  async saveCsv(){
-    if(!this.pitchBuf.length){log(`[${this.displayName}] Nothing to save.`);return;}
-    const t0_dev=this.tmsBuf[0],t0_ble=this.bleTsBuf[0],si=this.sampleIdx-this.pitchBuf.length+1;
-    // const csv='device_tms_ms,ble_tms_ms,device_t_rel_s,ble_t_rel_s,sample_index,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema,trigger\n'
-    // const csv='device_tms_ms,ble_tms_ms,device_t_rel_s,ble_t_rel_s,qi,qj,qk,qr,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema,trigger\n'+samples.map(s=>`${s.tms},${Math.round(s.ble_ts)},${((s.tms-t0_dev)/1000).toFixed(6)},${((s.ble_ts-t0_ble)/1000).toFixed(6)},${(s.qi??0).toFixed(6)},${(s.qj??0).toFixed(6)},${(s.qk??0).toFixed(6)},${(s.qr??1).toFixed(6)},${s.pitch.toFixed(2)},${s.yaw.toFixed(2)},${s.roll.toFixed(2)},${s.ax.toFixed(2)},${s.ay.toFixed(2)},${s.az.toFixed(2)},${s.vel.toFixed(6)},${s.trigger}`).join('\n');
-    const csv='device_tms_ms,ble_tms_ms,device_t_rel_s,ble_t_rel_s,sample_index,qi,qj,qk,qr,pitch_deg,yaw_deg,roll_deg,ax_ms2,ay_ms2,az_ms2,vel_ema,trigger\n'
-      +this.pitchBuf.map((p,i)=>{const tms=this.tmsBuf[i];return`${tms},${Math.round(this.bleTsBuf[i])},${((tms-t0_dev)/1000).toFixed(6)},${((this.bleTsBuf[i]-t0_ble)/1000).toFixed(6)},${si+i},${(this.qiBuf?.[i]??0).toFixed(6)},${(this.qjBuf?.[i]??0).toFixed(6)},${(this.qkBuf?.[i]??0).toFixed(6)},${(this.qrBuf?.[i]??1).toFixed(6)},${p.toFixed(2)},${(this.yawBuf[i]||0).toFixed(2)},${(this.rollBuf[i]||0).toFixed(2)},${(this.axBuf[i]||0).toFixed(2)},${(this.ayBuf[i]||0).toFixed(2)},${(this.azBuf[i]||0).toFixed(2)},${(this.velBuf[i]??0).toFixed(6)},${this.trigBuf[i]??0}`;}).join('\n');
-      +this.pitchBuf.map((p,i)=>{const tms=this.tmsBuf[i];return`${tms},${Math.round(this.bleTsBuf[i])},${((tms-t0_dev)/1000).toFixed(6)},${((this.bleTsBuf[i]-t0_ble)/1000).toFixed(6)},${si+i},${p.toFixed(2)},${(this.yawBuf[i]||0).toFixed(2)},${(this.rollBuf[i]||0).toFixed(2)},${(this.axBuf[i]||0).toFixed(2)},${(this.ayBuf[i]||0).toFixed(2)},${(this.azBuf[i]||0).toFixed(2)},${(this.velBuf[i]??0).toFixed(6)},${this.trigBuf[i]??0}`;}).join('\n');
-    const blob=new Blob([csv],{type:'text/csv'});
-    const safe=this.displayName.replace(/[^a-z0-9]/gi,'-');
-    const fn=`MAVEN_${safe}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
-    if('showSaveFilePicker'in window){try{const h=await window.showSaveFilePicker({suggestedName:fn,types:[{description:'CSV',accept:{'text/csv':['.csv']}}]});const w=await h.createWritable();await w.write(blob);await w.close();log(`[${this.displayName}] Saved ${h.name||fn}`);return;}catch(e){if(e?.name==='AbortError'){log(`[${this.displayName}] Canceled.`);return;}}}
-    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=fn;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
-    log(`[${this.displayName}] Downloaded ${fn}`);
   }
 }
 </script>
